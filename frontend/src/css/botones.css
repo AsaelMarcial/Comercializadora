@@ -1,0 +1,128 @@
+.btn-registrar {
+    position:relative;
+    float: right;
+    z-index: 1;
+    padding: 8px 15px;
+    margin-top: 67px;
+    margin-right: 45px;
+    border: unset;
+    border-radius: 5px;
+    color: #2c2c2c;
+    background: #e8e8e8;
+    transition: all 400ms;
+    overflow: hidden;
+    font-weight: 600;
+}
+   
+.btn-registrar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 5px;
+    background-color: #1B59F8;
+    z-index: -1;
+    transition: all 400ms;
+}
+   
+.btn-registrar:hover {
+    color: #ffffff;
+}
+   
+.btn-registrar:hover::before {
+    width: 100%;
+}
+
+
+.btn-opciones{
+    border: none;
+    background-color: transparent;
+    color: #70768C;
+}
+
+.btn-opciones:hover:nth-child(1){
+    color: #f8ba1b;
+    transition: all 0.2s ease;
+}
+
+.btn-opciones:hover:nth-child(2){
+    color: #f81b59;
+    transition: all 0.2s ease;
+}
+
+/* 
+Botones de exportar a PDF, Excel e imprimir 
+Vienen de la biblioteca datatable
+*/
+
+.dt-buttons{
+    /* height: 40px; */
+    float: right;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.btn-exportar{
+    background-color: #e8e8e8 !important;
+    color: #2c2c2c !important;
+    border: none !important;
+	padding: 5px;
+	border-radius: 8px;
+	width: 40px;
+	height: 40px;
+}
+
+.buttons-excel:hover{
+    color: #FFFF !important;
+    background-color: #107c41 !important;  
+    transition: all 0.4s ease;
+}
+
+.buttons-pdf:hover{
+    color: #FFFF !important;
+    background-color: #e5322d !important;  
+    transition: all 0.4s ease;
+}
+
+.buttons-print:hover{
+    color: #FFFF !important;
+    background-color: #1B59F8 !important;  
+    transition: all 0.4s ease;
+}
+
+
+.paginate_button{
+	border: 1px solid;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin: 2px;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.paginate_button:hover{
+	text-decoration: none;
+}
+
+.paginate_button.current{
+	background-color: #1B59F8;
+	color: white;
+}
+
+.paginate_button.disabled{
+	color: gray;
+	background-color: #F9F9F9;
+}
+
+.paginate_button.disabled:hover{
+	text-decoration: none;
+	cursor: default;
+}
+
+select {
+	width: calc(100% - 40px);
+}

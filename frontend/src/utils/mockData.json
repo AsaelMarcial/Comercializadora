@@ -1,0 +1,3510 @@
+{
+  "outcomes": [
+    {
+      "id": 17,
+      "proveedor": "Ziemann Group",
+      "descripcion": "lorem vitae mattis nibh ligula nec sem duis aliquam convallis nunc proin at turpis a",
+      "partida": "Consumer Durables",
+      "total": 3.74,
+      "factura": "KMNN"
+    },
+    {
+      "id": 19,
+      "proveedor": "Pouros LLC",
+      "descripcion": "pharetra magna ac consequat metus sapien ut nunc vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia",
+      "partida": "n/a",
+      "total": 1.49,
+      "factura": "SBQV"
+    },
+    {
+      "id": 20,
+      "proveedor": "Haag, Langosh and Ledner",
+      "descripcion": "scelerisque mauris sit amet eros suspendisse accumsan tortor quis turpis sed ante vivamus tortor duis mattis egestas metus",
+      "partida": "Capital Goods",
+      "total": 6.56,
+      "factura": null
+    },
+    {
+      "id": 21,
+      "proveedor": "McLaughlin, Hudson and Collier",
+      "descripcion": "sed nisl nunc rhoncus dui vel sem sed sagittis nam congue risus semper porta volutpat quam",
+      "partida": "Consumer Services",
+      "total": 1.16,
+      "factura": "ENSS"
+    },
+    {
+      "id": 22,
+      "proveedor": "Labadie, Schinner and Shanahan",
+      "descripcion": "sit amet diam in magna bibendum imperdiet nullam orci pede venenatis non sodales sed tincidunt eu felis",
+      "partida": "Consumer Services",
+      "total": 9.83,
+      "factura": "KSKF"
+    },
+    {
+      "id": 23,
+      "proveedor": "Howell, Corkery and Miller",
+      "descripcion": "massa donec dapibus duis at velit eu est congue elementum in hac habitasse platea dictumst morbi",
+      "partida": "Consumer Durables",
+      "total": 3.01,
+      "factura": "KRAP"
+    },
+    {
+      "id": 25,
+      "proveedor": "Dibbert Group",
+      "descripcion": "amet sapien dignissim vestibulum vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae nulla dapibus dolor",
+      "partida": "Technology",
+      "total": 1.47,
+      "factura": "SBLP"
+    },
+    {
+      "id": 26,
+      "proveedor": "Jacobi LLC",
+      "descripcion": "congue risus semper porta volutpat quam pede lobortis ligula sit amet eleifend pede",
+      "partida": "Health Care",
+      "total": 3.04,
+      "factura": "BIKP"
+    },
+    {
+      "id": 27,
+      "proveedor": "Kulas-Murazik",
+      "descripcion": "lectus pellentesque eget nunc donec quis orci eget orci vehicula condimentum curabitur in libero ut",
+      "partida": "Consumer Services",
+      "total": 2.65,
+      "factura": "KHLM"
+    },
+    {
+      "id": 28,
+      "proveedor": "Kuphal, Shanahan and Wunsch",
+      "descripcion": "justo in blandit ultrices enim lorem ipsum dolor sit amet consectetuer adipiscing elit proin",
+      "partida": "Capital Goods",
+      "total": 6.58,
+      "factura": "KOQU"
+    },
+    {
+      "id": 29,
+      "proveedor": "Ondricka LLC",
+      "descripcion": "in sapien iaculis congue vivamus metus arcu adipiscing molestie hendrerit at vulputate vitae nisl aenean lectus pellentesque eget",
+      "partida": "Health Care",
+      "total": 7.32,
+      "factura": "SNOC"
+    },
+    {
+      "id": 30,
+      "proveedor": "McKenzie Group",
+      "descripcion": "pede lobortis ligula sit amet eleifend pede libero quis orci nullam",
+      "partida": "Miscellaneous",
+      "total": 1.7,
+      "factura": "FAKP"
+    },
+    {
+      "id": 31,
+      "proveedor": "Jones Group",
+      "descripcion": "in sapien iaculis congue vivamus metus arcu adipiscing molestie hendrerit at vulputate vitae",
+      "partida": "Capital Goods",
+      "total": 5.77,
+      "factura": "SLOR"
+    },
+    {
+      "id": 32,
+      "proveedor": "Hirthe Group",
+      "descripcion": "nibh in hac habitasse platea dictumst aliquam augue quam sollicitudin vitae consectetuer",
+      "partida": "Technology",
+      "total": 7.73,
+      "factura": "LKPO"
+    },
+    {
+      "id": 33,
+      "proveedor": "Ankunding-Williamson",
+      "descripcion": "ut massa volutpat convallis morbi odio odio elementum eu interdum eu tincidunt in",
+      "partida": "Consumer Durables",
+      "total": 7.18,
+      "factura": "YBOU"
+    },
+    {
+      "id": 34,
+      "proveedor": "Reichert-Boehm",
+      "descripcion": "euismod scelerisque quam turpis adipiscing lorem vitae mattis nibh ligula nec sem duis aliquam convallis nunc proin",
+      "partida": "Finance",
+      "total": 3.39,
+      "factura": "LPAZ"
+    },
+    {
+      "id": 35,
+      "proveedor": "Morar, Hahn and Greenfelder",
+      "descripcion": "sit amet eleifend pede libero quis orci nullam molestie nibh in lectus pellentesque at nulla suspendisse potenti cras",
+      "partida": "Public Utilities",
+      "total": 4.11,
+      "factura": "WMKA"
+    },
+    {
+      "id": 36,
+      "proveedor": "Simonis-Huels",
+      "descripcion": "id luctus nec molestie sed justo pellentesque viverra pede ac diam cras",
+      "partida": "n/a",
+      "total": 6.75,
+      "factura": "FEFW"
+    },
+    {
+      "id": 37,
+      "proveedor": "King-Schuster",
+      "descripcion": "viverra eget congue eget semper rutrum nulla nunc purus phasellus in felis donec semper sapien a libero nam dui proin",
+      "partida": "n/a",
+      "total": 5.93,
+      "factura": "WASE"
+    },
+    {
+      "id": 38,
+      "proveedor": "Gutmann-Flatley",
+      "descripcion": "nibh in quis justo maecenas rhoncus aliquam lacus morbi quis tortor",
+      "partida": "Miscellaneous",
+      "total": 6.09,
+      "factura": "FANC"
+    },
+    {
+      "id": 39,
+      "proveedor": "Schimmel and Sons",
+      "descripcion": "parturient montes nascetur ridiculus mus etiam vel augue vestibulum rutrum",
+      "partida": "n/a",
+      "total": 2.27,
+      "factura": "HSFA"
+    },
+    {
+      "id": 40,
+      "proveedor": "Johnson LLC",
+      "descripcion": "accumsan felis ut at dolor quis odio consequat varius integer ac leo pellentesque ultrices mattis odio donec",
+      "partida": "Consumer Services",
+      "total": 8.7,
+      "factura": "YDLT"
+    },
+    {
+      "id": 41,
+      "proveedor": "Goldner, Abshire and Jacobi",
+      "descripcion": "lacinia nisi venenatis tristique fusce congue diam id ornare imperdiet sapien urna pretium nisl ut volutpat sapien arcu sed augue",
+      "partida": "Finance",
+      "total": 5.78,
+      "factura": "HEAT"
+    },
+    {
+      "id": 42,
+      "proveedor": "Jacobi and Sons",
+      "descripcion": "convallis duis consequat dui nec nisi volutpat eleifend donec ut dolor morbi vel lectus in",
+      "partida": "Consumer Services",
+      "total": 3.52,
+      "factura": "SNNU"
+    },
+    {
+      "id": 43,
+      "proveedor": "Balistreri, Beer and Kub",
+      "descripcion": "nascetur ridiculus mus vivamus vestibulum sagittis sapien cum sociis natoque penatibus et magnis dis parturient montes nascetur",
+      "partida": "Finance",
+      "total": 4.86,
+      "factura": "VTSS"
+    },
+    {
+      "id": 44,
+      "proveedor": "Bashirian-Raynor",
+      "descripcion": "eleifend pede libero quis orci nullam molestie nibh in lectus pellentesque at nulla suspendisse potenti cras in purus eu magna",
+      "partida": "Consumer Non-Durables",
+      "total": 3.51,
+      "factura": "AYAI"
+    },
+    {
+      "id": 45,
+      "proveedor": "Dibbert, Hoeger and Waters",
+      "descripcion": "donec dapibus duis at velit eu est congue elementum in",
+      "partida": "Technology",
+      "total": 2.03,
+      "factura": "YTEF"
+    },
+    {
+      "id": 46,
+      "proveedor": "Collier, Lesch and McLaughlin",
+      "descripcion": "sed interdum venenatis turpis enim blandit mi in porttitor pede justo eu massa donec dapibus duis at",
+      "partida": "n/a",
+      "total": 0.53,
+      "factura": "CKX"
+    },
+    {
+      "id": 47,
+      "proveedor": "Fadel-Ullrich",
+      "descripcion": "est donec odio justo sollicitudin ut suscipit a feugiat et eros vestibulum ac",
+      "partida": "Miscellaneous",
+      "total": 3.92,
+      "factura": "HEMA"
+    },
+    {
+      "id": 48,
+      "proveedor": "Berge-Skiles",
+      "descripcion": "nulla suscipit ligula in lacus curabitur at ipsum ac tellus semper interdum mauris ullamcorper purus sit amet nulla quisque arcu",
+      "partida": "n/a",
+      "total": 5.99,
+      "factura": "LXGB"
+    },
+    {
+      "id": 49,
+      "proveedor": "Schamberger-Bartell",
+      "descripcion": "dolor morbi vel lectus in quam fringilla rhoncus mauris enim leo rhoncus sed vestibulum sit",
+      "partida": "n/a",
+      "total": 5.15,
+      "factura": "ZSGZ"
+    },
+    {
+      "id": 50,
+      "proveedor": "Dickens and Sons",
+      "descripcion": "arcu adipiscing molestie hendrerit at vulputate vitae nisl aenean lectus pellentesque",
+      "partida": "n/a",
+      "total": 1,
+      "factura": "KCNU"
+    },
+    {
+      "id": 51,
+      "proveedor": "Leuschke, Schuppe and Metz",
+      "descripcion": "tellus in sagittis dui vel nisl duis ac nibh fusce lacus purus aliquet at feugiat non pretium",
+      "partida": "Finance",
+      "total": 0.01,
+      "factura": "ZULZ"
+    },
+    {
+      "id": 52,
+      "proveedor": "Williamson-Prosacco",
+      "descripcion": "arcu adipiscing molestie hendrerit at vulputate vitae nisl aenean lectus",
+      "partida": "Transportation",
+      "total": 1.61,
+      "factura": "KEGE"
+    },
+    {
+      "id": 53,
+      "proveedor": "Lakin, Grimes and Price",
+      "descripcion": "ante nulla justo aliquam quis turpis eget elit sodales scelerisque mauris",
+      "partida": "n/a",
+      "total": 6.11,
+      "factura": "CCA6"
+    },
+    {
+      "id": 54,
+      "proveedor": "Bartell, Feeney and Rolfson",
+      "descripcion": "dictumst aliquam augue quam sollicitudin vitae consectetuer eget rutrum at lorem integer tincidunt ante vel ipsum",
+      "partida": "n/a",
+      "total": 5.51,
+      "factura": "KPTV"
+    },
+    {
+      "id": 55,
+      "proveedor": "Bosco-Hackett",
+      "descripcion": "convallis tortor risus dapibus augue vel accumsan tellus nisi eu orci mauris lacinia sapien quis libero nullam sit amet",
+      "partida": "Health Care",
+      "total": 5.44,
+      "factura": "LFMN"
+    },
+    {
+      "id": 56,
+      "proveedor": "Moore, Yost and Mertz",
+      "descripcion": "in hac habitasse platea dictumst aliquam augue quam sollicitudin vitae",
+      "partida": "n/a",
+      "total": 3.74,
+      "factura": "EFVA"
+    },
+    {
+      "id": 57,
+      "proveedor": "Stoltenberg Group",
+      "descripcion": "hac habitasse platea dictumst morbi vestibulum velit id pretium iaculis",
+      "partida": "n/a",
+      "total": 8.73,
+      "factura": "CZSN"
+    },
+    {
+      "id": 58,
+      "proveedor": "Davis, Huel and Blanda",
+      "descripcion": "risus dapibus augue vel accumsan tellus nisi eu orci mauris lacinia sapien",
+      "partida": "Finance",
+      "total": 1.54,
+      "factura": "SUVO"
+    },
+    {
+      "id": 59,
+      "proveedor": "Braun, Ratke and Friesen",
+      "descripcion": "sollicitudin ut suscipit a feugiat et eros vestibulum ac est lacinia nisi venenatis tristique fusce congue diam",
+      "partida": "n/a",
+      "total": 4.68,
+      "factura": "KBKE"
+    },
+    {
+      "id": 60,
+      "proveedor": "Grimes-Howell",
+      "descripcion": "ultrices posuere cubilia curae duis faucibus accumsan odio curabitur convallis duis consequat dui nec",
+      "partida": "Consumer Services",
+      "total": 5.76,
+      "factura": "SKIG"
+    },
+    {
+      "id": 61,
+      "proveedor": "Johnston, Effertz and Stehr",
+      "descripcion": "aliquam sit amet diam in magna bibendum imperdiet nullam orci pede venenatis non sodales sed tincidunt eu",
+      "partida": "n/a",
+      "total": 7.65,
+      "factura": "YKBY"
+    },
+    {
+      "id": 62,
+      "proveedor": "Wisozk, Maggio and Aufderhar",
+      "descripcion": "amet consectetuer adipiscing elit proin interdum mauris non ligula pellentesque ultrices",
+      "partida": "Capital Goods",
+      "total": 9.25,
+      "factura": "EGUL"
+    },
+    {
+      "id": 63,
+      "proveedor": "Hammes, O'Kon and Runte",
+      "descripcion": "cubilia curae nulla dapibus dolor vel est donec odio justo sollicitudin ut suscipit a feugiat",
+      "partida": "n/a",
+      "total": 0.88,
+      "factura": null
+    },
+    {
+      "id": 64,
+      "proveedor": "Murphy Group",
+      "descripcion": "pretium nisl ut volutpat sapien arcu sed augue aliquam erat volutpat in congue etiam",
+      "partida": "Public Utilities",
+      "total": 6.61,
+      "factura": "KBWG"
+    },
+    {
+      "id": 65,
+      "proveedor": "Steuber-Mayer",
+      "descripcion": "odio cras mi pede malesuada in imperdiet et commodo vulputate justo in blandit ultrices",
+      "partida": "Basic Industries",
+      "total": 3.44,
+      "factura": "YABI"
+    },
+    {
+      "id": 66,
+      "proveedor": "McLaughlin-Boehm",
+      "descripcion": "tincidunt eu felis fusce posuere felis sed lacus morbi sem mauris laoreet ut rhoncus aliquet pulvinar sed nisl",
+      "partida": "Capital Goods",
+      "total": 5.66,
+      "factura": "CYNA"
+    },
+    {
+      "id": 67,
+      "proveedor": "Powlowski Group",
+      "descripcion": "in consequat ut nulla sed accumsan felis ut at dolor quis odio consequat varius integer ac leo pellentesque ultrices",
+      "partida": "n/a",
+      "total": 0.06,
+      "factura": "UKLN"
+    },
+    {
+      "id": 68,
+      "proveedor": "Nader, King and Roob",
+      "descripcion": "duis aliquam convallis nunc proin at turpis a pede posuere",
+      "partida": "Finance",
+      "total": 1.47,
+      "factura": "LTAJ"
+    },
+    {
+      "id": 69,
+      "proveedor": "Friesen-Stroman",
+      "descripcion": "sollicitudin vitae consectetuer eget rutrum at lorem integer tincidunt ante vel ipsum praesent blandit",
+      "partida": "Technology",
+      "total": 5.92,
+      "factura": "CYYH"
+    },
+    {
+      "id": 70,
+      "proveedor": "Bogan Inc",
+      "descripcion": "augue quam sollicitudin vitae consectetuer eget rutrum at lorem integer",
+      "partida": "Finance",
+      "total": 4.72,
+      "factura": null
+    },
+    {
+      "id": 71,
+      "proveedor": "Volkman-Bechtelar",
+      "descripcion": "sapien quis libero nullam sit amet turpis elementum ligula vehicula consequat",
+      "partida": "Finance",
+      "total": 6.28,
+      "factura": "MKTP"
+    },
+    {
+      "id": 72,
+      "proveedor": "Emard, Gusikowski and Breitenberg",
+      "descripcion": "commodo placerat praesent blandit nam nulla integer pede justo lacinia eget tincidunt eget tempus vel pede morbi porttitor lorem id",
+      "partida": "Public Utilities",
+      "total": 9.61,
+      "factura": "VNPK"
+    },
+    {
+      "id": 73,
+      "proveedor": "Wintheiser Inc",
+      "descripcion": "lectus pellentesque at nulla suspendisse potenti cras in purus eu",
+      "partida": "n/a",
+      "total": 1.25,
+      "factura": "SSCN"
+    },
+    {
+      "id": 74,
+      "proveedor": "Durgan Inc",
+      "descripcion": "consectetuer adipiscing elit proin interdum mauris non ligula pellentesque ultrices phasellus id sapien in sapien iaculis congue",
+      "partida": "Finance",
+      "total": 8.81,
+      "factura": "SYIB"
+    },
+    {
+      "id": 75,
+      "proveedor": "Ziemann, Carroll and Bruen",
+      "descripcion": "eget nunc donec quis orci eget orci vehicula condimentum curabitur in libero ut",
+      "partida": "Health Care",
+      "total": 2,
+      "factura": "TIST"
+    },
+    {
+      "id": 76,
+      "proveedor": "Yundt LLC",
+      "descripcion": "auctor gravida sem praesent id massa id nisl venenatis lacinia aenean sit amet justo morbi ut odio cras mi",
+      "partida": "Public Utilities",
+      "total": 4.03,
+      "factura": "SNRU"
+    },
+    {
+      "id": 77,
+      "proveedor": "Durgan Group",
+      "descripcion": "mi nulla ac enim in tempor turpis nec euismod scelerisque quam turpis adipiscing lorem vitae mattis nibh ligula nec sem",
+      "partida": "Consumer Services",
+      "total": 3.92,
+      "factura": "WAPI"
+    },
+    {
+      "id": 78,
+      "proveedor": "Greenholt, King and Cronin",
+      "descripcion": "nulla mollis molestie lorem quisque ut erat curabitur gravida nisi at",
+      "partida": "Finance",
+      "total": 2.87,
+      "factura": "CAH3"
+    },
+    {
+      "id": 79,
+      "proveedor": "Hilll Inc",
+      "descripcion": "pellentesque volutpat dui maecenas tristique est et tempus semper est quam pharetra magna ac consequat metus sapien",
+      "partida": "Public Utilities",
+      "total": 5.43,
+      "factura": "FAKU"
+    },
+    {
+      "id": 80,
+      "proveedor": "Halvorson-Fisher",
+      "descripcion": "in hac habitasse platea dictumst maecenas ut massa quis augue luctus",
+      "partida": "Consumer Non-Durables",
+      "total": 4.45,
+      "factura": "LPPI"
+    },
+    {
+      "id": 81,
+      "proveedor": "Mann Inc",
+      "descripcion": "eleifend donec ut dolor morbi vel lectus in quam fringilla rhoncus mauris enim leo rhoncus sed vestibulum sit amet",
+      "partida": "Energy",
+      "total": 7.14,
+      "factura": "SDDR"
+    },
+    {
+      "id": 82,
+      "proveedor": "Morar Inc",
+      "descripcion": "id ornare imperdiet sapien urna pretium nisl ut volutpat sapien arcu sed augue aliquam erat",
+      "partida": "Health Care",
+      "total": 8.34,
+      "factura": "LPGR"
+    },
+    {
+      "id": 83,
+      "proveedor": "Harris-Effertz",
+      "descripcion": "aenean fermentum donec ut mauris eget massa tempor convallis nulla neque libero",
+      "partida": "Consumer Durables",
+      "total": 9.33,
+      "factura": "OPPI"
+    },
+    {
+      "id": 84,
+      "proveedor": "Breitenberg, Anderson and Leffler",
+      "descripcion": "tempor turpis nec euismod scelerisque quam turpis adipiscing lorem vitae mattis nibh ligula nec sem duis aliquam",
+      "partida": "Transportation",
+      "total": 5.51,
+      "factura": "YBUD"
+    },
+    {
+      "id": 85,
+      "proveedor": "Jaskolski-Kerluke",
+      "descripcion": "elementum nullam varius nulla facilisi cras non velit nec nisi vulputate nonummy maecenas tincidunt lacus at velit vivamus",
+      "partida": "Health Care",
+      "total": 3.22,
+      "factura": "WABB"
+    },
+    {
+      "id": 86,
+      "proveedor": "Cassin Group",
+      "descripcion": "a ipsum integer a nibh in quis justo maecenas rhoncus aliquam lacus morbi quis tortor id nulla",
+      "partida": "n/a",
+      "total": 7.98,
+      "factura": "HAHU"
+    },
+    {
+      "id": 87,
+      "proveedor": "Gutkowski, West and Wilkinson",
+      "descripcion": "at nibh in hac habitasse platea dictumst aliquam augue quam sollicitudin vitae consectetuer eget rutrum at lorem integer tincidunt",
+      "partida": "n/a",
+      "total": 8.87,
+      "factura": "KFLV"
+    },
+    {
+      "id": 88,
+      "proveedor": "Jakubowski and Sons",
+      "descripcion": "luctus cum sociis natoque penatibus et magnis dis parturient montes nascetur",
+      "partida": "Miscellaneous",
+      "total": 3.7,
+      "factura": "DAOI"
+    },
+    {
+      "id": 89,
+      "proveedor": "Corwin Group",
+      "descripcion": "blandit lacinia erat vestibulum sed magna at nunc commodo placerat praesent blandit nam nulla integer pede justo lacinia eget tincidunt",
+      "partida": "Health Care",
+      "total": 5.79,
+      "factura": "FSSB"
+    },
+    {
+      "id": 90,
+      "proveedor": "Bogisich-D'Amore",
+      "descripcion": "vulputate elementum nullam varius nulla facilisi cras non velit nec nisi",
+      "partida": "Capital Goods",
+      "total": 10,
+      "factura": "KAPA"
+    },
+    {
+      "id": 91,
+      "proveedor": "Hegmann, Corkery and Welch",
+      "descripcion": "molestie hendrerit at vulputate vitae nisl aenean lectus pellentesque eget nunc donec quis orci eget orci vehicula condimentum curabitur",
+      "partida": "Consumer Durables",
+      "total": 1.73,
+      "factura": "WBGW"
+    },
+    {
+      "id": 92,
+      "proveedor": "Nicolas-Ankunding",
+      "descripcion": "ornare consequat lectus in est risus auctor sed tristique in tempus sit amet sem fusce",
+      "partida": "Consumer Services",
+      "total": 3.52,
+      "factura": null
+    },
+    {
+      "id": 93,
+      "proveedor": "Heathcote, Jakubowski and Krajcik",
+      "descripcion": "eu orci mauris lacinia sapien quis libero nullam sit amet turpis elementum ligula vehicula consequat morbi a",
+      "partida": "Health Care",
+      "total": 3.55,
+      "factura": "KMEV"
+    },
+    {
+      "id": 94,
+      "proveedor": "Morissette, Anderson and Harris",
+      "descripcion": "rhoncus aliquam lacus morbi quis tortor id nulla ultrices aliquet maecenas leo odio",
+      "partida": "Finance",
+      "total": 2.41,
+      "factura": "YSWG"
+    },
+    {
+      "id": 95,
+      "proveedor": "Heathcote LLC",
+      "descripcion": "eleifend pede libero quis orci nullam molestie nibh in lectus pellentesque at nulla suspendisse potenti cras in purus eu magna",
+      "partida": "Capital Goods",
+      "total": 7.17,
+      "factura": "VOMD"
+    },
+    {
+      "id": 96,
+      "proveedor": "Jenkins-D'Amore",
+      "descripcion": "eros vestibulum ac est lacinia nisi venenatis tristique fusce congue diam id",
+      "partida": "n/a",
+      "total": 7.15,
+      "factura": "KLAX"
+    },
+    {
+      "id": 97,
+      "proveedor": "Kuhn-Balistreri",
+      "descripcion": "morbi sem mauris laoreet ut rhoncus aliquet pulvinar sed nisl nunc rhoncus dui vel",
+      "partida": "Public Utilities",
+      "total": 3.91,
+      "factura": "KLNK"
+    },
+    {
+      "id": 98,
+      "proveedor": "Kuhic-Mayert",
+      "descripcion": "duis aliquam convallis nunc proin at turpis a pede posuere nonummy integer non velit donec diam neque",
+      "partida": "Capital Goods",
+      "total": 9.66,
+      "factura": "PADK"
+    },
+    {
+      "id": 99,
+      "proveedor": "Hammes-Wintheiser",
+      "descripcion": "posuere cubilia curae donec pharetra magna vestibulum aliquet ultrices erat tortor sollicitudin mi sit amet lobortis sapien sapien",
+      "partida": "Health Care",
+      "total": 3.3,
+      "factura": null
+    },
+    {
+      "id": 100,
+      "proveedor": "Marks Group",
+      "descripcion": "id luctus nec molestie sed justo pellentesque viverra pede ac diam cras pellentesque volutpat",
+      "partida": "Health Care",
+      "total": 9.84,
+      "factura": "KRND"
+    },
+    {
+      "proveedor": "test",
+      "descripcion": "",
+      "partida": "",
+      "total": 0,
+      "factura": "",
+      "id": 101
+    },
+    {
+      "proveedor": "",
+      "descripcion": "",
+      "partida": "",
+      "total": 0,
+      "factura": "",
+      "id": 102
+    },
+    {
+      "proveedor": "Lala",
+      "descripcion": "leche",
+      "partida": "20/01/2023",
+      "total": 300,
+      "factura": "87897965464",
+      "id": 103
+    }
+  ],
+  "users": [
+    {
+      "id": 2,
+      "firstName": "Alex",
+      "lastName": "Bence",
+      "email": "nbence1@mlb.com",
+      "username": "jbence1",
+      "rol": "Civil Engineer"
+    },
+    {
+      "id": 3,
+      "firstName": "UtNuncVestibulum.pdf",
+      "lastName": "Tran",
+      "email": "rtran2@etsy.com",
+      "username": "rtran2",
+      "rol": "Civil Engineer"
+    },
+    {
+      "id": 4,
+      "firstName": "NullaSed.tiff",
+      "lastName": "Lukas",
+      "email": "alukas3@va.gov",
+      "username": "alukas3",
+      "rol": "Senior Financial Analyst"
+    },
+    {
+      "id": 5,
+      "firstName": "Ut.avi",
+      "lastName": "Brenston",
+      "email": "rbrenston4@topsy.com",
+      "username": "mbrenston4",
+      "rol": "Paralegal"
+    },
+    {
+      "id": 6,
+      "firstName": "Dolor.tiff",
+      "lastName": "Allsopp",
+      "email": "aallsopp5@engadget.com",
+      "username": "gallsopp5",
+      "rol": "Payment Adjustment Coordinator"
+    },
+    {
+      "id": 7,
+      "firstName": "PotentiNullam.xls",
+      "lastName": "Raubenheimer",
+      "email": "eraubenheimer6@auda.org.au",
+      "username": "kraubenheimer6",
+      "rol": "Assistant Professor"
+    },
+    {
+      "id": 8,
+      "firstName": "AeneanLectus.avi",
+      "lastName": "Brockhurst",
+      "email": "mbrockhurst7@mtv.com",
+      "username": "sbrockhurst7",
+      "rol": "Design Engineer"
+    },
+    {
+      "id": 9,
+      "firstName": "Quis.avi",
+      "lastName": "Tinner",
+      "email": "mtinner8@meetup.com",
+      "username": "mtinner8",
+      "rol": "Statistician IV"
+    },
+    {
+      "id": 10,
+      "firstName": "AtLorem.jpeg",
+      "lastName": "Dawe",
+      "email": "vdawe9@trellian.com",
+      "username": "vdawe9",
+      "rol": "Professor"
+    },
+    {
+      "id": 11,
+      "firstName": "Ante.mp3",
+      "lastName": "Loncaster",
+      "email": "cloncastera@quantcast.com",
+      "username": "jloncastera",
+      "rol": "General Manager"
+    },
+    {
+      "id": 12,
+      "firstName": "Diam.png",
+      "lastName": "Quoit",
+      "email": "squoitb@paypal.com",
+      "username": "gquoitb",
+      "rol": "Sales Associate"
+    },
+    {
+      "id": 13,
+      "firstName": "UltricesPhasellusId.jpeg",
+      "lastName": "Tremaine",
+      "email": "btremainec@umn.edu",
+      "username": "ttremainec",
+      "rol": "Internal Auditor"
+    },
+    {
+      "id": 14,
+      "firstName": "ImperdietEtCommodo.gif",
+      "lastName": "Spellsworth",
+      "email": "aspellsworthd@reference.com",
+      "username": "ospellsworthd",
+      "rol": "Senior Sales Associate"
+    },
+    {
+      "id": 15,
+      "firstName": "Ipsum.png",
+      "lastName": "Eim",
+      "email": "beime@yale.edu",
+      "username": "deime",
+      "rol": "GIS Technical Architect"
+    },
+    {
+      "id": 16,
+      "firstName": "DictumstMaecenasUt.avi",
+      "lastName": "Omar",
+      "email": "momarf@epa.gov",
+      "username": "gomarf",
+      "rol": "Nurse Practicioner"
+    },
+    {
+      "id": 17,
+      "firstName": "Habitasse.xls",
+      "lastName": "Herion",
+      "email": "uheriong@comcast.net",
+      "username": "gheriong",
+      "rol": "VP Marketing"
+    },
+    {
+      "id": 18,
+      "firstName": "VelitId.mp3",
+      "lastName": "McCullum",
+      "email": "bmccullumh@webeden.co.uk",
+      "username": "cmccullumh",
+      "rol": "VP Accounting"
+    },
+    {
+      "id": 19,
+      "firstName": "MaurisLaoreetUt.mp3",
+      "lastName": "Bulteel",
+      "email": "tbulteeli@redcross.org",
+      "username": "rbulteeli",
+      "rol": "Social Worker"
+    },
+    {
+      "id": 20,
+      "firstName": "OdioConsequat.mp3",
+      "lastName": "Kmieciak",
+      "email": "ekmieciakj@ovh.net",
+      "username": "vkmieciakj",
+      "rol": "Project Manager"
+    },
+    {
+      "id": 21,
+      "firstName": "Eleifend.tiff",
+      "lastName": "Yakuntsov",
+      "email": "eyakuntsovk@google.fr",
+      "username": "kyakuntsovk",
+      "rol": "Recruiting Manager"
+    },
+    {
+      "id": 22,
+      "firstName": "UrnaPretiumNisl.xls",
+      "lastName": "Bowring",
+      "email": "mbowringl@sohu.com",
+      "username": "cbowringl",
+      "rol": "Marketing Assistant"
+    },
+    {
+      "id": 23,
+      "firstName": "NullaQuisqueArcu.xls",
+      "lastName": "Antony",
+      "email": "iantonym@feedburner.com",
+      "username": "hantonym",
+      "rol": "Database Administrator II"
+    },
+    {
+      "id": 24,
+      "firstName": "Condimentum.xls",
+      "lastName": "Bellard",
+      "email": "abellardn@imageshack.us",
+      "username": "jbellardn",
+      "rol": "Pharmacist"
+    },
+    {
+      "id": 25,
+      "firstName": "Dictumst.mp3",
+      "lastName": "Tapp",
+      "email": "etappo@wix.com",
+      "username": "atappo",
+      "rol": "Professor"
+    },
+    {
+      "id": 26,
+      "firstName": "Duis.pdf",
+      "lastName": "Anlay",
+      "email": "aanlayp@va.gov",
+      "username": "kanlayp",
+      "rol": "Web Developer I"
+    },
+    {
+      "id": 27,
+      "firstName": "NamUltrices.gif",
+      "lastName": "Giametti",
+      "email": "agiamettiq@goo.gl",
+      "username": "rgiamettiq",
+      "rol": "Legal Assistant"
+    },
+    {
+      "id": 28,
+      "firstName": "CrasIn.mp3",
+      "lastName": "Braiden",
+      "email": "cbraidenr@github.com",
+      "username": "tbraidenr",
+      "rol": "Web Designer IV"
+    },
+    {
+      "id": 29,
+      "firstName": "CongueDiamId.xls",
+      "lastName": "Rayner",
+      "email": "drayners@digg.com",
+      "username": "mrayners",
+      "rol": "Occupational Therapist"
+    },
+    {
+      "id": 30,
+      "firstName": "ElementumPellentesqueQuisque.mov",
+      "lastName": "McTeague",
+      "email": "rmcteaguet@bloomberg.com",
+      "username": "cmcteaguet",
+      "rol": "Quality Engineer"
+    },
+    {
+      "id": 31,
+      "firstName": "UltricesVelAugue.jpeg",
+      "lastName": "Wanek",
+      "email": "iwaneku@slate.com",
+      "username": "lwaneku",
+      "rol": "Food Chemist"
+    },
+    {
+      "id": 32,
+      "firstName": "EuismodScelerisqueQuam.xls",
+      "lastName": "Skentelbery",
+      "email": "kskentelberyv@jiathis.com",
+      "username": "cskentelberyv",
+      "rol": "Sales Representative"
+    },
+    {
+      "id": 33,
+      "firstName": "Convallis.avi",
+      "lastName": "Lochrie",
+      "email": "blochriew@ft.com",
+      "username": "llochriew",
+      "rol": "Nurse Practicioner"
+    },
+    {
+      "id": 34,
+      "firstName": "DignissimVestibulumVestibulum.png",
+      "lastName": "Hartless",
+      "email": "thartlessx@ucla.edu",
+      "username": "lhartlessx",
+      "rol": "Health Coach III"
+    },
+    {
+      "id": 35,
+      "firstName": "Et.pdf",
+      "lastName": "Luffman",
+      "email": "rluffmany@ustream.tv",
+      "username": "lluffmany",
+      "rol": "Teacher"
+    },
+    {
+      "id": 36,
+      "firstName": "Lorem.jpeg",
+      "lastName": "Grinnov",
+      "email": "sgrinnovz@senate.gov",
+      "username": "bgrinnovz",
+      "rol": "Account Executive"
+    },
+    {
+      "id": 37,
+      "firstName": "VestibulumVestibulum.mp3",
+      "lastName": "Janata",
+      "email": "cjanata10@blogspot.com",
+      "username": "cjanata10",
+      "rol": "Media Manager III"
+    },
+    {
+      "id": 38,
+      "firstName": "NislNunc.avi",
+      "lastName": "Sieghard",
+      "email": "bsieghard11@wiley.com",
+      "username": "dsieghard11",
+      "rol": "Sales Associate"
+    },
+    {
+      "id": 39,
+      "firstName": "Nunc.doc",
+      "lastName": "Ladbrook",
+      "email": "gladbrook12@sina.com.cn",
+      "username": "nladbrook12",
+      "rol": "GIS Technical Architect"
+    },
+    {
+      "id": 40,
+      "firstName": "InCongue.mp3",
+      "lastName": "Kittoe",
+      "email": "gkittoe13@alibaba.com",
+      "username": "tkittoe13",
+      "rol": "Research Associate"
+    },
+    {
+      "id": 41,
+      "firstName": "NonLigulaPellentesque.ppt",
+      "lastName": "Cluatt",
+      "email": "rcluatt14@china.com.cn",
+      "username": "dcluatt14",
+      "rol": "Help Desk Technician"
+    },
+    {
+      "id": 42,
+      "firstName": "Arcu.gif",
+      "lastName": "Pratte",
+      "email": "mpratte15@miitbeian.gov.cn",
+      "username": "rpratte15",
+      "rol": "Help Desk Operator"
+    },
+    {
+      "id": 43,
+      "firstName": "MontesNascetur.ppt",
+      "lastName": "McIlmurray",
+      "email": "rmcilmurray16@php.net",
+      "username": "lmcilmurray16",
+      "rol": "VP Accounting"
+    },
+    {
+      "id": 44,
+      "firstName": "AcNeque.mp3",
+      "lastName": "Rackam",
+      "email": "prackam17@unblog.fr",
+      "username": "frackam17",
+      "rol": "Chief Design Engineer"
+    },
+    {
+      "id": 45,
+      "firstName": "Varius.png",
+      "lastName": "Farnorth",
+      "email": "afarnorth18@angelfire.com",
+      "username": "tfarnorth18",
+      "rol": "Analog Circuit Design manager"
+    },
+    {
+      "id": 46,
+      "firstName": "MontesNascetur.mp3",
+      "lastName": "Kruger",
+      "email": "zkruger19@icio.us",
+      "username": "hkruger19",
+      "rol": "VP Product Management"
+    },
+    {
+      "id": 47,
+      "firstName": "Ultrices.xls",
+      "lastName": "Beamish",
+      "email": "pbeamish1a@usnews.com",
+      "username": "fbeamish1a",
+      "rol": "Senior Cost Accountant"
+    },
+    {
+      "id": 48,
+      "firstName": "LuctusEt.xls",
+      "lastName": "Allwright",
+      "email": "sallwright1b@mapquest.com",
+      "username": "tallwright1b",
+      "rol": "Senior Quality Engineer"
+    },
+    {
+      "id": 49,
+      "firstName": "VelitNec.tiff",
+      "lastName": "Huard",
+      "email": "vhuard1c@pinterest.com",
+      "username": "ehuard1c",
+      "rol": "Recruiting Manager"
+    },
+    {
+      "id": 50,
+      "firstName": "RutrumAtLorem.mp3",
+      "lastName": "Boulter",
+      "email": "kboulter1d@mail.ru",
+      "username": "aboulter1d",
+      "rol": "Environmental Tech"
+    },
+    {
+      "firstName": "Pretium.mp3",
+      "lastName": "Rosentholer",
+      "email": "rrosentholer0@com.com",
+      "username": "nrosentholer0",
+      "rol": "Recruiter",
+      "id": 51
+    },
+    {
+      "firstName": "Angel",
+      "lastName": "Sanchez",
+      "email": "angel_djsm@hotmail.com",
+      "username": "angelthetwin",
+      "rol": "admin",
+      "id": 52
+    }
+  ],
+  "incomes": [
+    {
+      "id": 1,
+      "monto": 5.99,
+      "concepto": "erat id mauris vulputate elementum nullam varius nulla facilisi cras non velit nec nisi",
+      "referencia": "53808-0748"
+    },
+    {
+      "id": 2,
+      "monto": 6.09,
+      "concepto": "ullamcorper augue a suscipit nulla elit ac nulla sed vel enim",
+      "referencia": "48951-2017"
+    },
+    {
+      "id": 3,
+      "monto": 4.55,
+      "concepto": "venenatis tristique fusce congue diam id ornare imperdiet sapien urna pretium nisl",
+      "referencia": "0268-1356"
+    },
+    {
+      "id": 4,
+      "monto": 9.1,
+      "concepto": "commodo placerat praesent blandit nam nulla integer pede justo lacinia eget tincidunt eget tempus vel pede morbi porttitor lorem",
+      "referencia": "43742-0019"
+    },
+    {
+      "id": 5,
+      "monto": 0.4,
+      "concepto": "mattis odio donec vitae nisi nam ultrices libero non mattis pulvinar nulla pede ullamcorper augue a",
+      "referencia": "55154-2385"
+    },
+    {
+      "id": 6,
+      "monto": 5.03,
+      "concepto": "consequat nulla nisl nunc nisl duis bibendum felis sed interdum venenatis turpis enim blandit mi in porttitor pede justo",
+      "referencia": "59667-0071"
+    },
+    {
+      "id": 7,
+      "monto": 6.2,
+      "concepto": "sem mauris laoreet ut rhoncus aliquet pulvinar sed nisl nunc rhoncus",
+      "referencia": "52533-198"
+    },
+    {
+      "id": 8,
+      "monto": 4.38,
+      "concepto": "feugiat et eros vestibulum ac est lacinia nisi venenatis tristique fusce congue",
+      "referencia": "41520-358"
+    },
+    {
+      "id": 9,
+      "monto": 1.26,
+      "concepto": "cursus id turpis integer aliquet massa id lobortis convallis tortor",
+      "referencia": "21130-106"
+    },
+    {
+      "id": 10,
+      "monto": 5.53,
+      "concepto": "nec nisi vulputate nonummy maecenas tincidunt lacus at velit vivamus vel nulla eget",
+      "referencia": "54575-418"
+    },
+    {
+      "id": 11,
+      "monto": 6.12,
+      "concepto": "curabitur at ipsum ac tellus semper interdum mauris ullamcorper purus sit",
+      "referencia": "50436-4623"
+    },
+    {
+      "id": 12,
+      "monto": 3.83,
+      "concepto": "vel nisl duis ac nibh fusce lacus purus aliquet at feugiat non pretium quis lectus suspendisse potenti",
+      "referencia": "68788-9948"
+    },
+    {
+      "id": 13,
+      "monto": 1.51,
+      "concepto": "lacus purus aliquet at feugiat non pretium quis lectus suspendisse potenti in eleifend quam a odio in hac habitasse",
+      "referencia": "37000-680"
+    },
+    {
+      "id": 14,
+      "monto": 1.75,
+      "concepto": "vel enim sit amet nunc viverra dapibus nulla suscipit ligula in lacus curabitur at ipsum ac tellus semper interdum",
+      "referencia": "0603-3739"
+    },
+    {
+      "id": 15,
+      "monto": 8.05,
+      "concepto": "eu orci mauris lacinia sapien quis libero nullam sit amet turpis elementum ligula vehicula consequat morbi a ipsum integer",
+      "referencia": "18027-030"
+    },
+    {
+      "id": 16,
+      "monto": 6.29,
+      "concepto": "a nibh in quis justo maecenas rhoncus aliquam lacus morbi quis tortor id nulla ultrices aliquet maecenas",
+      "referencia": "54473-227"
+    },
+    {
+      "id": 17,
+      "monto": 3.45,
+      "concepto": "sagittis sapien cum sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus mus etiam vel",
+      "referencia": "58975-022"
+    },
+    {
+      "id": 18,
+      "monto": 9.4,
+      "concepto": "rhoncus dui vel sem sed sagittis nam congue risus semper porta",
+      "referencia": "21695-567"
+    },
+    {
+      "id": 19,
+      "monto": 1.28,
+      "concepto": "sapien urna pretium nisl ut volutpat sapien arcu sed augue aliquam erat volutpat in congue etiam justo etiam pretium",
+      "referencia": "64942-1199"
+    },
+    {
+      "id": 20,
+      "monto": 3.9,
+      "concepto": "eu nibh quisque id justo sit amet sapien dignissim vestibulum vestibulum ante ipsum",
+      "referencia": "49288-0382"
+    },
+    {
+      "id": 21,
+      "monto": 5,
+      "concepto": "platea dictumst etiam faucibus cursus urna ut tellus nulla ut erat id mauris vulputate elementum nullam varius",
+      "referencia": "55289-944"
+    },
+    {
+      "id": 22,
+      "monto": 9.37,
+      "concepto": "vel lectus in quam fringilla rhoncus mauris enim leo rhoncus sed vestibulum",
+      "referencia": "17630-2017"
+    },
+    {
+      "id": 23,
+      "monto": 0.27,
+      "concepto": "nulla pede ullamcorper augue a suscipit nulla elit ac nulla",
+      "referencia": "15054-0120"
+    },
+    {
+      "id": 24,
+      "monto": 5.61,
+      "concepto": "tellus in sagittis dui vel nisl duis ac nibh fusce lacus purus aliquet at feugiat non pretium",
+      "referencia": "55390-164"
+    },
+    {
+      "id": 25,
+      "monto": 6.56,
+      "concepto": "consequat lectus in est risus auctor sed tristique in tempus sit amet sem",
+      "referencia": "21695-309"
+    },
+    {
+      "id": 26,
+      "monto": 8.78,
+      "concepto": "ut odio cras mi pede malesuada in imperdiet et commodo vulputate justo in blandit ultrices enim",
+      "referencia": "63323-427"
+    },
+    {
+      "id": 27,
+      "monto": 3.16,
+      "concepto": "faucibus orci luctus et ultrices posuere cubilia curae duis faucibus accumsan odio curabitur convallis duis consequat dui nec nisi",
+      "referencia": "59630-992"
+    },
+    {
+      "id": 28,
+      "monto": 9.98,
+      "concepto": "quam turpis adipiscing lorem vitae mattis nibh ligula nec sem duis aliquam convallis nunc proin at turpis a pede",
+      "referencia": "66993-465"
+    },
+    {
+      "id": 29,
+      "monto": 5.36,
+      "concepto": "nulla integer pede justo lacinia eget tincidunt eget tempus vel pede morbi porttitor lorem id ligula suspendisse ornare",
+      "referencia": "0472-1400"
+    },
+    {
+      "id": 30,
+      "monto": 9.38,
+      "concepto": "massa donec dapibus duis at velit eu est congue elementum in hac habitasse platea",
+      "referencia": "58668-2921"
+    },
+    {
+      "id": 31,
+      "monto": 7.55,
+      "concepto": "dolor morbi vel lectus in quam fringilla rhoncus mauris enim leo rhoncus sed vestibulum sit amet cursus id turpis integer",
+      "referencia": "0049-3980"
+    },
+    {
+      "id": 32,
+      "monto": 2.02,
+      "concepto": "ullamcorper purus sit amet nulla quisque arcu libero rutrum ac lobortis vel dapibus at diam nam tristique",
+      "referencia": "36987-1494"
+    },
+    {
+      "id": 33,
+      "monto": 6.78,
+      "concepto": "in purus eu magna vulputate luctus cum sociis natoque penatibus et magnis dis",
+      "referencia": "53045-103"
+    },
+    {
+      "id": 34,
+      "monto": 1.54,
+      "concepto": "vitae nisl aenean lectus pellentesque eget nunc donec quis orci eget orci",
+      "referencia": "0009-0094"
+    },
+    {
+      "id": 35,
+      "monto": 2.84,
+      "concepto": "rutrum nulla nunc purus phasellus in felis donec semper sapien a",
+      "referencia": "68712-003"
+    },
+    {
+      "id": 36,
+      "monto": 4.65,
+      "concepto": "in sapien iaculis congue vivamus metus arcu adipiscing molestie hendrerit at vulputate",
+      "referencia": "35356-257"
+    },
+    {
+      "id": 37,
+      "monto": 2.25,
+      "concepto": "mus vivamus vestibulum sagittis sapien cum sociis natoque penatibus et magnis dis parturient montes",
+      "referencia": "49288-0640"
+    },
+    {
+      "id": 38,
+      "monto": 9.71,
+      "concepto": "potenti in eleifend quam a odio in hac habitasse platea dictumst maecenas ut massa quis augue luctus tincidunt nulla",
+      "referencia": "0006-3918"
+    },
+    {
+      "id": 39,
+      "monto": 8.39,
+      "concepto": "hac habitasse platea dictumst morbi vestibulum velit id pretium iaculis diam erat fermentum justo nec condimentum neque sapien",
+      "referencia": "55045-3248"
+    },
+    {
+      "id": 40,
+      "monto": 7.33,
+      "concepto": "ornare imperdiet sapien urna pretium nisl ut volutpat sapien arcu sed augue aliquam erat volutpat",
+      "referencia": "41167-0662"
+    },
+    {
+      "id": 41,
+      "monto": 4.29,
+      "concepto": "auctor sed tristique in tempus sit amet sem fusce consequat nulla nisl nunc nisl duis bibendum felis",
+      "referencia": "68084-331"
+    },
+    {
+      "id": 42,
+      "monto": 6.47,
+      "concepto": "in lectus pellentesque at nulla suspendisse potenti cras in purus eu magna vulputate luctus",
+      "referencia": "49288-0376"
+    },
+    {
+      "id": 43,
+      "monto": 6.37,
+      "concepto": "in libero ut massa volutpat convallis morbi odio odio elementum eu interdum eu tincidunt in leo maecenas pulvinar lobortis est",
+      "referencia": "24488-001"
+    },
+    {
+      "id": 44,
+      "monto": 6.03,
+      "concepto": "rhoncus sed vestibulum sit amet cursus id turpis integer aliquet massa id lobortis convallis tortor risus dapibus",
+      "referencia": "59088-109"
+    },
+    {
+      "id": 45,
+      "monto": 6.19,
+      "concepto": "bibendum imperdiet nullam orci pede venenatis non sodales sed tincidunt eu felis fusce posuere",
+      "referencia": "69082-600"
+    },
+    {
+      "id": 46,
+      "monto": 7.03,
+      "concepto": "non mi integer ac neque duis bibendum morbi non quam nec dui luctus rutrum nulla tellus",
+      "referencia": "21695-490"
+    },
+    {
+      "id": 47,
+      "monto": 6.06,
+      "concepto": "nonummy integer non velit donec diam neque vestibulum eget vulputate ut ultrices vel augue vestibulum ante",
+      "referencia": "75921-119"
+    },
+    {
+      "id": 48,
+      "monto": 2.21,
+      "concepto": "parturient montes nascetur ridiculus mus etiam vel augue vestibulum rutrum rutrum neque aenean auctor gravida sem",
+      "referencia": "13811-663"
+    },
+    {
+      "id": 49,
+      "monto": 3.33,
+      "concepto": "in quam fringilla rhoncus mauris enim leo rhoncus sed vestibulum sit",
+      "referencia": "52544-383"
+    },
+    {
+      "id": 50,
+      "monto": 3.33,
+      "concepto": "lorem integer tincidunt ante vel ipsum praesent blandit lacinia erat vestibulum sed magna at nunc commodo placerat praesent blandit nam",
+      "referencia": "66336-344"
+    },
+    {
+      "id": 51,
+      "monto": 9.71,
+      "concepto": "sit amet consectetuer adipiscing elit proin interdum mauris non ligula pellentesque ultrices phasellus id sapien in sapien iaculis congue vivamus",
+      "referencia": "65588-2210"
+    },
+    {
+      "id": 52,
+      "monto": 1.43,
+      "concepto": "ornare imperdiet sapien urna pretium nisl ut volutpat sapien arcu sed augue aliquam erat",
+      "referencia": "0591-3546"
+    },
+    {
+      "id": 53,
+      "monto": 8.05,
+      "concepto": "non ligula pellentesque ultrices phasellus id sapien in sapien iaculis congue vivamus metus arcu adipiscing molestie hendrerit at",
+      "referencia": "67510-1501"
+    },
+    {
+      "id": 54,
+      "monto": 4.33,
+      "concepto": "maecenas pulvinar lobortis est phasellus sit amet erat nulla tempus vivamus in felis eu",
+      "referencia": "68788-9407"
+    },
+    {
+      "id": 55,
+      "monto": 0.92,
+      "concepto": "orci luctus et ultrices posuere cubilia curae donec pharetra magna vestibulum",
+      "referencia": "59062-1327"
+    },
+    {
+      "id": 56,
+      "monto": 9.88,
+      "concepto": "lacus curabitur at ipsum ac tellus semper interdum mauris ullamcorper purus sit",
+      "referencia": "50436-3444"
+    },
+    {
+      "id": 57,
+      "monto": 8.99,
+      "concepto": "vestibulum velit id pretium iaculis diam erat fermentum justo nec condimentum neque sapien placerat ante",
+      "referencia": "24385-278"
+    },
+    {
+      "id": 58,
+      "monto": 8.64,
+      "concepto": "eu massa donec dapibus duis at velit eu est congue elementum in hac habitasse platea",
+      "referencia": "47682-244"
+    },
+    {
+      "id": 59,
+      "monto": 6.4,
+      "concepto": "sit amet diam in magna bibendum imperdiet nullam orci pede venenatis non sodales sed tincidunt eu felis fusce",
+      "referencia": "0378-4415"
+    },
+    {
+      "id": 60,
+      "monto": 4.02,
+      "concepto": "hac habitasse platea dictumst etiam faucibus cursus urna ut tellus nulla",
+      "referencia": "60760-414"
+    },
+    {
+      "id": 61,
+      "monto": 0.02,
+      "concepto": "scelerisque mauris sit amet eros suspendisse accumsan tortor quis turpis sed ante vivamus tortor duis mattis",
+      "referencia": "57520-0057"
+    },
+    {
+      "id": 62,
+      "monto": 7.8,
+      "concepto": "justo sit amet sapien dignissim vestibulum vestibulum ante ipsum primis in faucibus orci luctus et ultrices",
+      "referencia": "49349-165"
+    },
+    {
+      "id": 63,
+      "monto": 3.81,
+      "concepto": "luctus et ultrices posuere cubilia curae duis faucibus accumsan odio curabitur convallis",
+      "referencia": "65044-3249"
+    },
+    {
+      "id": 64,
+      "monto": 1.62,
+      "concepto": "mauris vulputate elementum nullam varius nulla facilisi cras non velit",
+      "referencia": "11673-176"
+    },
+    {
+      "id": 65,
+      "monto": 5.07,
+      "concepto": "sapien in sapien iaculis congue vivamus metus arcu adipiscing molestie hendrerit at vulputate vitae nisl aenean lectus pellentesque eget nunc",
+      "referencia": "55154-2415"
+    },
+    {
+      "id": 66,
+      "monto": 4.04,
+      "concepto": "ut mauris eget massa tempor convallis nulla neque libero convallis eget",
+      "referencia": "69243-0610"
+    },
+    {
+      "id": 67,
+      "monto": 5.46,
+      "concepto": "at velit eu est congue elementum in hac habitasse platea dictumst morbi",
+      "referencia": "63739-553"
+    },
+    {
+      "id": 68,
+      "monto": 0.44,
+      "concepto": "tincidunt lacus at velit vivamus vel nulla eget eros elementum pellentesque quisque porta volutpat erat quisque erat eros viverra",
+      "referencia": "0268-0167"
+    },
+    {
+      "id": 69,
+      "monto": 1.24,
+      "concepto": "aliquet massa id lobortis convallis tortor risus dapibus augue vel accumsan tellus nisi eu orci",
+      "referencia": "54973-3160"
+    },
+    {
+      "id": 70,
+      "monto": 2.36,
+      "concepto": "penatibus et magnis dis parturient montes nascetur ridiculus mus vivamus vestibulum sagittis sapien cum sociis natoque penatibus",
+      "referencia": "51668-406"
+    },
+    {
+      "id": 71,
+      "monto": 1.45,
+      "concepto": "est quam pharetra magna ac consequat metus sapien ut nunc vestibulum ante",
+      "referencia": "51346-168"
+    },
+    {
+      "id": 72,
+      "monto": 6.49,
+      "concepto": "ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae donec",
+      "referencia": "69179-491"
+    },
+    {
+      "id": 73,
+      "monto": 6.75,
+      "concepto": "nisl aenean lectus pellentesque eget nunc donec quis orci eget orci vehicula",
+      "referencia": "0173-0791"
+    },
+    {
+      "id": 74,
+      "monto": 4.1,
+      "concepto": "nam nulla integer pede justo lacinia eget tincidunt eget tempus vel pede morbi porttitor lorem id ligula suspendisse",
+      "referencia": "24488-005"
+    },
+    {
+      "id": 75,
+      "monto": 5.42,
+      "concepto": "congue etiam justo etiam pretium iaculis justo in hac habitasse platea dictumst etiam faucibus cursus urna",
+      "referencia": "75847-1712"
+    },
+    {
+      "id": 76,
+      "monto": 4.76,
+      "concepto": "sit amet eros suspendisse accumsan tortor quis turpis sed ante vivamus",
+      "referencia": "63304-312"
+    },
+    {
+      "id": 77,
+      "monto": 0.93,
+      "concepto": "tempor turpis nec euismod scelerisque quam turpis adipiscing lorem vitae",
+      "referencia": "0615-6575"
+    },
+    {
+      "id": 78,
+      "monto": 9.88,
+      "concepto": "congue risus semper porta volutpat quam pede lobortis ligula sit amet eleifend pede libero quis orci nullam molestie",
+      "referencia": "54181-001"
+    },
+    {
+      "id": 79,
+      "monto": 6.32,
+      "concepto": "convallis morbi odio odio elementum eu interdum eu tincidunt in leo maecenas pulvinar lobortis est phasellus sit amet erat nulla",
+      "referencia": "49348-522"
+    },
+    {
+      "id": 80,
+      "monto": 6.06,
+      "concepto": "enim in tempor turpis nec euismod scelerisque quam turpis adipiscing lorem vitae",
+      "referencia": "52125-905"
+    },
+    {
+      "id": 81,
+      "monto": 9.45,
+      "concepto": "pede morbi porttitor lorem id ligula suspendisse ornare consequat lectus in est risus auctor",
+      "referencia": "59900-117"
+    },
+    {
+      "id": 82,
+      "monto": 1.39,
+      "concepto": "non interdum in ante vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae duis faucibus accumsan",
+      "referencia": "58118-5008"
+    },
+    {
+      "id": 83,
+      "monto": 6.14,
+      "concepto": "mattis egestas metus aenean fermentum donec ut mauris eget massa tempor convallis nulla neque libero convallis",
+      "referencia": "55714-4424"
+    },
+    {
+      "id": 84,
+      "monto": 1.19,
+      "concepto": "nulla sed vel enim sit amet nunc viverra dapibus nulla suscipit",
+      "referencia": "49348-576"
+    },
+    {
+      "id": 85,
+      "monto": 0.31,
+      "concepto": "nunc commodo placerat praesent blandit nam nulla integer pede justo lacinia eget tincidunt eget tempus vel",
+      "referencia": "42571-010"
+    },
+    {
+      "id": 86,
+      "monto": 4.89,
+      "concepto": "interdum eu tincidunt in leo maecenas pulvinar lobortis est phasellus sit amet erat nulla tempus vivamus in felis eu",
+      "referencia": "53942-153"
+    },
+    {
+      "id": 87,
+      "monto": 1.79,
+      "concepto": "rhoncus mauris enim leo rhoncus sed vestibulum sit amet cursus id turpis integer aliquet massa id lobortis convallis tortor",
+      "referencia": "22431-110"
+    },
+    {
+      "id": 88,
+      "monto": 8.36,
+      "concepto": "turpis adipiscing lorem vitae mattis nibh ligula nec sem duis aliquam convallis nunc proin at turpis a pede posuere nonummy",
+      "referencia": "36800-432"
+    },
+    {
+      "id": 89,
+      "monto": 9.16,
+      "concepto": "tristique est et tempus semper est quam pharetra magna ac consequat metus sapien ut nunc vestibulum",
+      "referencia": "57664-126"
+    },
+    {
+      "id": 90,
+      "monto": 2.76,
+      "concepto": "ullamcorper purus sit amet nulla quisque arcu libero rutrum ac lobortis vel dapibus at",
+      "referencia": "0268-0942"
+    },
+    {
+      "id": 91,
+      "monto": 2.65,
+      "concepto": "id nisl venenatis lacinia aenean sit amet justo morbi ut odio cras mi pede malesuada in imperdiet et commodo",
+      "referencia": "61957-1051"
+    },
+    {
+      "id": 92,
+      "monto": 2.68,
+      "concepto": "morbi non lectus aliquam sit amet diam in magna bibendum imperdiet nullam orci pede",
+      "referencia": "54868-4437"
+    },
+    {
+      "id": 93,
+      "monto": 4.74,
+      "concepto": "tellus nulla ut erat id mauris vulputate elementum nullam varius nulla facilisi cras non velit nec nisi vulputate nonummy maecenas",
+      "referencia": "63783-501"
+    },
+    {
+      "id": 94,
+      "monto": 9.12,
+      "concepto": "nisi eu orci mauris lacinia sapien quis libero nullam sit amet turpis elementum ligula vehicula consequat morbi a",
+      "referencia": "55312-035"
+    },
+    {
+      "id": 95,
+      "monto": 9.16,
+      "concepto": "ut massa quis augue luctus tincidunt nulla mollis molestie lorem quisque ut erat curabitur gravida nisi at nibh",
+      "referencia": "54868-6023"
+    },
+    {
+      "id": 96,
+      "monto": 7.47,
+      "concepto": "vehicula condimentum curabitur in libero ut massa volutpat convallis morbi odio odio elementum eu interdum eu tincidunt",
+      "referencia": "34057-014"
+    },
+    {
+      "id": 97,
+      "monto": 6.42,
+      "concepto": "mus etiam vel augue vestibulum rutrum rutrum neque aenean auctor gravida sem praesent id massa id nisl",
+      "referencia": "55910-751"
+    },
+    {
+      "id": 98,
+      "monto": 7.65,
+      "concepto": "habitasse platea dictumst etiam faucibus cursus urna ut tellus nulla ut erat id mauris vulputate elementum",
+      "referencia": "60429-071"
+    },
+    {
+      "id": 99,
+      "monto": 7.95,
+      "concepto": "nullam orci pede venenatis non sodales sed tincidunt eu felis fusce posuere felis sed lacus morbi sem",
+      "referencia": "0641-6040"
+    },
+    {
+      "id": 100,
+      "monto": 4.81,
+      "concepto": "commodo placerat praesent blandit nam nulla integer pede justo lacinia eget tincidunt eget tempus vel pede morbi",
+      "referencia": "0378-3632"
+    }
+  ],
+  "interns": [
+    {
+      "id": 2,
+      "firstName": "Cherianne",
+      "lastName": "Manders",
+      "carrera": "Editor",
+      "fechaInicio": "7/20/2022",
+      "fechaFin": "3/6/2022",
+      "credito": 500
+    },
+    {
+      "id": 3,
+      "firstName": "Valeda",
+      "lastName": "Siflet",
+      "carrera": "Programmer I",
+      "fechaInicio": "9/28/2022",
+      "fechaFin": "3/7/2022",
+      "credito": 500
+    },
+    {
+      "id": 4,
+      "firstName": "Torr",
+      "lastName": "Yeoman",
+      "carrera": "Product Engineer",
+      "fechaInicio": "5/25/2022",
+      "fechaFin": "1/5/2023",
+      "credito": 500
+    },
+    {
+      "id": 5,
+      "firstName": "Alana",
+      "lastName": "Akhurst",
+      "carrera": "Operator",
+      "fechaInicio": "6/17/2022",
+      "fechaFin": "9/25/2022",
+      "credito": 500
+    },
+    {
+      "id": 6,
+      "firstName": "Merrile",
+      "lastName": "Moy",
+      "carrera": "Automation Specialist II",
+      "fechaInicio": "8/11/2022",
+      "fechaFin": "3/12/2022",
+      "credito": 500
+    },
+    {
+      "id": 7,
+      "firstName": "Budd",
+      "lastName": "Yielding",
+      "carrera": "Professor",
+      "fechaInicio": "9/22/2022",
+      "fechaFin": "3/1/2022",
+      "credito": 500
+    },
+    {
+      "id": 8,
+      "firstName": "Claudian",
+      "lastName": "Dalli",
+      "carrera": "VP Accounting",
+      "fechaInicio": "1/17/2023",
+      "fechaFin": "7/8/2022",
+      "credito": 500
+    },
+    {
+      "id": 9,
+      "firstName": "Arlin",
+      "lastName": "Elvin",
+      "carrera": "Software Consultant",
+      "fechaInicio": "8/19/2022",
+      "fechaFin": "2/6/2022",
+      "credito": 500
+    },
+    {
+      "id": 10,
+      "firstName": "Germain",
+      "lastName": "Frondt",
+      "carrera": "Account Representative II",
+      "fechaInicio": "5/28/2022",
+      "fechaFin": "12/23/2022",
+      "credito": 500
+    },
+    {
+      "id": 11,
+      "firstName": "Laura",
+      "lastName": "Murty",
+      "carrera": "Statistician II",
+      "fechaInicio": "7/7/2022",
+      "fechaFin": "2/20/2022",
+      "credito": 500
+    },
+    {
+      "id": 12,
+      "firstName": "Davine",
+      "lastName": "Kindon",
+      "carrera": "Tax Accountant",
+      "fechaInicio": "10/21/2022",
+      "fechaFin": "12/25/2022",
+      "credito": 500
+    },
+    {
+      "id": 13,
+      "firstName": "Nikolaos",
+      "lastName": "Mendez",
+      "carrera": "Research Assistant I",
+      "fechaInicio": "11/8/2022",
+      "fechaFin": "1/4/2023",
+      "credito": 500
+    },
+    {
+      "id": 14,
+      "firstName": "Iris",
+      "lastName": "Menham",
+      "carrera": "Recruiting Manager",
+      "fechaInicio": "10/29/2022",
+      "fechaFin": "1/1/2023",
+      "credito": 500
+    },
+    {
+      "id": 15,
+      "firstName": "Niko",
+      "lastName": "Sprigging",
+      "carrera": "Help Desk Operator",
+      "fechaInicio": "4/10/2022",
+      "fechaFin": "7/25/2022",
+      "credito": 500
+    },
+    {
+      "id": 16,
+      "firstName": "Jessamine",
+      "lastName": "Harkness",
+      "carrera": "Software Test Engineer IV",
+      "fechaInicio": "4/5/2022",
+      "fechaFin": "7/25/2022",
+      "credito": 500
+    },
+    {
+      "id": 17,
+      "firstName": "Yulma",
+      "lastName": "Mallia",
+      "carrera": "Sales Representative",
+      "fechaInicio": "8/2/2022",
+      "fechaFin": "5/5/2022",
+      "credito": 500
+    },
+    {
+      "id": 18,
+      "firstName": "Biddie",
+      "lastName": "Denver",
+      "carrera": "Paralegal",
+      "fechaInicio": "4/8/2022",
+      "fechaFin": "6/19/2022",
+      "credito": 500
+    },
+    {
+      "id": 19,
+      "firstName": "Ardisj",
+      "lastName": "Hobble",
+      "carrera": "Business Systems Development Analyst",
+      "fechaInicio": "10/23/2022",
+      "fechaFin": "8/28/2022",
+      "credito": 500
+    },
+    {
+      "id": 20,
+      "firstName": "Bryant",
+      "lastName": "McKitterick",
+      "carrera": "Structural Engineer",
+      "fechaInicio": "12/12/2022",
+      "fechaFin": "11/20/2022",
+      "credito": 500
+    },
+    {
+      "id": 21,
+      "firstName": "Donni",
+      "lastName": "Reynalds",
+      "carrera": "Accounting Assistant II",
+      "fechaInicio": "5/31/2022",
+      "fechaFin": "9/6/2022",
+      "credito": 500
+    },
+    {
+      "id": 22,
+      "firstName": "Rosalynd",
+      "lastName": "Stummeyer",
+      "carrera": "Accountant III",
+      "fechaInicio": "6/7/2022",
+      "fechaFin": "8/5/2022",
+      "credito": 500
+    },
+    {
+      "id": 23,
+      "firstName": "Agata",
+      "lastName": "Tartt",
+      "carrera": "Internal Auditor",
+      "fechaInicio": "6/17/2022",
+      "fechaFin": "4/8/2022",
+      "credito": 500
+    },
+    {
+      "id": 24,
+      "firstName": "Armando",
+      "lastName": "Close",
+      "carrera": "Nurse",
+      "fechaInicio": "1/5/2023",
+      "fechaFin": "10/21/2022",
+      "credito": 500
+    },
+    {
+      "id": 25,
+      "firstName": "Gerik",
+      "lastName": "Bromley",
+      "carrera": "Administrative Assistant III",
+      "fechaInicio": "1/23/2023",
+      "fechaFin": "3/13/2022",
+      "credito": 500
+    },
+    {
+      "id": 26,
+      "firstName": "Luciana",
+      "lastName": "Insole",
+      "carrera": "Sales Associate",
+      "fechaInicio": "2/18/2022",
+      "fechaFin": "8/10/2022",
+      "credito": 500
+    },
+    {
+      "id": 27,
+      "firstName": "Stephenie",
+      "lastName": "Brogini",
+      "carrera": "Senior Sales Associate",
+      "fechaInicio": "4/14/2022",
+      "fechaFin": "12/16/2022",
+      "credito": 500
+    },
+    {
+      "id": 28,
+      "firstName": "Celestine",
+      "lastName": "Levane",
+      "carrera": "Media Manager IV",
+      "fechaInicio": "1/15/2023",
+      "fechaFin": "5/5/2022",
+      "credito": 500
+    },
+    {
+      "id": 29,
+      "firstName": "Barbara",
+      "lastName": "Worsnap",
+      "carrera": "VP Product Management",
+      "fechaInicio": "11/9/2022",
+      "fechaFin": "2/7/2022",
+      "credito": 500
+    },
+    {
+      "id": 30,
+      "firstName": "Rudd",
+      "lastName": "Sutheran",
+      "carrera": "Quality Engineer",
+      "fechaInicio": "7/6/2022",
+      "fechaFin": "4/9/2022",
+      "credito": 500
+    },
+    {
+      "id": 31,
+      "firstName": "Alta",
+      "lastName": "Engelbrecht",
+      "carrera": "Accounting Assistant II",
+      "fechaInicio": "11/14/2022",
+      "fechaFin": "10/25/2022",
+      "credito": 500
+    },
+    {
+      "id": 32,
+      "firstName": "Maryjane",
+      "lastName": "McCrostie",
+      "carrera": "Help Desk Technician",
+      "fechaInicio": "1/5/2023",
+      "fechaFin": "12/19/2022",
+      "credito": 500
+    },
+    {
+      "id": 33,
+      "firstName": "Brendan",
+      "lastName": "Dummer",
+      "carrera": "Teacher",
+      "fechaInicio": "3/20/2022",
+      "fechaFin": "5/27/2022",
+      "credito": 500
+    },
+    {
+      "id": 34,
+      "firstName": "Dulcia",
+      "lastName": "Pancoust",
+      "carrera": "VP Sales",
+      "fechaInicio": "6/19/2022",
+      "fechaFin": "10/21/2022",
+      "credito": 500
+    },
+    {
+      "id": 35,
+      "firstName": "Craggie",
+      "lastName": "Aldwich",
+      "carrera": "Tax Accountant",
+      "fechaInicio": "4/3/2022",
+      "fechaFin": "5/1/2022",
+      "credito": 500
+    },
+    {
+      "id": 36,
+      "firstName": "Florie",
+      "lastName": "Bank",
+      "carrera": "Graphic Designer",
+      "fechaInicio": "3/12/2022",
+      "fechaFin": "10/27/2022",
+      "credito": 500
+    },
+    {
+      "id": 37,
+      "firstName": "Erin",
+      "lastName": "Epinay",
+      "carrera": "Help Desk Operator",
+      "fechaInicio": "10/20/2022",
+      "fechaFin": "5/3/2022",
+      "credito": 500
+    },
+    {
+      "id": 38,
+      "firstName": "Alberik",
+      "lastName": "MacGinney",
+      "carrera": "Quality Engineer",
+      "fechaInicio": "4/30/2022",
+      "fechaFin": "6/5/2022",
+      "credito": 500
+    },
+    {
+      "id": 39,
+      "firstName": "Valenka",
+      "lastName": "Dunkley",
+      "carrera": "Systems Administrator II",
+      "fechaInicio": "3/9/2022",
+      "fechaFin": "1/4/2023",
+      "credito": 500
+    },
+    {
+      "id": 40,
+      "firstName": "Reeta",
+      "lastName": "Macguire",
+      "carrera": "Software Consultant",
+      "fechaInicio": "9/15/2022",
+      "fechaFin": "2/18/2022",
+      "credito": 500
+    },
+    {
+      "id": 41,
+      "firstName": "Aldridge",
+      "lastName": "Wikey",
+      "carrera": "Recruiting Manager",
+      "fechaInicio": "4/20/2022",
+      "fechaFin": "11/17/2022",
+      "credito": 500
+    },
+    {
+      "id": 42,
+      "firstName": "Caldwell",
+      "lastName": "Younge",
+      "carrera": "VP Sales",
+      "fechaInicio": "8/23/2022",
+      "fechaFin": "9/25/2022",
+      "credito": 500
+    },
+    {
+      "id": 43,
+      "firstName": "Adrianna",
+      "lastName": "Willetts",
+      "carrera": "Senior Cost Accountant",
+      "fechaInicio": "8/1/2022",
+      "fechaFin": "5/14/2022",
+      "credito": 500
+    },
+    {
+      "id": 44,
+      "firstName": "Teresita",
+      "lastName": "Wyne",
+      "carrera": "Associate Professor",
+      "fechaInicio": "6/9/2022",
+      "fechaFin": "2/12/2022",
+      "credito": 500
+    },
+    {
+      "id": 45,
+      "firstName": "Shelba",
+      "lastName": "Royds",
+      "carrera": "General Manager",
+      "fechaInicio": "9/5/2022",
+      "fechaFin": "7/26/2022",
+      "credito": 500
+    },
+    {
+      "id": 46,
+      "firstName": "Ines",
+      "lastName": "Norssister",
+      "carrera": "Administrative Assistant I",
+      "fechaInicio": "2/15/2022",
+      "fechaFin": "7/11/2022",
+      "credito": 500
+    },
+    {
+      "id": 47,
+      "firstName": "Tybie",
+      "lastName": "Ledgeway",
+      "carrera": "Nurse",
+      "fechaInicio": "12/30/2022",
+      "fechaFin": "10/19/2022",
+      "credito": 500
+    },
+    {
+      "id": 48,
+      "firstName": "Cindie",
+      "lastName": "Sawney",
+      "carrera": "Senior Sales Associate",
+      "fechaInicio": "8/17/2022",
+      "fechaFin": "5/8/2022",
+      "credito": 500
+    },
+    {
+      "id": 49,
+      "firstName": "Wait",
+      "lastName": "Zimmer",
+      "carrera": "Librarian",
+      "fechaInicio": "5/28/2022",
+      "fechaFin": "2/6/2022",
+      "credito": 500
+    },
+    {
+      "id": 50,
+      "firstName": "Temple",
+      "lastName": "Bretherton",
+      "carrera": "Librarian",
+      "fechaInicio": "4/8/2022",
+      "fechaFin": "8/21/2022",
+      "credito": 500
+    },
+    {
+      "id": 51,
+      "firstName": "Welby",
+      "lastName": "O'Leahy",
+      "carrera": "Software Engineer II",
+      "fechaInicio": "5/28/2022",
+      "fechaFin": "12/8/2022",
+      "credito": 500
+    },
+    {
+      "id": 52,
+      "firstName": "Barris",
+      "lastName": "Tison",
+      "carrera": "Payment Adjustment Coordinator",
+      "fechaInicio": "2/9/2022",
+      "fechaFin": "8/22/2022",
+      "credito": 500
+    },
+    {
+      "id": 53,
+      "firstName": "Carolina",
+      "lastName": "Cram",
+      "carrera": "Computer Systems Analyst I",
+      "fechaInicio": "3/20/2022",
+      "fechaFin": "7/11/2022",
+      "credito": 500
+    },
+    {
+      "id": 54,
+      "firstName": "Constancy",
+      "lastName": "Aymer",
+      "carrera": "Civil Engineer",
+      "fechaInicio": "10/18/2022",
+      "fechaFin": "9/5/2022",
+      "credito": 500
+    },
+    {
+      "id": 55,
+      "firstName": "Livvie",
+      "lastName": "Riveles",
+      "carrera": "Media Manager IV",
+      "fechaInicio": "3/15/2022",
+      "fechaFin": "7/3/2022",
+      "credito": 500
+    },
+    {
+      "id": 56,
+      "firstName": "Keene",
+      "lastName": "Davidson",
+      "carrera": "Account Executive",
+      "fechaInicio": "10/8/2022",
+      "fechaFin": "3/12/2022",
+      "credito": 500
+    },
+    {
+      "id": 57,
+      "firstName": "Hunt",
+      "lastName": "Chetwind",
+      "carrera": "Recruiting Manager",
+      "fechaInicio": "5/28/2022",
+      "fechaFin": "6/18/2022",
+      "credito": 500
+    },
+    {
+      "id": 58,
+      "firstName": "Wyn",
+      "lastName": "Lucey",
+      "carrera": "Web Designer II",
+      "fechaInicio": "4/28/2022",
+      "fechaFin": "6/18/2022",
+      "credito": 500
+    },
+    {
+      "id": 59,
+      "firstName": "Agnese",
+      "lastName": "Beels",
+      "carrera": "Nurse Practicioner",
+      "fechaInicio": "9/30/2022",
+      "fechaFin": "8/28/2022",
+      "credito": 500
+    },
+    {
+      "id": 60,
+      "firstName": "Dinnie",
+      "lastName": "Dobby",
+      "carrera": "Media Manager II",
+      "fechaInicio": "3/16/2022",
+      "fechaFin": "4/23/2022",
+      "credito": 500
+    },
+    {
+      "id": 61,
+      "firstName": "Vivian",
+      "lastName": "Minear",
+      "carrera": "Electrical Engineer",
+      "fechaInicio": "7/5/2022",
+      "fechaFin": "4/21/2022",
+      "credito": 500
+    },
+    {
+      "id": 62,
+      "firstName": "Conan",
+      "lastName": "Drakes",
+      "carrera": "Food Chemist",
+      "fechaInicio": "4/13/2022",
+      "fechaFin": "10/27/2022",
+      "credito": 500
+    },
+    {
+      "id": 63,
+      "firstName": "Tiff",
+      "lastName": "Gissing",
+      "carrera": "Physical Therapy Assistant",
+      "fechaInicio": "3/1/2022",
+      "fechaFin": "3/30/2022",
+      "credito": 500
+    },
+    {
+      "id": 64,
+      "firstName": "Erminie",
+      "lastName": "Fullwood",
+      "carrera": "Mechanical Systems Engineer",
+      "fechaInicio": "5/12/2022",
+      "fechaFin": "7/18/2022",
+      "credito": 500
+    },
+    {
+      "id": 65,
+      "firstName": "Marius",
+      "lastName": "Charlotte",
+      "carrera": "Account Executive",
+      "fechaInicio": "5/25/2022",
+      "fechaFin": "5/31/2022",
+      "credito": 500
+    },
+    {
+      "id": 66,
+      "firstName": "Weston",
+      "lastName": "Brodeur",
+      "carrera": "Administrative Assistant I",
+      "fechaInicio": "11/2/2022",
+      "fechaFin": "11/12/2022",
+      "credito": 500
+    },
+    {
+      "id": 67,
+      "firstName": "Glenn",
+      "lastName": "Zimmer",
+      "carrera": "Operator",
+      "fechaInicio": "9/1/2022",
+      "fechaFin": "11/6/2022",
+      "credito": 500
+    },
+    {
+      "id": 68,
+      "firstName": "Abie",
+      "lastName": "Fawltey",
+      "carrera": "Analog Circuit Design manager",
+      "fechaInicio": "11/20/2022",
+      "fechaFin": "1/19/2023",
+      "credito": 500
+    },
+    {
+      "id": 69,
+      "firstName": "Perrine",
+      "lastName": "Stirling",
+      "carrera": "VP Marketing",
+      "fechaInicio": "11/27/2022",
+      "fechaFin": "2/24/2022",
+      "credito": 500
+    },
+    {
+      "id": 70,
+      "firstName": "Ally",
+      "lastName": "Wiz",
+      "carrera": "Assistant Media Planner",
+      "fechaInicio": "10/10/2022",
+      "fechaFin": "4/7/2022",
+      "credito": 500
+    },
+    {
+      "id": 71,
+      "firstName": "Brynn",
+      "lastName": "Niccolls",
+      "carrera": "Health Coach I",
+      "fechaInicio": "4/1/2022",
+      "fechaFin": "1/12/2023",
+      "credito": 500
+    },
+    {
+      "id": 72,
+      "firstName": "Janet",
+      "lastName": "Guswell",
+      "carrera": "Administrative Officer",
+      "fechaInicio": "5/14/2022",
+      "fechaFin": "5/8/2022",
+      "credito": 500
+    },
+    {
+      "id": 73,
+      "firstName": "Gnni",
+      "lastName": "Kelling",
+      "carrera": "Marketing Manager",
+      "fechaInicio": "7/7/2022",
+      "fechaFin": "11/13/2022",
+      "credito": 500
+    },
+    {
+      "id": 74,
+      "firstName": "Mickie",
+      "lastName": "Scampion",
+      "carrera": "Clinical Specialist",
+      "fechaInicio": "4/12/2022",
+      "fechaFin": "1/20/2023",
+      "credito": 500
+    },
+    {
+      "id": 75,
+      "firstName": "Rebecka",
+      "lastName": "Mewitt",
+      "carrera": "Web Designer III",
+      "fechaInicio": "7/12/2022",
+      "fechaFin": "7/11/2022",
+      "credito": 500
+    },
+    {
+      "id": 76,
+      "firstName": "Evvy",
+      "lastName": "Billes",
+      "carrera": "Marketing Manager",
+      "fechaInicio": "2/6/2022",
+      "fechaFin": "11/7/2022",
+      "credito": 500
+    },
+    {
+      "id": 77,
+      "firstName": "Gennifer",
+      "lastName": "Nelsen",
+      "carrera": "Software Engineer II",
+      "fechaInicio": "12/3/2022",
+      "fechaFin": "5/15/2022",
+      "credito": 500
+    },
+    {
+      "id": 78,
+      "firstName": "Kory",
+      "lastName": "Beldam",
+      "carrera": "Assistant Professor",
+      "fechaInicio": "4/12/2022",
+      "fechaFin": "8/17/2022",
+      "credito": 500
+    },
+    {
+      "id": 79,
+      "firstName": "Betteann",
+      "lastName": "Jopson",
+      "carrera": "Nurse Practicioner",
+      "fechaInicio": "2/25/2022",
+      "fechaFin": "3/5/2022",
+      "credito": 500
+    },
+    {
+      "id": 80,
+      "firstName": "Zacharias",
+      "lastName": "Scrane",
+      "carrera": "Information Systems Manager",
+      "fechaInicio": "11/1/2022",
+      "fechaFin": "7/18/2022",
+      "credito": 500
+    },
+    {
+      "id": 81,
+      "firstName": "Cazzie",
+      "lastName": "Storton",
+      "carrera": "Structural Analysis Engineer",
+      "fechaInicio": "4/10/2022",
+      "fechaFin": "11/1/2022",
+      "credito": 500
+    },
+    {
+      "id": 82,
+      "firstName": "Gare",
+      "lastName": "Lumox",
+      "carrera": "Technical Writer",
+      "fechaInicio": "5/22/2022",
+      "fechaFin": "12/2/2022",
+      "credito": 500
+    },
+    {
+      "id": 83,
+      "firstName": "Gifford",
+      "lastName": "Whittlesee",
+      "carrera": "Biostatistician III",
+      "fechaInicio": "2/3/2022",
+      "fechaFin": "1/12/2023",
+      "credito": 500
+    },
+    {
+      "id": 84,
+      "firstName": "Meggi",
+      "lastName": "Everard",
+      "carrera": "Compensation Analyst",
+      "fechaInicio": "7/29/2022",
+      "fechaFin": "9/9/2022",
+      "credito": 500
+    },
+    {
+      "id": 85,
+      "firstName": "Liam",
+      "lastName": "Finnan",
+      "carrera": "Assistant Manager",
+      "fechaInicio": "11/16/2022",
+      "fechaFin": "1/7/2023",
+      "credito": 500
+    },
+    {
+      "id": 86,
+      "firstName": "Kellie",
+      "lastName": "Fairnie",
+      "carrera": "Analyst Programmer",
+      "fechaInicio": "4/28/2022",
+      "fechaFin": "1/23/2023",
+      "credito": 500
+    },
+    {
+      "id": 87,
+      "firstName": "Moyna",
+      "lastName": "Schuricht",
+      "carrera": "Civil Engineer",
+      "fechaInicio": "3/19/2022",
+      "fechaFin": "6/17/2022",
+      "credito": 500
+    },
+    {
+      "id": 88,
+      "firstName": "Weylin",
+      "lastName": "Spillman",
+      "carrera": "Research Associate",
+      "fechaInicio": "2/8/2022",
+      "fechaFin": "6/24/2022",
+      "credito": 500
+    },
+    {
+      "id": 89,
+      "firstName": "Melantha",
+      "lastName": "Lamblot",
+      "carrera": "Compensation Analyst",
+      "fechaInicio": "10/13/2022",
+      "fechaFin": "9/16/2022",
+      "credito": 500
+    },
+    {
+      "id": 90,
+      "firstName": "Jackie",
+      "lastName": "Corkett",
+      "carrera": "Librarian",
+      "fechaInicio": "10/28/2022",
+      "fechaFin": "2/25/2022",
+      "credito": 500
+    },
+    {
+      "id": 91,
+      "firstName": "Morton",
+      "lastName": "Spatig",
+      "carrera": "Internal Auditor",
+      "fechaInicio": "3/18/2022",
+      "fechaFin": "5/30/2022",
+      "credito": 500
+    },
+    {
+      "id": 92,
+      "firstName": "Ginger",
+      "lastName": "Sunderland",
+      "carrera": "Data Coordiator",
+      "fechaInicio": "2/11/2022",
+      "fechaFin": "7/8/2022",
+      "credito": 500
+    },
+    {
+      "id": 93,
+      "firstName": "Andrea",
+      "lastName": "Guilliland",
+      "carrera": "Executive Secretary",
+      "fechaInicio": "10/12/2022",
+      "fechaFin": "1/3/2023",
+      "credito": 500
+    },
+    {
+      "id": 94,
+      "firstName": "Elysee",
+      "lastName": "Eckels",
+      "carrera": "Sales Representative",
+      "fechaInicio": "4/11/2022",
+      "fechaFin": "1/15/2023",
+      "credito": 500
+    },
+    {
+      "id": 95,
+      "firstName": "Gray",
+      "lastName": "Terrell",
+      "carrera": "Junior Executive",
+      "fechaInicio": "10/30/2022",
+      "fechaFin": "3/26/2022",
+      "credito": 500
+    },
+    {
+      "id": 96,
+      "firstName": "Andrej",
+      "lastName": "Fittis",
+      "carrera": "Media Manager IV",
+      "fechaInicio": "11/21/2022",
+      "fechaFin": "2/17/2022",
+      "credito": 500
+    },
+    {
+      "id": 97,
+      "firstName": "Kaela",
+      "lastName": "Corbett",
+      "carrera": "Staff Scientist",
+      "fechaInicio": "5/7/2022",
+      "fechaFin": "7/22/2022",
+      "credito": 500
+    },
+    {
+      "id": 98,
+      "firstName": "Addy",
+      "lastName": "Froome",
+      "carrera": "Software Test Engineer I",
+      "fechaInicio": "11/5/2022",
+      "fechaFin": "5/6/2022",
+      "credito": 500
+    },
+    {
+      "id": 99,
+      "firstName": "Marcos",
+      "lastName": "Eslinger",
+      "carrera": "VP Product Management",
+      "fechaInicio": "11/4/2022",
+      "fechaFin": "8/10/2022",
+      "credito": 500
+    },
+    {
+      "id": 100,
+      "firstName": "Jacquie",
+      "lastName": "Sugars",
+      "carrera": "Software Test Engineer II",
+      "fechaInicio": "10/12/2022",
+      "fechaFin": "9/11/2022",
+      "credito": 500
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "nombre": "Sauce - Soy Low Sodium - 3.87l",
+      "precioCompra": 89.74,
+      "precioVenta": 45.15,
+      "precioPreferencial": 21.82,
+      "stock": 39,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 2,
+      "nombre": "Versatainer Nc - 888",
+      "precioCompra": 72.74,
+      "precioVenta": 11.43,
+      "precioPreferencial": 8.6,
+      "stock": 29,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 3,
+      "nombre": "Cake - Miini Cheesecake Cherry",
+      "precioCompra": 13.04,
+      "precioVenta": 76.33,
+      "precioPreferencial": 58.26,
+      "stock": 13,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 4,
+      "nombre": "Beer - Corona",
+      "precioCompra": 19.96,
+      "precioVenta": 64.81,
+      "precioPreferencial": 19.04,
+      "stock": 81,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 5,
+      "nombre": "Soup - Campbells Chili",
+      "precioCompra": 16.12,
+      "precioVenta": 74.58,
+      "precioPreferencial": 93.55,
+      "stock": 23,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 6,
+      "nombre": "Yogurt - Raspberry, 175 Gr",
+      "precioCompra": 95.75,
+      "precioVenta": 68.64,
+      "precioPreferencial": 30.04,
+      "stock": 7,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 7,
+      "nombre": "Milk - Chocolate 250 Ml",
+      "precioCompra": 43.73,
+      "precioVenta": 91.27,
+      "precioPreferencial": 33.05,
+      "stock": 74,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 8,
+      "nombre": "Lid Coffee Cup 8oz Blk",
+      "precioCompra": 34,
+      "precioVenta": 31.02,
+      "precioPreferencial": 56.71,
+      "stock": 41,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 9,
+      "nombre": "Chicken - Whole",
+      "precioCompra": 28.45,
+      "precioVenta": 93.05,
+      "precioPreferencial": 6.62,
+      "stock": 86,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 10,
+      "nombre": "Pork - Sausage, Medium",
+      "precioCompra": 91.29,
+      "precioVenta": 64.54,
+      "precioPreferencial": 45.9,
+      "stock": 16,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 11,
+      "nombre": "Cheese - Sheep Milk",
+      "precioCompra": 69.4,
+      "precioVenta": 79.28,
+      "precioPreferencial": 60.89,
+      "stock": 28,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 12,
+      "nombre": "Lobster - Base",
+      "precioCompra": 33.59,
+      "precioVenta": 72.64,
+      "precioPreferencial": 76.55,
+      "stock": 52,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 13,
+      "nombre": "Tea - Lemon Green Tea",
+      "precioCompra": 69.4,
+      "precioVenta": 37.05,
+      "precioPreferencial": 64.78,
+      "stock": 87,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 14,
+      "nombre": "Wine - Semi Dry Riesling Vineland",
+      "precioCompra": 39.62,
+      "precioVenta": 13.89,
+      "precioPreferencial": 88.38,
+      "stock": 82,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 15,
+      "nombre": "Seedlings - Buckwheat, Organic",
+      "precioCompra": 18.73,
+      "precioVenta": 91.39,
+      "precioPreferencial": 98.78,
+      "stock": 75,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 16,
+      "nombre": "Snails - Large Canned",
+      "precioCompra": 90.73,
+      "precioVenta": 47.83,
+      "precioPreferencial": 84.66,
+      "stock": 76,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 17,
+      "nombre": "Cod - Black Whole Fillet",
+      "precioCompra": 41.84,
+      "precioVenta": 23.07,
+      "precioPreferencial": 2.31,
+      "stock": 20,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 18,
+      "nombre": "Okra",
+      "precioCompra": 4.91,
+      "precioVenta": 36.94,
+      "precioPreferencial": 86.43,
+      "stock": 2,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 19,
+      "nombre": "Milk - Chocolate 500ml",
+      "precioCompra": 68.18,
+      "precioVenta": 50.81,
+      "precioPreferencial": 34.94,
+      "stock": 61,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 20,
+      "nombre": "Cheese - Grie Des Champ",
+      "precioCompra": 29.59,
+      "precioVenta": 62.99,
+      "precioPreferencial": 82.16,
+      "stock": 29,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 21,
+      "nombre": "Wine - Jackson Triggs Okonagan",
+      "precioCompra": 87.18,
+      "precioVenta": 78.13,
+      "precioPreferencial": 92.24,
+      "stock": 47,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 22,
+      "nombre": "Trueblue - Blueberry 12x473ml",
+      "precioCompra": 93.24,
+      "precioVenta": 96.94,
+      "precioPreferencial": 97.04,
+      "stock": 35,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 23,
+      "nombre": "Beef - Top Sirloin",
+      "precioCompra": 78.3,
+      "precioVenta": 47.14,
+      "precioPreferencial": 93.41,
+      "stock": 36,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 24,
+      "nombre": "Tea - Herbal Orange Spice",
+      "precioCompra": 9.17,
+      "precioVenta": 60.46,
+      "precioPreferencial": 90.85,
+      "stock": 49,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 25,
+      "nombre": "Cheese - Swiss",
+      "precioCompra": 98.12,
+      "precioVenta": 89.92,
+      "precioPreferencial": 2.71,
+      "stock": 84,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 26,
+      "nombre": "Wine - Red, Antinori Santa",
+      "precioCompra": 92.34,
+      "precioVenta": 46.73,
+      "precioPreferencial": 41.1,
+      "stock": 14,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 27,
+      "nombre": "Bread - Roll, Calabrese",
+      "precioCompra": 21.78,
+      "precioVenta": 99.03,
+      "precioPreferencial": 98.33,
+      "stock": 3,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 28,
+      "nombre": "Mudslide",
+      "precioCompra": 95.9,
+      "precioVenta": 36.27,
+      "precioPreferencial": 68.53,
+      "stock": 94,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 29,
+      "nombre": "Energy Drink - Franks Pineapple",
+      "precioCompra": 98.23,
+      "precioVenta": 41.37,
+      "precioPreferencial": 14.57,
+      "stock": 65,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 30,
+      "nombre": "Cheese - Cream Cheese",
+      "precioCompra": 28.71,
+      "precioVenta": 12.84,
+      "precioPreferencial": 66.24,
+      "stock": 71,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 31,
+      "nombre": "Dikon",
+      "precioCompra": 44.55,
+      "precioVenta": 25.56,
+      "precioPreferencial": 6.52,
+      "stock": 64,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 32,
+      "nombre": "Capon - Whole",
+      "precioCompra": 56.8,
+      "precioVenta": 81.23,
+      "precioPreferencial": 44.65,
+      "stock": 89,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 33,
+      "nombre": "Crab - Claws, Snow 16 - 24",
+      "precioCompra": 77.36,
+      "precioVenta": 26.9,
+      "precioPreferencial": 40.15,
+      "stock": 12,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 34,
+      "nombre": "Beef - Tenderloin Tails",
+      "precioCompra": 90.14,
+      "precioVenta": 48.33,
+      "precioPreferencial": 69.16,
+      "stock": 69,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 35,
+      "nombre": "Veal - Liver",
+      "precioCompra": 37.7,
+      "precioVenta": 46.74,
+      "precioPreferencial": 74.89,
+      "stock": 20,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 36,
+      "nombre": "Evaporated Milk - Skim",
+      "precioCompra": 10.83,
+      "precioVenta": 39.72,
+      "precioPreferencial": 43.46,
+      "stock": 89,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 37,
+      "nombre": "Tea - Herbal Orange Spice",
+      "precioCompra": 62.83,
+      "precioVenta": 65.49,
+      "precioPreferencial": 12.23,
+      "stock": 99,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 38,
+      "nombre": "Beef - Montreal Smoked Brisket",
+      "precioCompra": 22.44,
+      "precioVenta": 70.16,
+      "precioPreferencial": 5.17,
+      "stock": 57,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 39,
+      "nombre": "Eel - Smoked",
+      "precioCompra": 59.05,
+      "precioVenta": 98.05,
+      "precioPreferencial": 8.35,
+      "stock": 1,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 40,
+      "nombre": "Turkey - Breast, Smoked",
+      "precioCompra": 9.57,
+      "precioVenta": 47.54,
+      "precioPreferencial": 48.14,
+      "stock": 90,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 41,
+      "nombre": "Sambuca - Opal Nera",
+      "precioCompra": 60.2,
+      "precioVenta": 18.37,
+      "precioPreferencial": 14.08,
+      "stock": 30,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 42,
+      "nombre": "Dr. Pepper - 355ml",
+      "precioCompra": 36.56,
+      "precioVenta": 56.06,
+      "precioPreferencial": 30.1,
+      "stock": 85,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 43,
+      "nombre": "Chef Hat 20cm",
+      "precioCompra": 60.01,
+      "precioVenta": 7.78,
+      "precioPreferencial": 88.3,
+      "stock": 87,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 44,
+      "nombre": "Oysters - Smoked",
+      "precioCompra": 2.95,
+      "precioVenta": 70.26,
+      "precioPreferencial": 13.99,
+      "stock": 35,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 45,
+      "nombre": "Soup Campbells",
+      "precioCompra": 57.46,
+      "precioVenta": 8.05,
+      "precioPreferencial": 93.3,
+      "stock": 50,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 46,
+      "nombre": "Pork - Loin, Bone - In",
+      "precioCompra": 94.49,
+      "precioVenta": 38.66,
+      "precioPreferencial": 45.48,
+      "stock": 18,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 47,
+      "nombre": "Soup - Campbells, Minestrone",
+      "precioCompra": 69.38,
+      "precioVenta": 97.04,
+      "precioPreferencial": 4.01,
+      "stock": 32,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 48,
+      "nombre": "Veal - Sweetbread",
+      "precioCompra": 98.27,
+      "precioVenta": 51.96,
+      "precioPreferencial": 44.64,
+      "stock": 59,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 49,
+      "nombre": "Whmis - Spray Bottle Trigger",
+      "precioCompra": 71.68,
+      "precioVenta": 92.45,
+      "precioPreferencial": 24.43,
+      "stock": 63,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 50,
+      "nombre": "Cake - Mini Potato Pancake",
+      "precioCompra": 18.47,
+      "precioVenta": 11.95,
+      "precioPreferencial": 82.45,
+      "stock": 80,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 51,
+      "nombre": "Lamb - Whole Head Off",
+      "precioCompra": 20.83,
+      "precioVenta": 36.64,
+      "precioPreferencial": 65.37,
+      "stock": 57,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 52,
+      "nombre": "Shiro Miso",
+      "precioCompra": 68.74,
+      "precioVenta": 6.85,
+      "precioPreferencial": 25.03,
+      "stock": 81,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 53,
+      "nombre": "Pepper - Black, Whole",
+      "precioCompra": 70.74,
+      "precioVenta": 89.84,
+      "precioPreferencial": 70.11,
+      "stock": 96,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 54,
+      "nombre": "Beef Wellington",
+      "precioCompra": 5.34,
+      "precioVenta": 18.34,
+      "precioPreferencial": 8.14,
+      "stock": 61,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 55,
+      "nombre": "Flower - Carnations",
+      "precioCompra": 55.44,
+      "precioVenta": 8.71,
+      "precioPreferencial": 26.99,
+      "stock": 20,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 56,
+      "nombre": "Crab Meat Claw Pasteurise",
+      "precioCompra": 23.74,
+      "precioVenta": 96.93,
+      "precioPreferencial": 61.35,
+      "stock": 35,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 57,
+      "nombre": "Yogurt - Assorted Pack",
+      "precioCompra": 56.51,
+      "precioVenta": 14.54,
+      "precioPreferencial": 72.52,
+      "stock": 6,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 58,
+      "nombre": "Onion Powder",
+      "precioCompra": 7.09,
+      "precioVenta": 6.96,
+      "precioPreferencial": 4.56,
+      "stock": 18,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 59,
+      "nombre": "Sauce - Soya, Light",
+      "precioCompra": 15.69,
+      "precioVenta": 73.03,
+      "precioPreferencial": 90.84,
+      "stock": 35,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 60,
+      "nombre": "Fireball Whisky",
+      "precioCompra": 65.75,
+      "precioVenta": 63.99,
+      "precioPreferencial": 87.84,
+      "stock": 79,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 61,
+      "nombre": "Wheat - Soft Kernal Of Wheat",
+      "precioCompra": 96.84,
+      "precioVenta": 32.09,
+      "precioPreferencial": 82.21,
+      "stock": 78,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 62,
+      "nombre": "Lighter - Bbq",
+      "precioCompra": 87.88,
+      "precioVenta": 29.73,
+      "precioPreferencial": 39.38,
+      "stock": 5,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 63,
+      "nombre": "Sobe - Liz Blizz",
+      "precioCompra": 30.81,
+      "precioVenta": 46.17,
+      "precioPreferencial": 86.84,
+      "stock": 79,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 64,
+      "nombre": "Tray - 12in Rnd Blk",
+      "precioCompra": 68.47,
+      "precioVenta": 99.18,
+      "precioPreferencial": 20.81,
+      "stock": 52,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 65,
+      "nombre": "Beans - Fava, Canned",
+      "precioCompra": 19.54,
+      "precioVenta": 30.38,
+      "precioPreferencial": 7.56,
+      "stock": 87,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 66,
+      "nombre": "Wine - Cousino Macul Antiguas",
+      "precioCompra": 33.08,
+      "precioVenta": 56.78,
+      "precioPreferencial": 82.43,
+      "stock": 92,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 67,
+      "nombre": "Catfish - Fillets",
+      "precioCompra": 91.8,
+      "precioVenta": 13.41,
+      "precioPreferencial": 79.08,
+      "stock": 97,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 68,
+      "nombre": "Bols Melon Liqueur",
+      "precioCompra": 49.58,
+      "precioVenta": 7.98,
+      "precioPreferencial": 69.76,
+      "stock": 11,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 69,
+      "nombre": "Sauce - Thousand Island",
+      "precioCompra": 49.13,
+      "precioVenta": 10.78,
+      "precioPreferencial": 17.93,
+      "stock": 59,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 70,
+      "nombre": "Myers Planters Punch",
+      "precioCompra": 60.09,
+      "precioVenta": 19.82,
+      "precioPreferencial": 54.57,
+      "stock": 28,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 71,
+      "nombre": "Wine - Trimbach Pinot Blanc",
+      "precioCompra": 85.23,
+      "precioVenta": 29.99,
+      "precioPreferencial": 72.5,
+      "stock": 61,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 72,
+      "nombre": "Coffee - Espresso",
+      "precioCompra": 80.53,
+      "precioVenta": 71.44,
+      "precioPreferencial": 57.84,
+      "stock": 20,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 73,
+      "nombre": "Vacuum Bags 12x16",
+      "precioCompra": 34.99,
+      "precioVenta": 21.55,
+      "precioPreferencial": 14.96,
+      "stock": 34,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 74,
+      "nombre": "Juice - Apple 284ml",
+      "precioCompra": 72.97,
+      "precioVenta": 98.75,
+      "precioPreferencial": 77.23,
+      "stock": 55,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 75,
+      "nombre": "Wine - Red, Lurton Merlot De",
+      "precioCompra": 37.64,
+      "precioVenta": 51.78,
+      "precioPreferencial": 49.02,
+      "stock": 12,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 76,
+      "nombre": "Shrimp - Black Tiger 8 - 12",
+      "precioCompra": 30.89,
+      "precioVenta": 11.18,
+      "precioPreferencial": 22.55,
+      "stock": 86,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 77,
+      "nombre": "Wine - Chardonnay South",
+      "precioCompra": 93.71,
+      "precioVenta": 42.15,
+      "precioPreferencial": 86.08,
+      "stock": 90,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 78,
+      "nombre": "Wine - White, Gewurtzraminer",
+      "precioCompra": 5.39,
+      "precioVenta": 75.02,
+      "precioPreferencial": 25.75,
+      "stock": 7,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 79,
+      "nombre": "Sole - Dover, Whole, Fresh",
+      "precioCompra": 93.15,
+      "precioVenta": 39.25,
+      "precioPreferencial": 79.91,
+      "stock": 11,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 80,
+      "nombre": "Nantucket - 518ml",
+      "precioCompra": 33.44,
+      "precioVenta": 11,
+      "precioPreferencial": 33.79,
+      "stock": 58,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 81,
+      "nombre": "Ice Cream - Vanilla",
+      "precioCompra": 81.18,
+      "precioVenta": 88.44,
+      "precioPreferencial": 91.28,
+      "stock": 75,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 82,
+      "nombre": "Mace",
+      "precioCompra": 53.55,
+      "precioVenta": 57.42,
+      "precioPreferencial": 12.71,
+      "stock": 38,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 83,
+      "nombre": "Halibut - Whole, Fresh",
+      "precioCompra": 67.96,
+      "precioVenta": 91.86,
+      "precioPreferencial": 86.45,
+      "stock": 60,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 84,
+      "nombre": "Beef - Rouladin, Sliced",
+      "precioCompra": 7.23,
+      "precioVenta": 16.49,
+      "precioPreferencial": 83.58,
+      "stock": 82,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 85,
+      "nombre": "Oxtail - Cut",
+      "precioCompra": 20.31,
+      "precioVenta": 7.59,
+      "precioPreferencial": 36.65,
+      "stock": 12,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 86,
+      "nombre": "Pur Value",
+      "precioCompra": 32.07,
+      "precioVenta": 38.44,
+      "precioPreferencial": 50.47,
+      "stock": 75,
+      "tipo": "Dulcería"
+    },
+    {
+      "id": 87,
+      "nombre": "Mackerel Whole Fresh",
+      "precioCompra": 77.31,
+      "precioVenta": 11.93,
+      "precioPreferencial": 52.84,
+      "stock": 35,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 88,
+      "nombre": "Doilies - 10, Paper",
+      "precioCompra": 21.98,
+      "precioVenta": 17.68,
+      "precioPreferencial": 57.97,
+      "stock": 18,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 89,
+      "nombre": "Wine - Cotes Du Rhone",
+      "precioCompra": 18.14,
+      "precioVenta": 80.19,
+      "precioPreferencial": 25.36,
+      "stock": 44,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 90,
+      "nombre": "Oranges - Navel, 72",
+      "precioCompra": 51.11,
+      "precioVenta": 85.32,
+      "precioPreferencial": 86.24,
+      "stock": 75,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 91,
+      "nombre": "Liners - Baking Cups",
+      "precioCompra": 34.42,
+      "precioVenta": 84.85,
+      "precioPreferencial": 89.48,
+      "stock": 79,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 92,
+      "nombre": "Split Peas - Green, Dry",
+      "precioCompra": 28.06,
+      "precioVenta": 78.8,
+      "precioPreferencial": 85.54,
+      "stock": 81,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 93,
+      "nombre": "Wine - Delicato Merlot",
+      "precioCompra": 96.3,
+      "precioVenta": 99.67,
+      "precioPreferencial": 46.02,
+      "stock": 95,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 94,
+      "nombre": "Water - Mineral, Natural",
+      "precioCompra": 51.94,
+      "precioVenta": 40.7,
+      "precioPreferencial": 41.31,
+      "stock": 63,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 95,
+      "nombre": "Leeks - Large",
+      "precioCompra": 98.82,
+      "precioVenta": 80.32,
+      "precioPreferencial": 61.52,
+      "stock": 67,
+      "tipo": "Alimentos"
+    },
+    {
+      "id": 96,
+      "nombre": "Grapefruit - White",
+      "precioCompra": 98.13,
+      "precioVenta": 31.44,
+      "precioPreferencial": 30.32,
+      "stock": 86,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 97,
+      "nombre": "V8 - Berry Blend",
+      "precioCompra": 82.61,
+      "precioVenta": 61.54,
+      "precioPreferencial": 48.43,
+      "stock": 43,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 98,
+      "nombre": "Soup - Campbells, Classic Chix",
+      "precioCompra": 81.99,
+      "precioVenta": 9.66,
+      "precioPreferencial": 8.44,
+      "stock": 54,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 99,
+      "nombre": "Salmon Steak - Cohoe 8 Oz",
+      "precioCompra": 3.09,
+      "precioVenta": 20.93,
+      "precioPreferencial": 10.64,
+      "stock": 81,
+      "tipo": "Bebidas"
+    },
+    {
+      "id": 100,
+      "nombre": "Quail - Jumbo Boneless",
+      "precioCompra": 71.09,
+      "precioVenta": 55.59,
+      "precioPreferencial": 39.5,
+      "stock": 14,
+      "tipo": "Alimentos"
+    },
+    {
+      "nombre": "Takis",
+      "precioCompra": "10",
+      "precioVenta": "10",
+      "precioPreferencial": "10",
+      "stock": "30",
+      "tipo": "Dulcería",
+      "firstName": "a",
+      "id": 101
+    },
+    {
+      "nombre": "Chocoroles",
+      "precioCompra": "20",
+      "precioVenta": "30",
+      "precioPreferencial": "15",
+      "stock": "50",
+      "tipo": "Dulcería",
+      "id": 102
+    }
+  ]
+}
