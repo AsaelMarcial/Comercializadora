@@ -1,6 +1,11 @@
-Django==3.2.4
-djangorestframework==3.12.4
-django-cors-headers==3.7.0
-psycopg2-binary==2.9.1
-dj-database-url==0.5.0
-
+fastapi
+uvicorn[standard]
+pydantic
+sqlalchemy
+mysql-connector-python
+python-multipart
+PyJWT
+passlib[bcrypt]
+python-jose
+python-dotenv
+pydantic[email]

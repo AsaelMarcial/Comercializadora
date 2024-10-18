@@ -1,10 +1,18 @@
-FROM python:3.9
+# Dockerfile para Backend
 
+FROM python:3.9-slim
+
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copiar los requerimientos desde la carpeta backend al contenedor
+COPY requirements.txt /app/requirements.txt
 
-COPY . .
+# Instalar las dependencias
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Copiar el código fuente del backend
+COPY app /app/app
+
+# Comando para ejecutar la aplicación con Uvicorn
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
