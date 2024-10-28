@@ -12,6 +12,7 @@ class Usuario(Base):
     nombre = Column(String(255), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     rol = Column(String(50), nullable=False)  # Ej: 'Admin', 'Vendedor', 'Almacén'
+    password_hash = Column(String)
     productos = relationship("Producto", back_populates="usuario")
 
 # Modelo de Proveedores

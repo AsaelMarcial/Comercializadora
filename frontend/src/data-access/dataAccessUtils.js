@@ -1,13 +1,20 @@
-export const API_HOST = 'http://localhost:3001'
+export const API_HOST = 'http://localhost:8000'
 
+// dataAccessUtils.js
 export const processResponse = async (response) => {
-	if (!response) {
-		throw new Error('Error de red.')
-	}
-	if (!response.ok) {
-		const error = await response.json()
-		throw new Error(error)
-	}
-	let data = await response.json()
-	return data
-}
+    console.log("Response status:", response.status); // Imprime el código de estado
+
+    if (!response.ok) {
+        const errorMessage = await response.text(); // Obtén el cuerpo de la respuesta
+        console.error("Response error:", errorMessage); // Imprime el error
+        throw new Error(`Network response was not ok: ${response.status} - ${errorMessage}`);
+    }
+
+    try {
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("JSON parse error:", error); // Imprime el error de análisis JSON
+        throw new Error(`Failed to parse JSON: ${error.message}`);
+    }
+};

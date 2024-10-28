@@ -1,15 +1,13 @@
-# backend/app/schemas.py
-
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, PositiveInt, constr
 from typing import Optional
 
-# Esquema base para Producto
+# Esquema para Producto
 class ProductoBase(BaseModel):
-    codigo: str
-    nombre: str
+    codigo: constr(max_length=10)
+    nombre: constr(max_length=100)
     formato: Optional[str] = None
     unidad_venta: Optional[str] = None
-    piezas_caja: Optional[int] = None
+    piezas_caja: Optional[PositiveInt] = None
     peso_pieza_kg: Optional[float] = None
     peso_caja_kg: Optional[float] = None
     m2_caja: Optional[float] = None
@@ -27,45 +25,108 @@ class ProductoBase(BaseModel):
     material: Optional[str] = None
     es_externo: Optional[bool] = False
 
-# Esquema para crear un nuevo Producto
-class ProductoCreate(ProductoBase):
-    pass  # Puedes añadir validaciones o campos específicos si lo necesitas
+    class Config:
+        schema_extra = {
+            "example": {
+                "codigo": "P123",
+                "nombre": "Losa Cerámica",
+                "formato": "30x30",
+                "unidad_venta": "caja",
+                "piezas_caja": 12,
+                "peso_pieza_kg": 1.2,
+                "peso_caja_kg": 14.4,
+                "m2_caja": 1.08,
+                "precio_caja": 500.0,
+                "precio_caja_con_iva": 580.0,
+                "precio_caja_sin_iva": 500.0,
+                "precio_pieza": 41.67,
+                "precio_pieza_con_iva": 48.33,
+                "precio_pieza_sin_iva": 41.67,
+                "precio_m2": 462.96,
+                "precio_m2_con_iva": 537.83,
+                "precio_m2_sin_iva": 462.96,
+                "imagen_url": "https://example.com/image.png",
+                "color": "Blanco",
+                "material": "Cerámica",
+                "es_externo": False
+            }
+        }
 
-# Esquema para retornar un Producto
+class ProductoCreate(ProductoBase):
+    pass
+
 class Producto(ProductoBase):
     id: int
 
     class Config:
-        orm_mode = True  # Permite que Pydantic use ORM para mapear la respuesta
+        orm_mode = True
 
-# Esquema base para Usuario
+# Esquema para Usuario
 class UsuarioBase(BaseModel):
-    nombre: str
-    email: EmailStr  # Email con validación
-    rol: str  # Ejemplo de rol, puedes ajustarlo según tu modelo
+    nombre: constr(max_length=50)
+    email: EmailStr
+    rol: constr(max_length=20)
 
-# Esquema para crear un nuevo Usuario
+    class Config:
+        schema_extra = {
+            "example": {
+                "nombre": "Juan Pérez",
+                "email": "juan.perez@email.com",
+                "rol": "Admin"
+            }
+        }
+
 class UsuarioCreate(UsuarioBase):
-    password: str  # Añade el campo de contraseña si es necesario
+    password: str  # Este es el valor en texto plano que se transformará en password_hash
 
-# Esquema para retornar un Usuario
 class Usuario(UsuarioBase):
     id: int
 
     class Config:
-        orm_mode = True  # Permite que Pydantic use ORM para mapear la respuesta
+        orm_mode = True
 
+class UsuarioResponse(BaseModel):
+    id: int
+    nombre: str
+    email: EmailStr
+    rol: str
 
+    class Config:
+        orm_mode = True
+
+# Esquema para Inventario
 class InventarioBase(BaseModel):
     producto_id: int
-    cantidad: int
+    cantidad: PositiveInt
     ubicacion: Optional[str] = None
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "producto_id": 1,
+                "cantidad": 100,
+                "ubicacion": "Almacén 1"
+            }
+        }
+
 class InventarioCreate(InventarioBase):
-    pass  # Puedes agregar validaciones adicionales si es necesario
+    pass
 
 class Inventario(InventarioBase):
     id: int
 
     class Config:
-        orm_mode = True  # Permite que Pydantic use ORM para mapear la respuesta
+        orm_mode = True
+
+# Esquema para Login
+class LoginSchema(BaseModel):
+    email: EmailStr
+    password: str  # Este es el password que el usuario ingresa para autenticarse
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "user@example.com",
+                "password": "1234"
+            }
+        }
