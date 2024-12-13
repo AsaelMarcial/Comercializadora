@@ -25,7 +25,7 @@ const Outcomes = () => {
 
 
 	useEffect(() => {
-		document.title = 'ComedorUV - Egresos'
+		document.title = 'Orza - Egresos'
 		const table = $(tableRef.current).DataTable(datatableOptions)
 		table.draw()
 	}, [outcomes])

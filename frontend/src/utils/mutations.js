@@ -1,6 +1,5 @@
 import { toast } from "react-toastify"
 import { createIncome, deleteIncome, updateIncome } from "../data-access/incomesDataAccess"
-import { createIntern, deleteIntern, updateIntern } from "../data-access/internsDataAccess"
 import { createOutcome, deleteOutcome, updateOutcome } from "../data-access/outcomesDataAccess"
 import { createProduct, deleteProduct, updateProduct } from "../data-access/productsDataAccess"
 import { createUser, deleteUser, updateUser } from "../data-access/usersDataAccess"
@@ -98,19 +97,6 @@ export const updateIncomeMutation = (income) => {
 
 export const deleteIncomeMutation = (id) => {
 	deleteIncome(id)
-}
-
-// Intern Mutations
-export const createInternMutation = (intern) => {
-	createIntern(intern)
-}
-
-export const updateInternMutation = (intern) => {
-	updateIntern(intern)
-}
-
-export const deleteInternMutation = (id) => {
-	deleteIntern(id)
 }
 
 // Product Mutations

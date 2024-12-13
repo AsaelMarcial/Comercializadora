@@ -23,7 +23,7 @@ const Incomes = () => {
 	const deleteMutation = useMutation(deleteIncomeMutation, DELETE_MUTATION_OPTIONS)
 
 	useEffect(() => {
-		document.title = 'ComedorUV - Ingresos'
+		document.title = 'Orza - Ingresos'
 		const table = $(tableRef.current).DataTable(datatableOptions)
 		table.draw()
 	}, [incomes])

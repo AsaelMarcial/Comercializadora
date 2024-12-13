@@ -7,11 +7,10 @@ import '../css/menu.css'
 import '../utils/formatting'
 import FormField from '../components/FormField'
 import TextInput from 'react-autocomplete-input'
-import { readAllInterns } from '../data-access/internsDataAccess'
 
 
-const Menu = () => {
-	const [selectedCategory, setSelectedCategory] = useState('Alimentos')
+const Ventas = () => {
+	const [selectedCategory, setSelectedCategory] = useState('Interior')
 	const [order, setOrder] = useState([])
 	const { data: products, isLoading } = useQuery({
 		...QUERY_OPTIONS,
@@ -19,25 +18,13 @@ const Menu = () => {
 		queryFn: readAllProducts,
 	})
 
-	const { data: interns } = useQuery({
-		...QUERY_OPTIONS,
-		queryKey: 'interns',
-		queryFn: readAllInterns,
-	})
-
 	const [orderDetails, setOrderDetails] = useState({
 		nombre: '',
 		notas: '',
 		imprimirTicket: false,
-		esBecario: false,
 		nombreBecario: '',
 	})
 
-	const internsNames = useMemo(() => {
-		return interns ? interns.map((intern) => {
-			return `${intern.firstName} ${intern.lastName}`
-		}) : []
-	})
 
 	const total = useMemo(() => {
 		return order.reduce((total, actual) => total + (actual.cantidad * actual.producto.precioVenta), 0
@@ -104,14 +91,14 @@ const Menu = () => {
 		<div className='contenedor-tabla'>
 			<NavigationTitle
 				menu='Inicio'
-				submenu='Menu'
+				submenu='Ventas'
 			/>
 			<div className='tab-bar'>
-				<h3 className={`tab-element ${selectedCategory === 'Alimentos' && 'active'}`} onClick={onTabElementClicked} >Alimentos</h3>
+				<h3 className={`tab-element ${selectedCategory === 'Interior' && 'active'}`} onClick={onTabElementClicked} >Interior</h3>
 				<h3>|</h3>
-				<h3 className={`tab-element ${selectedCategory === 'Dulcería' && 'active'}`} onClick={onTabElementClicked} >Dulcería</h3>
+				<h3 className={`tab-element ${selectedCategory === 'Exterior' && 'active'}`} onClick={onTabElementClicked} >Exterior</h3>
 				<h3>|</h3>
-				<h3 className={`tab-element ${selectedCategory === 'Bebidas' && 'active'}`} onClick={onTabElementClicked} >Bebidas</h3>
+				<h3 className={`tab-element ${selectedCategory === 'Decorados' && 'active'}`} onClick={onTabElementClicked} >Decorados</h3>
 			</div>
 			<div className='main-container'>
 				<div className='products-container'>
@@ -179,27 +166,13 @@ const Menu = () => {
 					</div>
 
 					<div className='ticket-toggle'>
-						<label className="form-check-label" >Imprimir ticket</label>
+						<label className="form-check-label" >Imprimir cotización</label>
 						<label className="switch">
 							<input type="checkbox" checked={orderDetails.imprimirTicket} onChange={() => {
 								setOrderDetails(prevOrderDetails => {
 									return {
 										...prevOrderDetails,
 										imprimirTicket: !prevOrderDetails.imprimirTicket
-									}
-								})
-							}} />
-							<span className="slider round"></span>
-						</label>
-					</div>
-					<div className='ticket-toggle'>
-						<label className="form-check-label" >Es Becario</label>
-						<label className="switch">
-							<input type="checkbox" checked={orderDetails.esBecario} onChange={() => {
-								setOrderDetails(prevOrderDetails => {
-									return {
-										...prevOrderDetails,
-										esBecario: !prevOrderDetails.esBecario
 									}
 								})
 							}} />
@@ -213,8 +186,7 @@ const Menu = () => {
 							className='becario-input'
 							placeholder='Nombre del becario'
 							trigger={['']}
-							options={internsNames}
-							value={orderDetails.nombreBecario}
+							value={orderDetails.nombre}
 							onChange={(value) => {
 								setOrderDetails(prevOrderDetails => {
 									return {
@@ -229,7 +201,7 @@ const Menu = () => {
 							name='nombre'
 							inputType='text'
 							iconClasses='fa-solid fa-user'
-							placeholder='Nombre'
+							placeholder='Cliente'
 							value={orderDetails.nombre}
 							onChange={handleInputChange}
 						/>
@@ -270,4 +242,4 @@ const Menu = () => {
 	)
 }
 
-export default Menu
+export default Ventas

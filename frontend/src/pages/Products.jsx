@@ -23,7 +23,7 @@ const Products = () => {
 	const deleteMutation = useMutation(deleteProductMutation, DELETE_MUTATION_OPTIONS)
 
 	useEffect(() => {
-		document.title = 'ComedorUV - Productos'
+		document.title = 'Orza - Productos'
 		const table = $(tableRef.current).DataTable(datatableOptions)
 		table.draw()
 	}, [products])
