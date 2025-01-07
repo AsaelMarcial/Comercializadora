@@ -1,6 +1,6 @@
 import { API_HOST, processResponse } from "./dataAccessUtils"
 
-const API_SERVICE = 'products'
+const API_SERVICE = 'productos'
 
 export const createProduct = (product) => {
 	return new Promise(async (resolve, reject) => {

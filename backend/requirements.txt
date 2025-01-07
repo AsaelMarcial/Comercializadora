@@ -9,3 +9,5 @@ passlib[bcrypt]
 python-jose
 python-dotenv
 pydantic[email]
+Pillow
+aiofiles

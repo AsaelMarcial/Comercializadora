@@ -80,3 +80,13 @@ class CRUDProducto:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error al eliminar el producto: {str(e)}"
             )
+
+    def actualizar_imagen_producto(self, producto_id: int, imagen_url: str):
+        # Buscar el producto en la base de datos
+        producto = self.db.query(Producto).filter(Producto.id == producto_id).first()
+        if producto:
+            producto.imagen_url = imagen_url  # Actualizar el campo imagen_url
+            self.db.commit()  # Guardar los cambios
+            self.db.refresh(producto)  # Refrescar la instancia activa
+            return producto  # Retornar el producto actualizado
+        raise HTTPException(status_code=404, detail="Producto no encontrado")  # Si no se encuentra

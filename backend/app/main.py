@@ -6,6 +6,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.database import engine, Base
 from app.routers import productos, usuarios, inventario
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from app.models import Usuario as UsuarioModel
+from sqlalchemy.orm import Session
 
 # Crear las tablas en la base de datos si no existen
 Base.metadata.create_all(bind=engine)
@@ -22,6 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 # Esquema de autenticación con OAuth2 para JWT
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -29,13 +34,15 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
+
     openapi_schema = get_openapi(
         title="Comercializadora API",
         version="1.0.0",
         description="API para gestionar productos, usuarios e inventarios.",
         routes=app.routes,
     )
-    # Definir el esquema de seguridad como Bearer Token
+
+    # Declarar el esquema de autenticación con JWT
     openapi_schema["components"]["securitySchemes"] = {
         "BearerAuth": {
             "type": "http",
@@ -43,8 +50,14 @@ def custom_openapi():
             "bearerFormat": "JWT",
         }
     }
-    # Aplicar el esquema de seguridad a todos los endpoints
-    openapi_schema["security"] = [{"BearerAuth": []}]
+
+    # Aplicar seguridad global a todos los endpoints
+    for path in openapi_schema["paths"]:
+        for method in openapi_schema["paths"][path]:
+            operation = openapi_schema["paths"][path][method]
+            # Añade "security" solo si falta
+            operation.setdefault("security", [{"BearerAuth": []}])
+
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 

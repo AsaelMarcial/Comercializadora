@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Usuario as UsuarioModel
 
+
 # Cargar variables de entorno
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecreto")  # Asegúrate de tener SECRET_KEY en tu archivo .env
@@ -68,6 +69,8 @@ def verify_token(token: str):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         rol: str = payload.get("rol")
+        #imprime en consola la informacion del email y el rol
+        print(f"Email: {email}, Rol: {rol}")
         if email is None or rol is None:
             raise credentials_exception
         return {"email": email, "rol": rol}
@@ -76,15 +79,45 @@ def verify_token(token: str):
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    """Obtiene el usuario actual a partir del token JWT."""
+    """
+    Obtiene al usuario autenticado desde el token y consulta dinámicamente su rol en la base de datos.
+    """
+    # Validar y decodificar el token JWT
     payload = verify_token(token)
-    user_email = payload.get("sub")  # Extrae el email del payload
+    user_email = payload.get("sub")
+
     if user_email is None:
-        raise HTTPException(status_code=401, detail="No se pudo validar las credenciales")
+        raise HTTPException(status_code=401, detail="Credenciales inválidas.")
 
-    # Busca al usuario en la base de datos
+    # Consultar al usuario por su email en la base de datos
     user = db.query(UsuarioModel).filter(UsuarioModel.email == user_email).first()
-    if user is None:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-    return user  # Devuelve el usuario actual
+    if user is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado.")
+
+    return user
+
+
+def require_role(roles: List[str]):
+    """
+    Dependencia reutilizable para verificar roles.
+
+    Params:
+    - roles: Lista de roles permitidos para acceder al endpoint.
+
+    Retorna:
+    - Usuario autenticado si el rol es válido.
+    """
+
+    async def role_dependency(
+            current_user: UsuarioModel = Depends(get_current_user),  # Usuario autenticado
+            db: Session = Depends(get_db)  # Base de datos
+    ):
+        if current_user.rol not in roles:
+            raise HTTPException(
+                status_code=403,
+                detail=f"No tienes permiso para acceder a este recurso. Requiere rol: {roles}"
+            )
+        return current_user  # Si el rol es válido, retorna el usuario
+
+    return role_dependency

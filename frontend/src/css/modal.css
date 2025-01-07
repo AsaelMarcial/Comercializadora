@@ -55,3 +55,8 @@
 .close-button:hover{
     color: red;
 }
+
+.custom-modal-width {
+    max-width: 80vw; /* Ajusta este valor según el tamaño deseado */
+    width: 200%;       /* Se adapta al tamaño disponible */
+}
