@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
-from typing import Optional
+from typing import Optional, List
 from enum import Enum  # Importar Enum
 from sqlalchemy.orm import Session
 from app.database import get_db

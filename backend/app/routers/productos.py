@@ -60,11 +60,10 @@ async def upload_producto_imagen(
         producto_id: int,
         imagen: UploadFile = File(...),
         db: Session = Depends(get_db),
-        current_user: dict = Depends(get_current_user)
 ):
     # 1. Validar permisos del usuario
-    if current_user['rol'] not in ["Admin", "Modificador"]:
-        raise HTTPException(status_code=403, detail="No tienes permisos para realizar esta acción.")
+    #if current_user['rol'] not in ["Admin", "Modificador"]:
+    #    raise HTTPException(status_code=403, detail="No tienes permisos para realizar esta acción.")
 
     # 2. Buscar el producto en la base de datos
     crud_producto.db = db
