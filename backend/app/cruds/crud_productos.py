@@ -8,13 +8,18 @@ class CRUDProducto:
     def __init__(self, db: Session):
         self.db = db
 
-    def crear_producto(self, producto: ProductoCreate):
+    def crear_producto(self, producto_data: ProductoCreate) -> Producto:
         try:
-            db_producto = Producto(**producto.dict())
-            self.db.add(db_producto)
-            self.db.commit()
-            self.db.refresh(db_producto)
-            return db_producto
+            nuevo_producto = Producto(**producto_data.dict())
+            self.db.add(nuevo_producto)
+            self.db.commit()  # Confirma la transacción
+            self.db.refresh(nuevo_producto)  # Actualiza el objeto con el ID generado
+            print(f"Producto persistido: {nuevo_producto}")
+            return nuevo_producto
+        except Exception as e:
+            print(f"Error en crear_producto: {str(e)}")
+            self.db.rollback()
+            raise
         except IntegrityError:
             self.db.rollback()
             raise HTTPException(

@@ -20,12 +20,16 @@ crud_producto = CRUDProducto(db=None)  # Inicializamos sin conexión
     tags=["Productos"],
     summary="Crear un nuevo producto"
 )
-def create_producto(
-        producto: ProductoCreate,
-        db: Session = Depends(get_db)  # Declaración explícita del esquema por usuario actual
-):
+def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
     crud_producto.db = db
-    return crud_producto.crear_producto(producto)
+    try:
+        nuevo_producto = crud_producto.crear_producto(producto)
+        print(f"Producto creado con éxito: {nuevo_producto}")
+        return nuevo_producto
+    except Exception as e:
+        print(f"Error en crear_producto: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al crear el producto: {str(e)}")
+
 
 @router.get("/productos/{producto_id}", response_model=Producto)
 def read_producto(producto_id: int, db: Session = Depends(get_db)):

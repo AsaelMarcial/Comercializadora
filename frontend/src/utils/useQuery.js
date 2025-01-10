@@ -1,4 +1,4 @@
 export const QUERY_OPTIONS = {
-	refetchInterval: 5000,
+	refetchInterval: 100000,
 	refetchIntervalInBackground: true
 }

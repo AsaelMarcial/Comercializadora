@@ -8,7 +8,8 @@ import { deleteProductMutation, DELETE_MUTATION_OPTIONS } from '../utils/mutatio
 import { QUERY_OPTIONS } from '../utils/useQuery';
 import Modal from '../components/Modal';
 import ProductForm from '../forms/ProductForm';
-import ProductDetailsModal from '../components/ProductDetailsModal'; // Importa el nuevo componente
+import ProductDetailsModal from '../components/ProductDetailsModal'; // Modal para detalles del producto
+import UploadImageModal from '../components/UploadImageModal'; // Nuevo modal para carga de imagen
 
 const Products = () => {
     const { data: products, isLoading } = useQuery({
@@ -16,9 +17,11 @@ const Products = () => {
         queryKey: 'products',
         queryFn: readAllProducts
     });
-    const [isShowingModal, setIsShowingModal] = useState(false);
+    const [isShowingFormModal, setIsShowingFormModal] = useState(false); // Modal del formulario
+    const [isShowingImageModal, setIsShowingImageModal] = useState(false); // Modal de carga de imagen
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const [isShowingDetailsModal, setIsShowingDetailsModal] = useState(false); // Nuevo estado para modal de detalles
+    const [selectedProductId, setSelectedProductId] = useState(null); // ID del producto para la imagen
+    const [isShowingDetailsModal, setIsShowingDetailsModal] = useState(false); // Modal de detalles del producto
     const queryClient = useQueryClient();
     const tableRef = useRef();
 
@@ -35,6 +38,16 @@ const Products = () => {
         queryClient.resetQueries();
     }
 
+    const openImageModal = (productId) => {
+        setSelectedProductId(productId); // Establecer el ID del producto
+        setIsShowingImageModal(true); // Abrir el modal de imagen
+    };
+
+    const closeImageModal = () => {
+        setSelectedProductId(null); // Limpiar el ID del producto
+        setIsShowingImageModal(false); // Cerrar el modal de imagen
+    };
+
     return (
         <>
             <NavigationTitle menu="Inicio" submenu="Productos" />
@@ -45,7 +58,7 @@ const Products = () => {
                     <button
                         type="button"
                         className="btn-registrar"
-                        onClick={() => setIsShowingModal(true)}
+                        onClick={() => setIsShowingFormModal(true)}
                     >
                         <i className="fa-solid fa-plus"></i> Nuevo producto
                     </button>
@@ -86,7 +99,7 @@ const Products = () => {
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setSelectedProduct(product);
-                                                    setIsShowingModal(true); // Aquí es para editar el producto
+                                                    setIsShowingFormModal(true); // Aquí es para editar el producto
                                                 }}
                                             >
                                                 <i className="fa-solid fa-pen-to-square"></i>
@@ -121,21 +134,29 @@ const Products = () => {
             )}
             {/* Modal para formulario */}
             <Modal
-                isShowing={isShowingModal}
-                setIsShowing={setIsShowingModal}
+                isShowing={isShowingFormModal}
+                setIsShowing={setIsShowingFormModal}
                 onClose={() => {
                     setSelectedProduct(null);
-                    setIsShowingModal(false);
+                    setIsShowingFormModal(false);
                 }}
             >
                 <ProductForm
                     cancelAction={() => {
                         setSelectedProduct(null);
-                        setIsShowingModal(false);
+                        setIsShowingFormModal(false);
                     }}
                     productUpdate={selectedProduct}
+                    openImageModal={openImageModal} // Pasa la función para abrir el modal de imagen
                 />
             </Modal>
+            {/* Modal para carga de imagen */}
+            {isShowingImageModal && (
+                <UploadImageModal
+                    productId={selectedProductId}
+                    closeModal={closeImageModal}
+                />
+            )}
         </>
     );
 };

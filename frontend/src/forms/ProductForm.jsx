@@ -8,7 +8,7 @@ import {
 	UPDATE_MUTATION_OPTIONS
 } from '../utils/mutations';
 
-const ProductForm = ({ cancelAction, productUpdate }) => {
+const ProductForm = ({ cancelAction, productUpdate, openImageModal }) => { // Agregado openImageModal
 	const [product, setProduct] = useState(productUpdate ?? {
 		codigo: '',
 		nombre: '',
@@ -32,15 +32,20 @@ const ProductForm = ({ cancelAction, productUpdate }) => {
 		material: '',
 		es_externo: false
 	});
-	const [imageFile, setImageFile] = useState(null); // Estado para manejar la imagen seleccionada
 
 	const queryClient = useQueryClient();
 
 	const createMutation = useMutation(createProductMutation, {
 		...CREATE_MUTATION_OPTIONS,
-		onSettled: async () => {
+		onSuccess: async (data) => {
+			console.log("Producto creado:", data); // Agregar log para inspeccionar
 			queryClient.resetQueries('products');
-		}
+			if (data && data.id) {
+				openImageModal(data.id); // Abre el modal de imagen con el ID del producto
+			} else {
+				console.error("El producto creado no tiene un ID:", data);
+			}
+		},
 	});
 
 	const updateMutation = useMutation(updateProductMutation, {
@@ -58,54 +63,17 @@ const ProductForm = ({ cancelAction, productUpdate }) => {
 		}));
 	}
 
-	function handleImageChange(event) {
-		const file = event.target.files[0];
-		setImageFile(file); // Guardamos el archivo seleccionado en el estado
-	}
-
-	async function uploadImage() {
-		if (!imageFile) return null;
-
-		const formData = new FormData();
-		formData.append('image', imageFile);
-
-		// Endpoint de subida de imágenes (actualiza con tu URL)
-		const response = await fetch('YOUR_IMAGE_UPLOAD_ENDPOINT', {
-			method: 'POST',
-			body: formData
-		});
-
-		if (!response.ok) {
-			throw new Error('Error al subir la imagen');
-		}
-
-		const data = await response.json();
-		return data.imageUrl; // Asume que el servidor devuelve la URL de la imagen
-	}
-
 	async function submitProduct() {
 		try {
-			let imageUrl = product.imagen_url;
-
-			// Si hay una imagen seleccionada, súbela primero
-			if (imageFile) {
-				imageUrl = await uploadImage();
-			}
-
-			// Actualizamos el producto con la URL de la imagen
-			const productToSave = {
-				...product,
-				imagen_url: imageUrl
-			};
+			let savedProduct = { ...product };
 
 			if (product.id) {
-				await updateMutation.mutateAsync(productToSave);
-				updateMutation.reset();
+				await updateMutation.mutateAsync(savedProduct);
 			} else {
-				await createMutation.mutateAsync(productToSave);
-				createMutation.reset();
+				savedProduct = await createMutation.mutateAsync(savedProduct);
 			}
-			await queryClient.resetQueries();
+
+			await queryClient.resetQueries('products');
 			cancelAction();
 		} catch (error) {
 			console.error('Error al guardar el producto:', error);
@@ -130,6 +98,40 @@ const ProductForm = ({ cancelAction, productUpdate }) => {
 				value={product.nombre}
 				onChange={handleInputChange}
 			/>
+			<FormField
+				name="color"
+				inputType="text"
+				iconClasses="fa-solid fa-palette"
+				placeholder="Color"
+				value={product.color}
+				onChange={handleInputChange}
+			/>
+			<FormField
+				name="material"
+				inputType="text"
+				iconClasses="fa-solid fa-tools"
+				placeholder="Material"
+				value={product.material}
+				onChange={handleInputChange}
+			/>
+			<div className="form-group">
+				<label htmlFor="es_externo">Es Externo</label>
+				<select
+					id="es_externo"
+					name="es_externo"
+					className="form-control"
+					value={product.es_externo ? 'true' : 'false'}
+					onChange={(e) =>
+						setProduct((prevProduct) => ({
+							...prevProduct,
+							es_externo: e.target.value === 'true'
+						}))
+					}
+				>
+					<option value="false">No</option>
+					<option value="true">Sí</option>
+				</select>
+			</div>
 			<FormField
 				name="formato"
 				inputType="text"
@@ -187,41 +189,69 @@ const ProductForm = ({ cancelAction, productUpdate }) => {
 				onChange={handleInputChange}
 			/>
 			<FormField
-				name="imagen_url"
-				inputType="file"
-				iconClasses="fa-solid fa-image"
-				placeholder="Seleccionar Imagen"
-				onChange={handleImageChange} // Maneja el cambio de la imagen
-			/>
-			<FormField
-				name="color"
-				inputType="text"
-				iconClasses="fa-solid fa-palette"
-				placeholder="Color"
-				value={product.color}
+				name="precio_caja_con_iva"
+				inputType="number"
+				iconClasses="fa-solid fa-dollar-sign"
+				placeholder="Precio por Caja (con IVA)"
+				value={product.precio_caja_con_iva}
 				onChange={handleInputChange}
 			/>
 			<FormField
-				name="material"
-				inputType="text"
-				iconClasses="fa-solid fa-tools"
-				placeholder="Material"
-				value={product.material}
+				name="precio_caja_sin_iva"
+				inputType="number"
+				iconClasses="fa-solid fa-dollar-sign"
+				placeholder="Precio por Caja (sin IVA)"
+				value={product.precio_caja_sin_iva}
 				onChange={handleInputChange}
 			/>
-			<div className="form-check">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					id="es_externo"
-					name="es_externo"
-					checked={product.es_externo}
-					onChange={handleInputChange}
-				/>
-				<label className="form-check-label" htmlFor="es_externo">
-					Es Externo
-				</label>
-			</div>
+			<FormField
+				name="precio_pieza"
+				inputType="number"
+				iconClasses="fa-solid fa-dollar-sign"
+				placeholder="Precio por Pieza"
+				value={product.precio_pieza}
+				onChange={handleInputChange}
+			/>
+			<FormField
+				name="precio_pieza_con_iva"
+				inputType="number"
+				iconClasses="fa-solid fa-dollar-sign"
+				placeholder="Precio por Pieza (con IVA)"
+				value={product.precio_pieza_con_iva}
+				onChange={handleInputChange}
+			/>
+			<FormField
+				name="precio_pieza_sin_iva"
+				inputType="number"
+				iconClasses="fa-solid fa-dollar-sign"
+				placeholder="Precio por Pieza (sin IVA)"
+				value={product.precio_pieza_sin_iva}
+				onChange={handleInputChange}
+			/>
+			<FormField
+				name="precio_m2"
+				inputType="number"
+				iconClasses="fa-solid fa-dollar-sign"
+				placeholder="Precio por m2"
+				value={product.precio_m2}
+				onChange={handleInputChange}
+			/>
+			<FormField
+				name="precio_m2_con_iva"
+				inputType="number"
+				iconClasses="fa-solid fa-dollar-sign"
+				placeholder="Precio por m2 (con IVA)"
+				value={product.precio_m2_con_iva}
+				onChange={handleInputChange}
+			/>
+			<FormField
+				name="precio_m2_sin_iva"
+				inputType="number"
+				iconClasses="fa-solid fa-dollar-sign"
+				placeholder="Precio por m2 (sin IVA)"
+				value={product.precio_m2_sin_iva}
+				onChange={handleInputChange}
+			/>
 			<div className="modal-footer">
 				<button type="button" className="btn btn-danger" onClick={cancelAction}>
 					Cancelar
