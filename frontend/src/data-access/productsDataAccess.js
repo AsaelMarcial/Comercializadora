@@ -2,24 +2,24 @@ import { API_HOST, processResponse } from "./dataAccessUtils";
 
 const API_SERVICE = 'productos';
 
-export const createProduct = (product) => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const url = `${API_HOST}/${API_SERVICE}`;
-			const response = await fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(product)
-			});
-			const savedProduct = await processResponse(response);
-			resolve(savedProduct); // Retorna el producto creado, incluyendo su ID
-			console.log('Producto creado:', savedProduct);
-		} catch (error) {
-			reject(error.message);
-		}
-	});
+export const createProduct = async (product) => {
+    try {
+        const url = `${API_HOST}/${API_SERVICE}`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(product)
+        });
+
+        const savedProduct = await processResponse(response);
+        console.log('Producto creado:', savedProduct);
+        return savedProduct;
+    } catch (error) {
+        console.error('Error creando producto:', error);
+        throw new Error(`Error creando producto: ${error.message}`);
+    }
 };
 
 export const readAllProducts = () => {

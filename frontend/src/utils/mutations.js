@@ -100,8 +100,8 @@ export const deleteIncomeMutation = (id) => {
 }
 
 // Product Mutations
-export const createProductMutation = (product) => {
-	createProduct(product)
+export const createProductMutation = async (product) => {
+	return await createProduct(product)
 }
 
 export const updateProductMutation = (product) => {

@@ -38,9 +38,9 @@ const ProductForm = ({ cancelAction, productUpdate, openImageModal }) => { // Ag
 	const createMutation = useMutation(createProductMutation, {
 		...CREATE_MUTATION_OPTIONS,
 		onSuccess: async (data) => {
-			console.log("Producto creado:", data); // Agregar log para inspeccionar
-			queryClient.resetQueries('products');
+			console.log("savedProduct en onSuccess:", data);
 			if (data && data.id) {
+				console.log("Producto creado:", data); // Agregar log para inspeccionar
 				openImageModal(data.id); // Abre el modal de imagen con el ID del producto
 			} else {
 				console.error("El producto creado no tiene un ID:", data);

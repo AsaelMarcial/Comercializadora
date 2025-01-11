@@ -30,6 +30,6 @@ def get_db():
         yield db
     except Exception as e:
         db.rollback()  # Deshacer los cambios si ocurre un error
-        raise HTTPException(status_code=500, detail=f"Error en la base de datos: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error en la sesion: {str(e)}")
     finally:
         db.close()  # Siempre cerrar la sesión

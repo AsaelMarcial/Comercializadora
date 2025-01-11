@@ -21,7 +21,7 @@ crud_producto = CRUDProducto(db=None)  # Inicializamos sin conexión
     summary="Crear un nuevo producto"
 )
 def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
-    crud_producto.db = db
+    crud_producto = CRUDProducto(db)
     try:
         nuevo_producto = crud_producto.crear_producto(producto)
         print(f"Producto creado con éxito: {nuevo_producto}")
