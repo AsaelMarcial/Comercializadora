@@ -37,27 +37,33 @@ def read_producto(producto_id: int, db: Session = Depends(get_db)):
     return crud_producto.obtener_producto(producto_id)
 
 @router.get("/productos", response_model=list[Producto])
-def read_productos(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+def read_productos(db: Session = Depends(get_db)):
     crud_producto.db = db
-    return crud_producto.obtener_productos(skip=skip, limit=limit)
+    return crud_producto.obtener_productos()
 
 @router.put("/productos/{producto_id}", response_model=Producto)
-def update_producto(producto_id: int, producto: ProductoCreate, db: Session = Depends(get_db),
-                    current_user: dict = Depends(get_current_user)):
-    if current_user['rol'] not in ["Admin", "Modificador"]:
-        raise HTTPException(status_code=403, detail="No tienes permisos para realizar esta acción.")
-
+def update_producto(
+    producto_id: int,
+    producto: ProductoCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)  # Obtener usuario actual
+):
     crud_producto.db = db
-    return crud_producto.actualizar_producto(producto_id, producto)
+    usuario_id = current_user["id"]  # ID del usuario actual
+    return crud_producto.actualizar_producto(producto_id, producto, usuario_id)
 
 @router.delete("/productos/{producto_id}", response_model=Producto)
-def delete_producto(producto_id: int, db: Session = Depends(get_db),
-                    current_user: dict = Depends(get_current_user)):
-    if current_user['rol'] != "Admin":
-        raise HTTPException(status_code=403, detail="No tienes permisos para realizar esta acción.")
-
+def delete_producto(producto_id: int, db: Session = Depends(get_db)):
     crud_producto.db = db
-    return crud_producto.eliminar_producto(producto_id)
+    try:
+        producto_eliminado = crud_producto.eliminar_producto(producto_id)
+        return producto_eliminado
+    except Exception as e:
+        print(f"Error en delete_producto: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al eliminar el producto: {str(e)}"
+        )
 
 @router.post("/productos/{producto_id}/upload-imagen")
 async def upload_producto_imagen(

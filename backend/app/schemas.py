@@ -11,16 +11,12 @@ class ProductoBase(BaseModel):
     peso_pieza_kg: Optional[float] = None
     peso_caja_kg: Optional[float] = None
     m2_caja: Optional[float] = None
-    precio_caja: Optional[float] = None
     precio_caja_con_iva: Optional[float] = None
     precio_caja_sin_iva: Optional[float] = None
-    precio_pieza: Optional[float] = None
     precio_pieza_con_iva: Optional[float] = None
     precio_pieza_sin_iva: Optional[float] = None
-    precio_m2: Optional[float] = None
     precio_m2_con_iva: Optional[float] = None
     precio_m2_sin_iva: Optional[float] = None
-    imagen_url: Optional[str] = None
     color: Optional[str] = None
     material: Optional[str] = None
     es_externo: Optional[bool] = False
@@ -36,16 +32,12 @@ class ProductoBase(BaseModel):
                 "peso_pieza_kg": 1.2,
                 "peso_caja_kg": 14.4,
                 "m2_caja": 1.08,
-                "precio_caja": 500.0,
                 "precio_caja_con_iva": 580.0,
                 "precio_caja_sin_iva": 500.0,
-                "precio_pieza": 41.67,
                 "precio_pieza_con_iva": 48.33,
                 "precio_pieza_sin_iva": 41.67,
-                "precio_m2": 462.96,
                 "precio_m2_con_iva": 537.83,
                 "precio_m2_sin_iva": 462.96,
-                "imagen_url": "https://example.com/image.png",
                 "color": "Blanco",
                 "material": "Cerámica",
                 "es_externo": False
@@ -60,7 +52,6 @@ class Producto(ProductoBase):
 
     class Config:
         orm_mode = True
-
 # Esquema para Usuario
 class UsuarioBase(BaseModel):
     nombre: constr(max_length=50)

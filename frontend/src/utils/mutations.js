@@ -104,10 +104,10 @@ export const createProductMutation = async (product) => {
 	return await createProduct(product)
 }
 
-export const updateProductMutation = (product) => {
-	updateProduct(product)
+export const updateProductMutation = async (product) => {
+	return await updateProduct(product)
 }
 
-export const deleteProductMutation = (id) => {
-	deleteProduct(id)
+export const deleteProductMutation = async (id) => {
+	return await deleteProduct(id)
 }

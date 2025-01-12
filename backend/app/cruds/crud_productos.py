@@ -3,6 +3,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import HTTPException, status
 from app.models import Producto
 from app.schemas import ProductoCreate
+import os
 
 class CRUDProducto:
     def __init__(self, db: Session):
@@ -42,10 +43,10 @@ class CRUDProducto:
             )
         return db_producto
 
-    def obtener_productos(self, skip: int = 0, limit: int = 10):
-        return self.db.query(Producto).offset(skip).limit(limit).all()
+    def obtener_productos(self):
+        return self.db.query(Producto).all()
 
-    def actualizar_producto(self, producto_id: int, producto: ProductoCreate):
+    def actualizar_producto(self, producto_id: int, producto: ProductoCreate, usuario_id: int):
         db_producto = self.db.query(Producto).filter(Producto.id == producto_id).first()
         if db_producto is None:
             raise HTTPException(
@@ -55,6 +56,9 @@ class CRUDProducto:
 
         for key, value in producto.dict().items():
             setattr(db_producto, key, value)
+
+        # Registrar el ID del usuario que modificó el producto
+        db_producto.ultimo_usuario_id = usuario_id
 
         try:
             self.db.commit()
@@ -76,6 +80,12 @@ class CRUDProducto:
             )
 
         try:
+            # Eliminar imagen si existe
+            image_path = f"./uploads/producto_{producto_id}.png"
+            if os.path.exists(image_path):
+                os.remove(image_path)
+
+            # Eliminar producto
             self.db.delete(db_producto)
             self.db.commit()
             return db_producto

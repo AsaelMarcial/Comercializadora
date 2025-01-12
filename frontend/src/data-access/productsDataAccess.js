@@ -93,18 +93,26 @@ export const uploadImage = (imageFile) => {
 	});
 };
 
-export const uploadProductImage = async (productId, file) => {
-	const formData = new FormData();
-	formData.append('imagen', file);
+export const uploadProductImage = async ({ productId, file }) => {
+    if (!productId || typeof productId !== 'number') {
+        throw new Error('productId debe ser un número válido');
+    }
 
-	const response = await fetch(`${API_HOST}/productos/${productId}/upload-imagen`, {
-		method: 'POST',
-		body: formData,
-	});
+    const url = `${API_HOST}/productos/${productId}/upload-imagen`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: file,
+        });
 
-	if (!response.ok) {
-		throw new Error('Error al subir la imagen');
-	}
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error al subir la imagen: ${response.status} - ${errorText}`);
+        }
 
-	return await response.json();
+        return await response.json();
+    } catch (error) {
+        console.error('Error en uploadProductImage:', error);
+        throw error;
+    }
 };

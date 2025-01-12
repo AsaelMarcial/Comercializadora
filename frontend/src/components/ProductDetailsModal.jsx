@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
-import { Tab, Tabs } from 'react-bootstrap'; // Si usas Bootstrap para tabs, instala la dependencia: `npm install react-bootstrap bootstrap`
+import React from 'react';
 
 const ProductDetailsModal = ({ product, onClose }) => {
-    const [selectedTab, setSelectedTab] = useState('details');
-
     if (!product) return null; // No mostrar si no hay producto seleccionado.
 
     return (
@@ -12,38 +9,45 @@ const ProductDetailsModal = ({ product, onClose }) => {
                 <div className="modal-content">
                     {/* Header del Modal */}
                     <div className="modal-header">
-                        <h5 className="modal-title">Detalles del Producto - {product.nombre}</h5>
+                        <h5 className="modal-title">Detalles del Producto</h5>
                         <button type="button" className="btn-close" onClick={onClose}></button>
                     </div>
-                    {/* Tabs y contenido del Modal */}
+
+                    {/* Contenido del Modal */}
                     <div className="modal-body">
-                        <Tabs
-                            activeKey={selectedTab}
-                            onSelect={(k) => setSelectedTab(k)}
-                            className="mb-3"
-                        >
-                            {/* Tab 1: Detalles generales */}
-                            <Tab eventKey="details" title="Detalles Generales">
-                                <h6>Información General</h6>
-                                <p><strong>Nombre:</strong> {product.nombre}</p>
-                                <p><strong>Tipo:</strong> {product.tipo}</p>
-                                <p><strong>Descripción:</strong> {product.descripcion || 'No disponible'}</p>
-                            </Tab>
-                            {/* Tab 2: Precios */}
-                            <Tab eventKey="prices" title="Precios">
-                                <h6>Precios</h6>
-                                <p><strong>Precio de Compra:</strong> ${product.formato}</p>
-                                <p><strong>Precio de Venta:</strong> ${product.unidad_venta}</p>
-                                <p><strong>Precio Preferencial:</strong> ${product.precioPreferencial}</p>
-                            </Tab>
-                            {/* Tab 3: Inventario */}
-                            <Tab eventKey="inventory" title="Inventario">
-                                <h6>Inventario</h6>
-                                <p><strong>Stock Disponible:</strong> {product.stock}</p>
-                                <p><strong>Estado:</strong> {product.stock > 0 ? 'Disponible' : 'Agotado'}</p>
-                            </Tab>
-                        </Tabs>
+                        {/* Mostrar la imagen si existe */}
+                        {product.id && (
+                            <div className="text-center mb-4">
+                                <img
+                                    src={`http://localhost:8000/uploads/producto_${product.id}.png`}
+                                    alt={product.nombre}
+                                    style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'cover' }}
+                                />
+                            </div>
+                        )}
+
+                        <h6>Información General</h6>
+                        <p><strong>Código:</strong> {product.codigo}</p>
+                        <p><strong>Nombre:</strong> {product.nombre}</p>
+                        <p><strong>Formato:</strong> {product.formato || 'No especificado'}</p>
+                        <p><strong>Unidad de Venta:</strong> {product.unidad_venta || 'No especificado'}</p>
+                        <p><strong>Piezas por Caja:</strong> {product.piezas_caja || 'No especificado'}</p>
+                        <p><strong>Peso por Pieza (kg):</strong> {product.peso_pieza_kg || 'No especificado'}</p>
+                        <p><strong>Peso por Caja (kg):</strong> {product.peso_caja_kg || 'No especificado'}</p>
+                        <p><strong>M2 por Caja:</strong> {product.m2_caja || 'No especificado'}</p>
+                        <p><strong>Color:</strong> {product.color || 'No especificado'}</p>
+                        <p><strong>Material:</strong> {product.material || 'No especificado'}</p>
+                        <p><strong>¿Es Externo?:</strong> {product.es_externo ? 'Sí' : 'No'}</p>
+
+                        <h6>Precios</h6>
+                        <p><strong>Precio por Caja (con IVA):</strong> ${product.precio_caja_con_iva || 'No especificado'}</p>
+                        <p><strong>Precio por Caja (sin IVA):</strong> ${product.precio_caja_sin_iva || 'No especificado'}</p>
+                        <p><strong>Precio por Pieza (con IVA):</strong> ${product.precio_pieza_con_iva || 'No especificado'}</p>
+                        <p><strong>Precio por Pieza (sin IVA):</strong> ${product.precio_pieza_sin_iva || 'No especificado'}</p>
+                        <p><strong>Precio por M2 (con IVA):</strong> ${product.precio_m2_con_iva || 'No especificado'}</p>
+                        <p><strong>Precio por M2 (sin IVA):</strong> ${product.precio_m2_sin_iva || 'No especificado'}</p>
                     </div>
+
                     {/* Footer del Modal */}
                     <div className="modal-footer">
                         <button
