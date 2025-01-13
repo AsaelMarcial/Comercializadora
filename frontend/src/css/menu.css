@@ -12,6 +12,27 @@
 	cursor: pointer;
 }
 
+.ventas-main {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.products-list {
+    flex: 3; /* Ocupa más espacio para los productos */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.order-summary {
+    flex: 1; /* Ocupa menos espacio para el carrito */
+    max-width: 350px;
+    position: sticky;
+    top: 20px;
+}
+
+
 .main-container {
 	display: flex;
 	flex-direction: row;

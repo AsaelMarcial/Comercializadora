@@ -1,245 +1,217 @@
-import React, { useMemo, useState } from 'react'
-import { useQuery } from 'react-query'
-import NavigationTitle from '../components/NavigationTitle'
-import { readAllProducts } from '../data-access/productsDataAccess'
-import { QUERY_OPTIONS } from '../utils/useQuery'
-import '../css/menu.css'
-import '../utils/formatting'
-import FormField from '../components/FormField'
-import TextInput from 'react-autocomplete-input'
-
+import React, { useMemo, useState } from 'react';
+import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import NavigationTitle from '../components/NavigationTitle';
+import { readAllProducts } from '../data-access/productsDataAccess';
+import { QUERY_OPTIONS } from '../utils/useQuery';
+import Modal from '../components/Modal';
+import '../css/menu.css';
+import '../utils/formatting';
 
 const Ventas = () => {
-	const [selectedCategory, setSelectedCategory] = useState('Interior')
-	const [order, setOrder] = useState([])
-	const { data: products, isLoading } = useQuery({
-		...QUERY_OPTIONS,
-		queryKey: 'products',
-		queryFn: readAllProducts,
-	})
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [order, setOrder] = useState([]);
+    const { data: products, isLoading } = useQuery({
+        ...QUERY_OPTIONS,
+        queryKey: 'products',
+        queryFn: readAllProducts,
+    });
+    const navigate = useNavigate();
 
-	const [orderDetails, setOrderDetails] = useState({
-		nombre: '',
-		notas: '',
-		imprimirTicket: false,
-		nombreBecario: '',
-	})
+    const total = useMemo(() => {
+        return order.reduce(
+            (total, actual) => total + actual.cantidad * actual.producto.precio_pieza_con_iva,
+            0
+        );
+    }, [order]);
 
+    const addToOrder = (producto) => {
+        let found = order.find((orderItem) => orderItem.producto.id === producto.id);
+        if (!found) {
+            setOrder((prevOrder) => [
+                ...prevOrder,
+                {
+                    producto,
+                    cantidad: 1,
+                },
+            ]);
+            return;
+        }
+        setOrder((prevOrder) => {
+            let newOrder = prevOrder.filter((orderItem) => orderItem !== found);
+            newOrder.push({
+                ...found,
+                cantidad: found.cantidad + 1,
+            });
+            return newOrder;
+        });
+    };
 
-	const total = useMemo(() => {
-		return order.reduce((total, actual) => total + (actual.cantidad * actual.producto.precioVenta), 0
-		)
-	}, [order])
+    const removeFromOrder = (producto) => {
+        let found = order.find((orderItem) => orderItem.producto.id === producto.id);
+        if (!found) return;
+        setOrder((prevOrder) => {
+            let newOrder = prevOrder.filter((orderItem) => orderItem !== found);
+            if (found.cantidad > 1) {
+                newOrder.push({
+                    ...found,
+                    cantidad: found.cantidad - 1,
+                });
+            }
+            return newOrder;
+        });
+    };
 
-	const filteredProducts = useMemo(() => {
-		return products ? products.filter(product => product.tipo === selectedCategory) : []
-	}, [products, selectedCategory])
+    const handleContinue = () => {
+        if (order.length === 0) {
+            alert('No hay productos en el carrito. Agrega al menos uno para continuar.');
+            return;
+        }
+        navigate('/app/ventas/ganancias', { state: { order } });
+    };
 
-	function onTabElementClicked(event) {
-		setSelectedCategory(event.target.innerHTML)
-	}
+    return (
+        <div className="ventas-container">
+            <NavigationTitle menu="Inicio" submenu="Ventas" />
+            <div className="ventas-main">
+                {/* Contenedor de productos */}
+                <div className="products-list">
+                    {isLoading ? (
+                        'Loading...'
+                    ) : (
+                        products.map((product) => (
+                            <div
+                                key={product.id}
+                                className="menu-item"
+                                onClick={() => setSelectedProduct(product)}
+                            >
+                                <img
+                                    className="menu-item-image"
+                                    src={`http://localhost:8000/uploads/producto_${product.id}.jpeg`}
+                                    alt={product.nombre}
+                                    onError={(e) => {
+                                        e.target.src = '';
+                                        e.target.alt = 'Sin imagen';
+                                    }}
+                                />
+                                <div className="menu-item-content">
+                                    <p className="menu-item-nombre">{product.nombre}</p>
+                                    <p className="menu-item-precio">
+                                        ${product.precio_pieza_con_iva.toFixed(2)}
+                                    </p>
+                                </div>
+                                <div className="stepper-container">
+                                    <i
+                                        className="fa-solid fa-minus stepper-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            removeFromOrder(product);
+                                        }}
+                                    ></i>
+                                    <div className="stepper-count">
+                                        {
+                                            order.find((orderItem) => orderItem.producto.id === product.id)?.cantidad ||
+                                            0
+                                        }
+                                    </div>
+                                    <i
+                                        className="fa-solid fa-plus stepper-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            addToOrder(product);
+                                        }}
+                                    ></i>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
 
-	function addToOrder(producto) {
-		let found = order.find(orderItem => orderItem.producto.id === producto.id)
-		if (!found) {
-			setOrder(prevOrder => {
-				return [
-					...prevOrder,
-					{
-						producto: producto,
-						cantidad: 1
-					}
-				]
-			})
-			return
-		}
-		setOrder(prevOrder => {
-			let newOrder = prevOrder.filter(orderItem => orderItem !== found)
-			newOrder.push({
-				...found,
-				cantidad: found.cantidad + 1
-			})
-			return newOrder
-		})
-	}
+                {/* Carrito */}
+                <div className="order-summary">
+                    <h4>Carrito</h4>
+                    <div className="table-productos">
+                        {order.length > 0 ? (
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <td>Cantidad</td>
+                                        <td>Producto</td>
+                                        <td>Subtotal</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {order.map((orderItem) => (
+                                        <tr key={orderItem.producto.id}>
+                                            <td>{orderItem.cantidad}</td>
+                                            <td>{orderItem.producto.nombre}</td>
+                                            <td>
+                                                ${(
+                                                    orderItem.producto.precio_pieza_con_iva *
+                                                    orderItem.cantidad
+                                                ).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    <tr>
+                                        <td></td>
+                                        <td>Total</td>
+                                        <td>${total.toFixed(2)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p>No hay productos en el carrito.</p>
+                        )}
+                    </div>
+                    <div className="modal-footer">
+                        <button
+                            type="button"
+                            className="btn btn-danger"
+                            onClick={() => setOrder([])}
+                        >
+                            Vaciar Carrito
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={handleContinue}
+                        >
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-	function removeFromOrder(producto) {
-		let found = order.find(orderItem => orderItem.producto.id === producto.id)
-		if (!found) return
-		setOrder(prevOrder => {
-			let newOrder = prevOrder.filter(orderItem => orderItem !== found)
-			if (found.cantidad > 1) {
-				newOrder.push({
-					...found,
-					cantidad: found.cantidad - 1
-				})
-			}
-			return newOrder
-		})
-	}
+            {/* Modal para mostrar detalles del producto */}
+            {selectedProduct && (
+                <Modal
+                    title={`Detalles del Producto - ${selectedProduct.nombre}`}
+                    isShowing={!!selectedProduct}
+                    setIsShowing={() => setSelectedProduct(null)}
+                >
+                    <div className="product-details">
+                        <img
+                            src={`http://localhost:8000/uploads/producto_${selectedProduct.id}.jpeg`}
+                            alt={selectedProduct.nombre}
+                            onError={(e) => {
+                                e.target.src = '';
+                                e.target.alt = 'Sin imagen';
+                            }}
+                            style={{ width: '100%', height: 'auto', marginBottom: '1rem' }}
+                        />
+                        <p><strong>Código:</strong> {selectedProduct.codigo}</p>
+                        <p><strong>Nombre:</strong> {selectedProduct.nombre}</p>
+                        <p><strong>Precio Caja (IVA):</strong> ${selectedProduct.precio_caja_con_iva}</p>
+                        <p><strong>Precio Pieza (IVA):</strong> ${selectedProduct.precio_pieza_con_iva}</p>
+                        <p><strong>Precio M2 (IVA):</strong> ${selectedProduct.precio_m2_con_iva}</p>
+                        <p><strong>Color:</strong> {selectedProduct.color}</p>
+                        <p><strong>Material:</strong> {selectedProduct.material}</p>
+                    </div>
+                </Modal>
+            )}
+        </div>
+    );
+};
 
-	function handleInputChange(event) {
-		setOrderDetails(prevOrderDetails => {
-			return {
-				...prevOrderDetails,
-				[event.target.name]: event.target.value
-			}
-		})
-	}
-
-	return (
-		<div className='contenedor-tabla'>
-			<NavigationTitle
-				menu='Inicio'
-				submenu='Ventas'
-			/>
-			<div className='tab-bar'>
-				<h3 className={`tab-element ${selectedCategory === 'Interior' && 'active'}`} onClick={onTabElementClicked} >Interior</h3>
-				<h3>|</h3>
-				<h3 className={`tab-element ${selectedCategory === 'Exterior' && 'active'}`} onClick={onTabElementClicked} >Exterior</h3>
-				<h3>|</h3>
-				<h3 className={`tab-element ${selectedCategory === 'Decorados' && 'active'}`} onClick={onTabElementClicked} >Decorados</h3>
-			</div>
-			<div className='main-container'>
-				<div className='products-container'>
-					{isLoading ? 'Loading' :
-						filteredProducts.map(product => {
-							return (
-								<div key={product.id} className='menu-item'>
-									<img className='menu-item-image' src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Empanadas_de_Queso.jpg" alt="empanadas" />
-									<div className='menu-item-content'>
-										<p className='menu-item-nombre'>{product.nombre}</p>
-										<p className='menu-item-precio'>${product.precioVenta}</p>
-									</div>
-									<div className='stepper-container'>
-										<i
-											className='fa-solid fa-minus stepper-button'
-											onClick={() => {
-												removeFromOrder(product)
-											}}
-										></i>
-										<div className='stepper-count'></div>
-										<i
-											className='fa-solid fa-plus stepper-button'
-											onClick={() => {
-												addToOrder(product)
-											}}
-										></i>
-									</div>
-								</div>
-							)
-						})
-					}
-				</div>
-				<div className='order-card'>
-					<h4>Detalles de la Orden</h4>
-					<div className='table-productos'>
-						{order.length > 0 ?
-							<table>
-								<thead>
-									<tr>
-										<td>Cantidad</td>
-										<td>Descripción</td>
-										<td>Subtotal</td>
-									</tr>
-								</thead>
-								<tbody>
-									{order.map(orderItem => {
-										return (
-											<tr key={orderItem.producto.id}>
-												<td>{orderItem.cantidad}</td>
-												<td>{orderItem.producto.nombre}</td>
-												<td>${(orderItem.producto.precioVenta * orderItem.cantidad).priceFormat()}</td>
-											</tr>
-										)
-									})}
-									<tr>
-										<td className='blank-td'></td>
-										<td className='blank-td'>Total</td>
-										<td className='blank-td'>${total.priceFormat()}</td>
-									</tr>
-								</tbody>
-							</table>
-							:
-							'Aún no ha agregado ningún producto a la orden'
-						}
-					</div>
-
-					<div className='ticket-toggle'>
-						<label className="form-check-label" >Imprimir cotización</label>
-						<label className="switch">
-							<input type="checkbox" checked={orderDetails.imprimirTicket} onChange={() => {
-								setOrderDetails(prevOrderDetails => {
-									return {
-										...prevOrderDetails,
-										imprimirTicket: !prevOrderDetails.imprimirTicket
-									}
-								})
-							}} />
-							<span className="slider round"></span>
-						</label>
-					</div>
-
-					{orderDetails.esBecario ?
-						<TextInput
-							rows={1}
-							className='becario-input'
-							placeholder='Nombre del becario'
-							trigger={['']}
-							value={orderDetails.nombre}
-							onChange={(value) => {
-								setOrderDetails(prevOrderDetails => {
-									return {
-										...prevOrderDetails,
-										nombreBecario: value
-									}
-								})
-							}}
-						/>
-						:
-						<FormField
-							name='nombre'
-							inputType='text'
-							iconClasses='fa-solid fa-user'
-							placeholder='Cliente'
-							value={orderDetails.nombre}
-							onChange={handleInputChange}
-						/>
-					}
-
-
-
-
-					<textarea
-						name="notas"
-						cols="30"
-						rows="5"
-						placeholder='Notas'
-						value={orderDetails.notas}
-						onChange={handleInputChange}
-					></textarea>
-
-					<div className='modal-footer'>
-						<button
-							type='button'
-							className='btn btn-danger'
-							onClick={() => { }}
-						>
-							Cancelar
-						</button>
-						<button
-							type='button'
-							className='btn btn-primary'
-							onClick={() => { }}
-						>
-							Continuar
-						</button>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	)
-}
-
-export default Ventas
+export default Ventas;

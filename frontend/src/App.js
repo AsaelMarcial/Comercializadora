@@ -8,6 +8,7 @@ import Outcomes from './pages/Outcomes';
 import Products from './pages/Products';
 import Reports from './pages/Reports';
 import Ventas from './pages/Ventas';
+import GananciasPorProducto from './pages/GananciasPorProducto'; // Importa esta página
 import Users from './pages/Users';
 import Help from './pages/Help';
 import Login from './pages/Login';
@@ -28,7 +29,8 @@ function App() {
             <Route path="outcomes" element={<Outcomes />} />
             <Route path="products" element={<Products />} />
             <Route path="reports" element={<Reports />} />
-            <Route path="menu" element={<Ventas />} />
+            <Route path="ventas" element={<Ventas />} />
+            <Route path="ventas/ganancias" element={<GananciasPorProducto />} />
             <Route path="users" element={<Users />} />
             <Route path="help" element={<Help />} />
           </Route>

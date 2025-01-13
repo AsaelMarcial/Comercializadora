@@ -98,7 +98,7 @@ const Products = () => {
                                         <td>
                                             {product.id ? (
                                                 <img
-                                                    src={`http://localhost:8000/uploads/producto_${product.id}.png`}
+                                                    src={`http://localhost:8000/uploads/producto_${product.id}.jpeg`}
                                                     alt={product.nombre}
                                                     style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                                     onError={(e) => {

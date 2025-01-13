@@ -1,0 +1,131 @@
+.main-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    background-color: #f3f3f3;
+    border-radius: 15px;
+    margin: 16px auto;
+    max-width: 90%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.header h2 {
+    font-size: 24px;
+    color: #6a728f;
+}
+
+.table-productos {
+    border-radius: 10px;
+    background-color: white;
+    overflow: hidden;
+    padding: 10px;
+    margin-bottom: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+thead {
+    background-color: #f4f4f4;
+}
+
+thead th {
+    padding: 10px;
+    text-align: left;
+    color: #6a728f;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #e9e9e9;
+}
+
+tbody td {
+    padding: 10px;
+    text-align: left;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.btn-primary {
+    background-color: #6a728f;
+    color: white;
+}
+
+button.btn-primary:hover {
+    background-color: #505869;
+}
+
+button.btn-secondary {
+    background-color: #ced4da;
+    color: #333;
+}
+
+button.btn-secondary:hover {
+    background-color: #b5bcc4;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+textarea {
+    width: 100%;
+    padding: 8px;
+    border-radius: 15px;
+    border: solid 0.5px #ced4da;
+    margin-bottom: 16px;
+}
+
+.highlight-row {
+    background-color: #dae0e7;
+}
+.resumen-ganancias {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.resumen-ganancias h4 {
+    margin: 10px 0;
+}
+
+.botones-acciones {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}

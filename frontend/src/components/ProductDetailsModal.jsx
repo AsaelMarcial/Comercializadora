@@ -19,7 +19,7 @@ const ProductDetailsModal = ({ product, onClose }) => {
                         {product.id && (
                             <div className="text-center mb-4">
                                 <img
-                                    src={`http://localhost:8000/uploads/producto_${product.id}.png`}
+                                    src={`http://localhost:8000/uploads/producto_${product.id}.jpeg`}
                                     alt={product.nombre}
                                     style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'cover' }}
                                 />
