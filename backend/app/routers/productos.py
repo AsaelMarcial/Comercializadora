@@ -1,16 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, File, UploadFile
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import ProductoCreate, Producto
 from app.cruds.crud_productos import CRUDProducto
 from app.auth import get_current_user
-from fastapi import File, UploadFile
 import os
 from PIL import Image
 import io
 
 router = APIRouter()
-crud_producto = CRUDProducto(db=None)
 
 @router.post(
     "/productos",
@@ -18,7 +16,11 @@ crud_producto = CRUDProducto(db=None)
     tags=["Productos"],
     summary="Crear un nuevo producto"
 )
-def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
+def create_producto(
+    producto: ProductoCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
     crud_producto = CRUDProducto(db)
     try:
         nuevo_producto = crud_producto.crear_producto(producto)
@@ -29,13 +31,21 @@ def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error al crear el producto: {str(e)}")
 
 @router.get("/productos/{producto_id}", response_model=Producto)
-def read_producto(producto_id: int, db: Session = Depends(get_db)):
-    crud_producto.db = db
+def read_producto(
+    producto_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    crud_producto = CRUDProducto(db)
     return crud_producto.obtener_producto(producto_id)
 
 @router.get("/productos", response_model=list[Producto])
-def read_productos(db: Session = Depends(get_db)):
-    crud_producto.db = db
+def read_productos(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+
+    crud_producto = CRUDProducto(db)
     return crud_producto.obtener_productos()
 
 @router.put("/productos/{producto_id}", response_model=Producto)
@@ -45,13 +55,17 @@ def update_producto(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    crud_producto.db = db
+    crud_producto = CRUDProducto(db)
     usuario_id = current_user["id"]
     return crud_producto.actualizar_producto(producto_id, producto, usuario_id)
 
 @router.delete("/productos/{producto_id}", response_model=Producto)
-def delete_producto(producto_id: int, db: Session = Depends(get_db)):
-    crud_producto.db = db
+def delete_producto(
+    producto_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    crud_producto = CRUDProducto(db)
     try:
         producto_eliminado = crud_producto.eliminar_producto(producto_id)
         return producto_eliminado
@@ -64,9 +78,10 @@ def delete_producto(producto_id: int, db: Session = Depends(get_db)):
 
 @router.post("/productos/{producto_id}/upload-imagen")
 async def upload_producto_imagen(
-        producto_id: int,
-        imagen: UploadFile = File(...),
-        db: Session = Depends(get_db),
+    producto_id: int,
+    imagen: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
 ):
     try:
         # Validar archivo recibido

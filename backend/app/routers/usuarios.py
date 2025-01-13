@@ -54,7 +54,7 @@ def login(credentials: LoginSchema, db: Session = Depends(get_db)):
         logger.error("Credenciales inválidas")
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
 
-    access_token = create_access_token(data={"sub": user.email, "rol": user.rol})
+    access_token = create_access_token(data={"sub": user.email, "rol": user.rol, "id": user.id})
 
     return {
         "access_token": access_token,

@@ -1,4 +1,3 @@
-// src/utils/auth.js
 import jwtDecode from 'jwt-decode';
 
 export const getUserFromToken = () => {
@@ -7,9 +6,18 @@ export const getUserFromToken = () => {
 
   try {
     const decoded = jwtDecode(token);
-    return decoded; // Devolver el objeto decodificado del token
+
+    // Validar si el token ha expirado
+    const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+    if (decoded.exp && decoded.exp < currentTime) {
+      console.warn('Token expirado');
+      localStorage.removeItem('token'); // Elimina el token expirado
+      return null;
+    }
+
+    return decoded; // Retorna el token decodificado si es válido
   } catch (error) {
-    console.error('Token inválido:', error);
+    console.error('Error al decodificar el token:', error);
     return null;
   }
 };

@@ -1,5 +1,6 @@
-from pydantic import BaseModel, EmailStr, PositiveInt, constr
-from typing import Optional
+from pydantic import BaseModel, EmailStr, PositiveInt, constr, condecimal
+from typing import Optional, List
+from datetime import datetime
 
 # Esquema para Producto
 class ProductoBase(BaseModel):
@@ -52,6 +53,7 @@ class Producto(ProductoBase):
 
     class Config:
         orm_mode = True
+
 # Esquema para Usuario
 class UsuarioBase(BaseModel):
     nombre: constr(max_length=50)
@@ -68,7 +70,7 @@ class UsuarioBase(BaseModel):
         }
 
 class UsuarioCreate(UsuarioBase):
-    password: str  # Este es el valor en texto plano que se transformará en password_hash
+    password: str
 
 class Usuario(UsuarioBase):
     id: int
@@ -109,10 +111,68 @@ class Inventario(InventarioBase):
     class Config:
         orm_mode = True
 
+# Esquema para Órdenes de Venta y Detalle
+class OrdenVentaDetalleBase(BaseModel):
+    producto_id: int
+    cantidad: PositiveInt
+    precio_unitario: float
+
+class OrdenVentaDetalleCreate(OrdenVentaDetalleBase):
+    pass
+
+class OrdenVentaDetalle(OrdenVentaDetalleBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class OrdenVentaBase(BaseModel):
+    cliente: str
+    total: float
+
+class OrdenVentaCreate(OrdenVentaBase):
+    detalles: List[OrdenVentaDetalleCreate]
+
+class OrdenVenta(OrdenVentaBase):
+    id: int
+    detalles: List[OrdenVentaDetalle]
+
+    class Config:
+        orm_mode = True
+
+# Esquema para Órdenes de Compra y Detalle
+class OrdenCompraDetalleBase(BaseModel):
+    producto_id: int
+    cantidad: PositiveInt
+    precio_unitario: float
+
+class OrdenCompraDetalleCreate(OrdenCompraDetalleBase):
+    pass
+
+class OrdenCompraDetalle(OrdenCompraDetalleBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class OrdenCompraBase(BaseModel):
+    proveedor_id: int
+    total: float
+
+class OrdenCompraCreate(OrdenCompraBase):
+    detalles: List[OrdenCompraDetalleCreate]
+
+class OrdenCompra(OrdenCompraBase):
+    id: int
+    detalles: List[OrdenCompraDetalle]
+
+    class Config:
+        orm_mode = True
+
 # Esquema para Login
 class LoginSchema(BaseModel):
     email: EmailStr
-    password: str  # Este es el password que el usuario ingresa para autenticarse
+    password: str
 
     class Config:
         schema_extra = {
@@ -121,3 +181,100 @@ class LoginSchema(BaseModel):
                 "password": "1234"
             }
         }
+
+# Esquema para los detalles de la cotización
+class CotizacionDetalleBase(BaseModel):
+    producto_id: PositiveInt
+    cantidad: PositiveInt
+    precio_unitario: condecimal(max_digits=10, decimal_places=2)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "producto_id": 1,
+                "cantidad": 10,
+                "precio_unitario": 50.00
+            }
+        }
+
+class CotizacionDetalleCreate(CotizacionDetalleBase):
+    pass
+
+class CotizacionDetalle(CotizacionDetalleBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+# Esquema para la cotización completa
+class CotizacionBase(BaseModel):
+    cliente: constr(max_length=255)
+    total: condecimal(max_digits=10, decimal_places=2)
+    fecha: Optional[datetime] = None
+    detalles: List[CotizacionDetalleCreate]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "cliente": "Juan Pérez",
+                "total": 500.00,
+                "fecha": "2025-01-13T15:30:00",
+                "detalles": [
+                    {
+                        "producto_id": 1,
+                        "cantidad": 10,
+                        "precio_unitario": 50.00
+                    },
+                    {
+                        "producto_id": 2,
+                        "cantidad": 5,
+                        "precio_unitario": 60.00
+                    }
+                ]
+            }
+        }
+
+class CotizacionCreate(BaseModel):
+    cliente: str
+    total: condecimal(max_digits=10, decimal_places=2)
+    detalles: list[CotizacionDetalleCreate]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "cliente": "Juan Pérez",
+                "total": 1050.50,
+                "detalles": [
+                    {"producto_id": 1, "cantidad": 5, "precio_unitario": 210.10},
+                    {"producto_id": 2, "cantidad": 2, "precio_unitario": 315.15}
+                ]
+            }
+        }
+
+class Cotizacion(CotizacionBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class CotizacionDetalleResponse(BaseModel):
+    producto_id: int
+    cantidad: int
+    precio_unitario: condecimal(max_digits=10, decimal_places=2)
+    total: condecimal(max_digits=10, decimal_places=2)
+
+    class Config:
+        orm_mode = True
+
+# Esquema para la respuesta de cotización
+class CotizacionResponse(BaseModel):
+    id: int
+    cliente: str
+    fecha: datetime
+    total: condecimal(max_digits=10, decimal_places=2)
+    usuario_id: int
+    detalles: List[CotizacionDetalleResponse]
+
+    class Config:
+        orm_mode = True

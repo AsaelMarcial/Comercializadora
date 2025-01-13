@@ -1,0 +1,134 @@
+/* src/css/confirmacionCotizacion.css */
+
+.contenedor-confirmacion {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+}
+
+.tabla-productos {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.tabla-productos th, .tabla-productos td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.tabla-productos th {
+    background-color: #4CAF50;
+    color: white;
+    text-align: left;
+}
+
+.boton-acciones {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.boton-acciones button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.boton-acciones .btn-confirmar {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.boton-acciones .btn-descargar {
+    background-color: #007BFF;
+    color: white;
+}
+.contenedor-confirmacion {
+    margin: 20px;
+}
+
+.tabla-confirmacion {
+    margin-bottom: 20px;
+}
+
+.tabla-confirmacion table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-confirmacion th,
+.tabla-confirmacion td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+.resumen-totales {
+    margin: 20px 0;
+    font-size: 1.2rem;
+}
+
+.botones-acciones {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.botones-derecha {
+    display: flex;
+    gap: 10px;
+}
+.botones-acciones {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.botones-derecha {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Botón Volver */
+.btn.btn-secondary {
+    background-color: #6c757d; /* Gris oscuro */
+    color: white;
+}
+
+.btn.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Botón Guardar Cotización */
+.btn.btn-primary {
+    background-color: #007bff; /* Azul brillante */
+    color: white;
+}
+
+.btn.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Botón Descargar PDF */
+.btn.btn-secondary.pdf {
+    background-color: #17a2b8; /* Azul claro */
+    color: white;
+}
+
+.btn.btn-secondary.pdf:hover {
+    background-color: #117a8b;
+}

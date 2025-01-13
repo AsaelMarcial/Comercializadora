@@ -45,7 +45,7 @@ const GananciasPorProducto = () => {
 
     const continuarConCotizacion = () => {
         console.log('Productos finales:', productosConGanancia);
-        navigate('/app/ventas/cotizacion', { state: { productos: productosConGanancia } });
+        navigate('/app/ventas/confirmacion', { state: { productos: productosConGanancia, granTotal } });
     };
 
     // Manejo del caso cuando no hay productos en el carrito

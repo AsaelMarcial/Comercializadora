@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
-# Cambia las credenciales según tu configuración local
+# URL de la base de datos, ajusta según tu configuración
 DATABASE_URL = "mysql+mysqlconnector://root:Hvzrrs04@host.docker.internal:3306/comercializadora"
 
 # Crear el motor de la base de datos con configuración avanzada
@@ -24,12 +24,13 @@ Base = declarative_base()
 def get_db():
     """
     Generador para obtener una sesión de la base de datos.
+    Maneja el ciclo de vida de la sesión y errores.
     """
     db = SessionLocal()
     try:
         yield db
     except Exception as e:
         db.rollback()  # Deshacer los cambios si ocurre un error
-        raise HTTPException(status_code=500, detail=f"Error en la sesion: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error en la sesión: {str(e)}")
     finally:
         db.close()  # Siempre cerrar la sesión

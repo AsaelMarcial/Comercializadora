@@ -4,7 +4,6 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from .database import Base
 
-# Modelo de Usuarios
 class Usuario(Base):
     __tablename__ = "usuarios"
 
@@ -12,7 +11,7 @@ class Usuario(Base):
     nombre = Column(String(255), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     rol = Column(String(50), nullable=False)  # Ej: 'Admin', 'Vendedor', 'Almacén'
-    password_hash = Column(String)
+    password_hash = Column(String(255))  # Ahora con longitud definida
     productos = relationship("Producto", back_populates="usuario")
 
 # Modelo de Proveedores
@@ -73,7 +72,7 @@ class MovimientoInventario(Base):
     producto_id = Column(Integer, ForeignKey("productos.id", ondelete="CASCADE"))
     tipo_movimiento = Column(String(50), nullable=False)  # 'entrada', 'salida', 'ajuste'
     cantidad = Column(Integer, nullable=False)
-    fecha = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    fecha = Column(TIMESTAMP, server_default=func.now())
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
     comentario = Column(Text)
 
@@ -86,14 +85,15 @@ class OrdenVenta(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     cliente = Column(String(255), nullable=False)
-    fecha = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    fecha = Column(TIMESTAMP, server_default=func.now())
     total = Column(DECIMAL(10, 2))
+    estado = Column(String(50), default="pendiente")  # Estado de la orden
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
 
     usuario = relationship("Usuario")
-    detalles = relationship("OrdenVentaDetalle", back_populates="orden")
+    detalles = relationship("OrdenVentaDetalle", back_populates="orden", lazy="joined")
 
-# Detalle de Órdenes de Venta
+# Modelo de Detalle de Órdenes de Venta
 class OrdenVentaDetalle(Base):
     __tablename__ = "ordenes_venta_detalle"
 
@@ -112,15 +112,17 @@ class OrdenCompra(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     proveedor_id = Column(Integer, ForeignKey("proveedores.id"))
-    fecha = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    fecha = Column(TIMESTAMP, server_default=func.now())
     total = Column(DECIMAL(10, 2))
+    estado = Column(String(50), default="pendiente")  # Estado de la orden
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
+    orden_venta_id = Column(Integer, ForeignKey("ordenes_venta.id"))  # Relación con orden de venta
 
     proveedor = relationship("Proveedor")
     usuario = relationship("Usuario")
-    detalles = relationship("OrdenCompraDetalle", back_populates="orden")
+    detalles = relationship("OrdenCompraDetalle", back_populates="orden", lazy="joined")
 
-# Detalle de Órdenes de Compra
+# Modelo de Detalle de Órdenes de Compra
 class OrdenCompraDetalle(Base):
     __tablename__ = "ordenes_compra_detalle"
 
@@ -131,4 +133,31 @@ class OrdenCompraDetalle(Base):
     precio_unitario = Column(DECIMAL(10, 2))
 
     orden = relationship("OrdenCompra", back_populates="detalles")
+    producto = relationship("Producto")
+
+# Modelo de Cotización
+class Cotizacion(Base):
+    __tablename__ = "cotizaciones"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cliente = Column(String(255), nullable=False)
+    fecha = Column(TIMESTAMP, default=func.now())
+    total = Column(DECIMAL(10, 2), nullable=False)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+
+    usuario = relationship("Usuario")
+    detalles = relationship("CotizacionDetalle", back_populates="cotizacion")
+
+# Modelo de Detalle de Cotización
+class CotizacionDetalle(Base):
+    __tablename__ = "cotizaciones_detalle"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cotizacion_id = Column(Integer, ForeignKey("cotizaciones.id", ondelete="CASCADE"), nullable=False)
+    producto_id = Column(Integer, ForeignKey("productos.id"), nullable=False)
+    cantidad = Column(Integer, nullable=False)
+    precio_unitario = Column(DECIMAL(10, 2), nullable=False)
+    total = Column(DECIMAL(10, 2), nullable=False)
+
+    cotizacion = relationship("Cotizacion", back_populates="detalles")
     producto = relationship("Producto")

@@ -78,24 +78,15 @@ def verify_token(token: str):
         raise credentials_exception
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    """
-    Obtiene al usuario autenticado desde el token y consulta dinámicamente su rol en la base de datos.
-    """
-    # Validar y decodificar el token JWT
-    payload = verify_token(token)
-    user_email = payload.get("sub")
-
-    if user_email is None:
-        raise HTTPException(status_code=401, detail="Credenciales inválidas.")
-
-    # Consultar al usuario por su email en la base de datos
-    user = db.query(UsuarioModel).filter(UsuarioModel.email == user_email).first()
-
-    if user is None:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado.")
-
-    return user
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
+        return {"id": payload.get("id"), "email": payload.get("email"), "rol": payload.get("rol")}
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
 
 
 def require_role(roles: List[str]):

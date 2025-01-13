@@ -81,7 +81,7 @@ class CRUDProducto:
 
         try:
             # Eliminar imagen si existe
-            image_path = f"./uploads/producto_{producto_id}.png"
+            image_path = f"./uploads/producto_{producto_id}.jpeg"
             if os.path.exists(image_path):
                 os.remove(image_path)
 
