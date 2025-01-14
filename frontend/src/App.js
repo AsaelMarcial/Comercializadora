@@ -14,6 +14,7 @@ import Help from './pages/Help';
 import Login from './pages/Login';
 import PrivateRoute from './components/PrivateRoute';
 import ConfirmacionCotizacion from "./pages/ConfirmacionCotizacion";
+import Proveedores from './pages/Proveedores';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="ventas" element={<Ventas />} />
             <Route path="ventas/ganancias" element={<GananciasPorProducto />} />
             <Route path="ventas/confirmacion" element={<ConfirmacionCotizacion />} />
+            <Route path="proveedores" element={<Proveedores />} />
             <Route path="users" element={<Users />} />
             <Route path="help" element={<Help />} />
           </Route>

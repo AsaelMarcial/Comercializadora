@@ -74,7 +74,7 @@ const GananciasPorProducto = () => {
                     <tbody>
                         {productosConGanancia.map((producto) => {
                             const precioFinal =
-                                producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100);
+                                producto.producto.precio_m2_sin_iva * (1 + producto.ganancia / 100);
 
                             return (
                                 <tr key={producto.producto.id}>
@@ -87,7 +87,7 @@ const GananciasPorProducto = () => {
                                     </td>
                                     <td>{producto.producto.nombre}</td>
                                     <td>{producto.cantidad}</td>
-                                    <td>${producto.producto.precio_pieza_con_iva.toFixed(2)}</td>
+                                    <td>${producto.producto.precio_m2_sin_iva.toFixed(2)}</td>
                                     <td>
                                         <input
                                             type="number"

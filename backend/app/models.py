@@ -30,28 +30,31 @@ class Producto(Base):
     __tablename__ = "productos"
 
     id = Column(Integer, primary_key=True, index=True)
-    codigo = Column(String(50), unique=True, nullable=False)
-    nombre = Column(String(255), nullable=False)
-    formato = Column(String(50))
-    unidad_venta = Column(String(20))
-    piezas_caja = Column(Integer)
-    peso_pieza_kg = Column(DECIMAL(10, 2))
-    peso_caja_kg = Column(DECIMAL(10, 2))
-    m2_caja = Column(DECIMAL(10, 2))
-    precio_caja_con_iva = Column(DECIMAL(10, 2))
-    precio_caja_sin_iva = Column(DECIMAL(10, 2))
-    precio_pieza_con_iva = Column(DECIMAL(10, 2))
-    precio_pieza_sin_iva = Column(DECIMAL(10, 2))
-    precio_m2_con_iva = Column(DECIMAL(10, 2))
-    precio_m2_sin_iva = Column(DECIMAL(10, 2))
+    codigo = Column(String(50), unique=True, nullable=True)  # Permitir NULL si es necesario
+    nombre = Column(String(255), nullable=False)  # Campo obligatorio
+    formato = Column(String(50), nullable=True)  # Campo opcional
+    unidad_venta = Column(String(20), nullable=True)
+    piezas_caja = Column(Integer, nullable=True)
+    peso_pieza_kg = Column(DECIMAL(10, 2), nullable=True)
+    peso_caja_kg = Column(DECIMAL(10, 2), nullable=True)
+    m2_caja = Column(DECIMAL(10, 2), nullable=True)
+    precio_caja_con_iva = Column(DECIMAL(10, 2), nullable=True)
+    precio_caja_sin_iva = Column(DECIMAL(10, 2), nullable=True)
+    precio_pieza_con_iva = Column(DECIMAL(10, 2), nullable=True)
+    precio_pieza_sin_iva = Column(DECIMAL(10, 2), nullable=True)
+    precio_m2_con_iva = Column(DECIMAL(10, 2), nullable=True)
+    precio_m2_sin_iva = Column(DECIMAL(10, 2), nullable=True)
     es_externo = Column(Boolean, default=False)
-    ultimo_usuario_id = Column(Integer, ForeignKey("usuarios.id"))
+    ultimo_usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
+    proveedor_id = Column(Integer, ForeignKey("proveedores.id", ondelete="SET NULL"), nullable=True)  # Relación con Proveedor
     fecha_modificacion = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
-    color = Column(String(50))
-    material = Column(String(50))
+    color = Column(String(50), nullable=True)
+    material = Column(String(50), nullable=True)
 
+    # Relaciones
     usuario = relationship("Usuario", back_populates="productos")
     inventario = relationship("Inventario", uselist=False, back_populates="producto")
+    proveedor = relationship("Proveedor")  # Relación con el modelo Proveedor
 
 # Modelo de Inventario
 class Inventario(Base):

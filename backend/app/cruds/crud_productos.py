@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import HTTPException, status
-from app.models import Producto
+from app.models import Producto, Proveedor
 from app.schemas import ProductoCreate
 import os
 
@@ -11,21 +11,26 @@ class CRUDProducto:
 
     def crear_producto(self, producto_data: ProductoCreate) -> Producto:
         try:
+            # Validar que el proveedor exista si se proporciona proveedor_id
+            if producto_data.proveedor_id:
+                proveedor = self.db.query(Proveedor).filter(Proveedor.id == producto_data.proveedor_id).first()
+                if not proveedor:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="El proveedor especificado no existe."
+                    )
+
             nuevo_producto = Producto(**producto_data.dict())
             self.db.add(nuevo_producto)
             self.db.commit()  # Confirma la transacción
             self.db.refresh(nuevo_producto)  # Actualiza el objeto con el ID generado
             print(f"Producto persistido: {nuevo_producto}")
             return nuevo_producto
-        except Exception as e:
-            print(f"Error en crear_producto: {str(e)}")
-            self.db.rollback()
-            raise
         except IntegrityError:
             self.db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="El producto ya existe o hay un error de integridad"
+                detail="El producto ya existe o hay un error de integridad."
             )
         except SQLAlchemyError as e:
             self.db.rollback()
@@ -33,28 +38,43 @@ class CRUDProducto:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error al crear el producto: {str(e)}"
             )
+        except Exception as e:
+            self.db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error inesperado al crear el producto: {str(e)}"
+            )
 
-    def obtener_producto(self, producto_id: int):
+    def obtener_producto(self, producto_id: int) -> Producto:
         db_producto = self.db.query(Producto).filter(Producto.id == producto_id).first()
-        if db_producto is None:
+        if not db_producto:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Producto no encontrado"
+                detail="Producto no encontrado."
             )
         return db_producto
 
     def obtener_productos(self):
         return self.db.query(Producto).all()
 
-    def actualizar_producto(self, producto_id: int, producto: ProductoCreate, usuario_id: int):
+    def actualizar_producto(self, producto_id: int, producto_data: ProductoCreate, usuario_id: int) -> Producto:
         db_producto = self.db.query(Producto).filter(Producto.id == producto_id).first()
-        if db_producto is None:
+        if not db_producto:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Producto no encontrado"
+                detail="Producto no encontrado."
             )
 
-        for key, value in producto.dict().items():
+        # Validar que el proveedor exista si se proporciona proveedor_id
+        if producto_data.proveedor_id:
+            proveedor = self.db.query(Proveedor).filter(Proveedor.id == producto_data.proveedor_id).first()
+            if not proveedor:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="El proveedor especificado no existe."
+                )
+
+        for key, value in producto_data.dict().items():
             setattr(db_producto, key, value)
 
         # Registrar el ID del usuario que modificó el producto
@@ -73,10 +93,10 @@ class CRUDProducto:
 
     def eliminar_producto(self, producto_id: int):
         db_producto = self.db.query(Producto).filter(Producto.id == producto_id).first()
-        if db_producto is None:
+        if not db_producto:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Producto no encontrado"
+                detail="Producto no encontrado."
             )
 
         try:
@@ -96,12 +116,21 @@ class CRUDProducto:
                 detail=f"Error al eliminar el producto: {str(e)}"
             )
 
-    def actualizar_imagen_producto(self, producto_id: int, imagen_url: str):
-        # Buscar el producto en la base de datos
+    def actualizar_imagen_producto(self, producto_id: int, imagen_url: str) -> Producto:
         producto = self.db.query(Producto).filter(Producto.id == producto_id).first()
-        if producto:
+        if not producto:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Producto no encontrado."
+            )
+        try:
             producto.imagen_url = imagen_url  # Actualizar el campo imagen_url
             self.db.commit()  # Guardar los cambios
             self.db.refresh(producto)  # Refrescar la instancia activa
-            return producto  # Retornar el producto actualizado
-        raise HTTPException(status_code=404, detail="Producto no encontrado")  # Si no se encuentra
+            return producto
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al actualizar la imagen del producto: {str(e)}"
+            )

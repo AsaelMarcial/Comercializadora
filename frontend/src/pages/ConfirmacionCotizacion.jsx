@@ -1,20 +1,20 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { createCotizacion } from '../data-access/cotizacionesDataAccess';
+import { createCotizacion, downloadCotizacionPDF } from '../data-access/cotizacionesDataAccess';
 import NavigationTitle from '../components/NavigationTitle';
 import '../css/confirmacionCotizacion.css';
 
 const ConfirmacionCotizacion = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { productos, granTotal } = location.state || {};
+    const { productos, granTotal, cotizacionId } = location.state || {};
 
-    // Mutación para guardar la cotización
     const mutation = useMutation(createCotizacion, {
-        onSuccess: () => {
+        onSuccess: (data) => {
             alert('Cotización guardada con éxito');
-            navigate('/app/ventas/cotizaciones'); // Redirige al listado de cotizaciones
+            // Aquí puedes actualizar el estado local si es necesario
+            console.log('ID de la cotización creada:', data.id);
         },
         onError: (error) => {
             console.error('Error al guardar la cotización:', error);
@@ -22,21 +22,30 @@ const ConfirmacionCotizacion = () => {
         },
     });
 
-    // Manejar el guardado de la cotización
     const handleGuardarCotizacion = () => {
         const cotizacion = {
-            cliente: 'Nombre del Cliente', // Reemplazar con el cliente real si está disponible
+            cliente: 'Nombre del Cliente',
             detalles: productos.map((producto) => ({
                 producto_id: producto.producto.id,
                 cantidad: producto.cantidad,
-                precio_unitario: parseFloat(
-                    (producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100)).toFixed(2)
-                ),
+                precio_unitario: producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100),
             })),
-            total: parseFloat(granTotal.toFixed(2)), // Redondear el total a dos decimales
+            total: granTotal,
         };
 
         mutation.mutate(cotizacion);
+    };
+
+    const handleDescargarPDF = async () => {
+        try {
+            if (!cotizacionId) {
+                alert('Debe guardar la cotización antes de descargar el PDF.');
+                return;
+            }
+            await downloadCotizacionPDF(cotizacionId);
+        } catch (error) {
+            alert('Hubo un error al descargar el PDF.');
+        }
     };
 
     return (
@@ -55,17 +64,16 @@ const ConfirmacionCotizacion = () => {
                     </thead>
                     <tbody>
                         {productos.map((producto) => {
-                            const precioUnitario = parseFloat(
-                                (producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100)).toFixed(2)
-                            );
-                            const totalProducto = parseFloat((precioUnitario * producto.cantidad).toFixed(2));
+                            const precioUnitario =
+                                producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100);
+                            const totalProducto = precioUnitario * producto.cantidad;
 
                             return (
                                 <tr key={producto.producto.id}>
                                     <td>{producto.producto.nombre}</td>
                                     <td>{producto.cantidad}</td>
-                                    <td>${precioUnitario}</td>
-                                    <td>${totalProducto}</td>
+                                    <td>${precioUnitario.toFixed(2)}</td>
+                                    <td>${totalProducto.toFixed(2)}</td>
                                 </tr>
                             );
                         })}
@@ -83,7 +91,7 @@ const ConfirmacionCotizacion = () => {
                 <button className="btn btn-primary" onClick={handleGuardarCotizacion}>
                     Guardar Cotización
                 </button>
-                <button className="btn btn-success" disabled>
+                <button className="btn btn-success" onClick={handleDescargarPDF}>
                     Descargar PDF
                 </button>
             </div>

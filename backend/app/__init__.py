@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import productos, usuarios, inventario
+from .routers import productos, usuarios, inventario, proveedores
 from app.database import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -28,6 +28,8 @@ Base.metadata.create_all(bind=engine)
 app.include_router(productos.router)
 app.include_router(usuarios.router)
 app.include_router(inventario.router)
+app.include_router(proveedores.router)
+
 
 # Ruta principal de prueba
 @app.get("/")

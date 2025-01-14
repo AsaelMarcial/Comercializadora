@@ -34,8 +34,17 @@ const Products = () => {
     }, [products]);
 
     async function onDeleteButtonClicked(id) {
-        await deleteMutation.mutateAsync(id);
-        queryClient.resetQueries();
+        const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este producto?');
+        if (!confirmDelete) return; // Si el usuario cancela, no se realiza ninguna acción
+
+        try {
+            await deleteMutation.mutateAsync(id);
+            queryClient.resetQueries(); // Actualiza la lista de productos
+            alert('Producto eliminado con éxito.'); // Mensaje de éxito
+        } catch (error) {
+            console.error('Error al eliminar el producto:', error);
+            alert('Hubo un error al eliminar el producto.');
+        }
     }
 
     const openImageModal = (productId) => {
@@ -92,7 +101,7 @@ const Products = () => {
                                         <td className="leading-row">{product.codigo}</td>
                                         <td>{product.nombre}</td>
                                         <td>{product.formato}</td>
-                                        <td>${product.precio_pieza_con_iva}</td>
+                                        <td>${product.precio_m2_sin_iva}</td>
                                         <td>{product.stock}</td>
                                         <td>{product.stock > 0 ? 'Disponible' : 'Agotado'}</td>
                                         <td>
@@ -126,8 +135,8 @@ const Products = () => {
                                                 type="button"
                                                 className="btn-opciones p-1"
                                                 onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    onDeleteButtonClicked(product.id);
+                                                    e.stopPropagation(); // Evita que el evento afecte a otras interacciones
+                                                    onDeleteButtonClicked(product.id); // Llama a la función de confirmación
                                                 }}
                                             >
                                                 <i className="fa-solid fa-trash"></i>

@@ -1,6 +1,6 @@
-// src/pages/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../css/login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -36,31 +36,38 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleLogin}>
-        {error && <p className="error">{error}</p>}
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Iniciar Sesión</button>
-      </form>
+      <div className="login-box">
+        <img
+          src="/Logo COMERCIALIZADORA Orza FONDO AZUL.png"
+          alt="Logo"
+          className="logo"
+        />
+        <h2>Iniciar Sesión</h2>
+        <form onSubmit={handleLogin}>
+          {error && <p className="error">{error}</p>}
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Contraseña:</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit">Iniciar Sesión</button>
+        </form>
+      </div>
     </div>
   );
 };

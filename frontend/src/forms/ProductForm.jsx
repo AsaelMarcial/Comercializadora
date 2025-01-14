@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import FormField from '../components/FormField';
 import {
     createProductMutation,
@@ -7,6 +7,7 @@ import {
     CREATE_MUTATION_OPTIONS,
     UPDATE_MUTATION_OPTIONS
 } from '../utils/mutations';
+import { readAllProveedores } from '../data-access/proveedoresDataAccess';
 
 const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModal }) => {
     const [product, setProduct] = useState(productUpdate ?? {
@@ -21,13 +22,15 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
         precio_caja: '',
         precio_pieza: '',
         precio_m2: '',
-        incluye_iva: true, // Indica si los precios incluyen IVA
+        incluye_iva: true,
         color: '',
         material: '',
-        es_externo: false
+        es_externo: false,
+        proveedor_id: null, // Campo nuevo para el proveedor
     });
 
-    const IVA_RATE = 0.16; // Tasa de IVA predeterminada
+    const { data: proveedores, isLoading: loadingProveedores } = useQuery('proveedores', readAllProveedores);
+    const IVA_RATE = 0.16;
     const queryClient = useQueryClient();
 
     const createMutation = useMutation(createProductMutation, {
@@ -35,7 +38,7 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
         onSuccess: () => {
             queryClient.invalidateQueries('products');
             cancelAction();
-        }
+        },
     });
 
     const updateMutation = useMutation(updateProductMutation, {
@@ -43,14 +46,14 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
         onSuccess: () => {
             queryClient.invalidateQueries('products');
             cancelAction();
-        }
+        },
     });
 
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: type === 'checkbox' ? checked : value,
         }));
     };
 
@@ -65,12 +68,12 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
             if (incluye_iva) {
                 return {
                     withIva: parsedPrice.toFixed(2),
-                    withoutIva: (parsedPrice / (1 + IVA_RATE)).toFixed(2)
+                    withoutIva: (parsedPrice / (1 + IVA_RATE)).toFixed(2),
                 };
             } else {
                 return {
                     withIva: (parsedPrice * (1 + IVA_RATE)).toFixed(2),
-                    withoutIva: parsedPrice.toFixed(2)
+                    withoutIva: parsedPrice.toFixed(2),
                 };
             }
         };
@@ -78,7 +81,7 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
         return {
             precio_caja: calculate(precio_caja),
             precio_pieza: calculate(precio_pieza),
-            precio_m2: calculate(precio_m2)
+            precio_m2: calculate(precio_m2),
         };
     };
 
@@ -93,20 +96,18 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
                 precio_pieza_sin_iva: prices.precio_pieza.withoutIva,
                 precio_m2_con_iva: prices.precio_m2.withIva,
                 precio_m2_sin_iva: prices.precio_m2.withoutIva,
-                ultimo_usuario_id: currentUserId
+                ultimo_usuario_id: currentUserId,
             };
 
             let savedProduct;
             if (product.id) {
-                // Actualización
                 savedProduct = await updateMutation.mutateAsync(payload);
             } else {
-                // Creación
                 savedProduct = await createMutation.mutateAsync(payload);
             }
 
             if (savedProduct && savedProduct.id) {
-                openImageModal(savedProduct.id); // Asegúrate de que se llama correctamente
+                openImageModal(savedProduct.id);
             }
         } catch (error) {
             console.error('Error al guardar el producto:', error);
@@ -238,21 +239,24 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
                         onChange={handleInputChange}
                     />
                     <div className="form-group">
-                        <label htmlFor="es_externo">¿Es Externo?</label>
+                        <label htmlFor="proveedor_id">Proveedor</label>
                         <select
-                            id="es_externo"
-                            name="es_externo"
+                            id="proveedor_id"
+                            name="proveedor_id"
                             className="form-control"
-                            value={product.es_externo ? 'true' : 'false'}
-                            onChange={(e) =>
-                                setProduct((prevProduct) => ({
-                                    ...prevProduct,
-                                    es_externo: e.target.value === 'true'
-                                }))
-                            }
+                            value={product.proveedor_id || ''}
+                            onChange={handleInputChange}
                         >
-                            <option value="false">No</option>
-                            <option value="true">Sí</option>
+                            <option value="">Seleccione un proveedor</option>
+                            {loadingProveedores ? (
+                                <option>Cargando proveedores...</option>
+                            ) : (
+                                proveedores.map((proveedor) => (
+                                    <option key={proveedor.id} value={proveedor.id}>
+                                        {proveedor.nombre}
+                                    </option>
+                                ))
+                            )}
                         </select>
                     </div>
                 </div>

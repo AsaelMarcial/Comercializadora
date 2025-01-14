@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi.openapi.utils import get_openapi
 from sqlalchemy.exc import SQLAlchemyError
 from app.database import engine, Base
-from app.routers import productos, usuarios, inventario, cotizaciones
+from app.routers import productos, usuarios, inventario, cotizaciones, proveedores
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.models import Usuario as UsuarioModel
@@ -69,6 +69,7 @@ app.include_router(productos.router, tags=["Productos"])
 app.include_router(usuarios.router, tags=["Usuarios"])
 app.include_router(inventario.router, tags=["Inventario"])
 app.include_router(cotizaciones.router, tags=["Cotizaciones"])
+app.include_router(proveedores.router, tags=["Proveedores"])
 
 # Ruta principal de prueba
 @app.get("/", summary="Ruta de prueba")

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Cotización</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #000000;
+            background-color: #F9F9F9;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #0E3B47;
+            padding: 20px 20px 0 20px;
+            position: relative;
+            color: #FFFFFF;
+        }
+
+        .logo {
+            width: 200px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .divider {
+            width: 100%;
+            height: 2px;
+            background-color: #FFC107;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
+
+        .general-info {
+            margin-left: 10px;
+        }
+
+        .general-info p {
+            margin: 5px 0;
+        }
+
+        .cotizacion-info {
+            margin-right: 20px;
+            text-align: right;
+        }
+
+        .cotizacion-info p {
+            margin: 5px 0;
+        }
+
+        .product-section {
+            padding: 20px;
+            background-color: #FFFFFF;
+            margin: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: #FFFFFF;
+        }
+
+        .product-table th {
+            background-color: #0E3B47;
+            color: #FFFFFF;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #CCCCCC;
+        }
+
+        .product-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #CCCCCC;
+        }
+
+        .product-table img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #E0E0E0;
+        }
+
+        .section-divider {
+            width: 100%;
+            height: 2px;
+            background-color: #0E3B47;
+            margin-top: 20px;
+        }
+
+        .footer {
+            margin: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+                .totales h4 {
+            margin: 5px 0;
+        }
+
+        .totales h4.total {
+            font-size: 14px; /* Tamaño más grande */
+            font-weight: bold;
+            color: #0E3B47;
+            text-decoration: underline; /* Subrayado */
+            margin-top: 10px;
+        }
+
+        .left-section {
+            width: 65%;
+        }
+
+        .observaciones,
+        .notas {
+            margin-bottom: 10px;
+        }
+
+        .observaciones h4,
+        .notas h4 {
+            background-color: #0E3B47;
+            color: #FFFFFF;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+
+        .observaciones p,
+        .notas p {
+            margin: 5px 0;
+            padding-left: 10px;
+            font-size: 9px; /* Reducir tamaño de texto */
+        }
+
+        .right-section {
+            width: 30%;
+            text-align: right;
+        }
+
+        .totales h4 {
+            margin: 5px 0;
+        }
+
+        .contacto {
+            margin-top: 20px;
+        }
+
+        .contacto h4 {
+            background-color: #0E3B47;
+            color: #FFFFFF;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .contacto p {
+            margin: 5px 0;
+            font-size: 10px; /* Reducir tamaño de texto */
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <img src="../../../frontend/public/Logo COMERCIALIZADORA Orza LETRAS BLANCAS SIN FONDO.png" alt="Logo" class="logo">
+        <div class="divider"></div>
+        <div class="title">COTIZACIÓN</div>
+        <div class="info">
+            <div class="general-info">
+                <p><strong>ATENCIÓN:</strong> Nombre del Cliente</p>
+                <p><strong>PROYECTO:</strong> Nombre del Proyecto</p>
+                <p><strong>DIRECCIÓN:</strong> Dirección del Proyecto</p>
+            </div>
+
+            <div class="cotizacion-info">
+                <p><strong>COTIZACIÓN:</strong> 25.10.*0001</p>
+                <p><strong>FECHA:</strong> 25/10/2024</p>
+            </div>
+        </div>
+    </div>
+
+ <div class="product-section">
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>PRODUCTO</th>
+                    <th>CONCEPTO</th>
+                    <th>UNIDAD</th>
+                    <th>CANTIDAD</th>
+                    <th>PRECIO UNITARIO</th>
+                    <th>IMPORTE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td><img src="{{ producto.imagen_url }}" alt="Producto"></td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.unidad }}</td>
+                    <td>{{ producto.cantidad }}</td>
+                    <td>${{ producto.precio_unitario }}</td>
+                    <td>${{ producto.importe }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <div class="left-section">
+            <div class="observaciones">
+                <h4>OBSERVACIONES:</h4>
+                <p>1. LA UNIDAD DE MEDIDA ES EN M2, COLOCAMOS LO EQUIVALENTE EN CAJAS A LOS M2 SOLICITADOS</p>
+                <p>2. PRECIOS Y EXISTENCIAS SUJETOS A CAMBIO SIN PREVIO AVISO</p>
+                <p>3. TIEMPO DE ENTREGA 8 A 10 DÍAS HÁBILES DEPENDIENDO DE EXISTENCIAS Y DISPONIBILIDAD DE LA FLETERA</p>
+                <p>4. NO HAY CAMBIOS NI DEVOLUCIONES</p>
+                <p>5. MERCANCÍA FRÁGIL NO PUEDE ASEGURARSE CONTRA DAÑO PARCIAL ÚNICAMENTE CONTRA ROBO O EXTRAVÍO EN TRÁNSITO</p>
+                <p>6. EL 5% DE MERMA (MATERIAL DESPOSTILLADO) CORRE POR CUENTA DEL CLIENTE</p>
+            </div>
+
+            <div class="notas">
+                <h4>NOTAS:</h4>
+                <p>1. EL SERVICIO DE FLETE NO INCLUYE MANIOBRAS DE DESCARGA</p>
+                <p>2. CUALQUIER TIPO DE DAÑO DERIVADO DE MANIOBRA HECHA O SOLICITADA POR EL CLIENTE, ES RESPONSABILIDAD DEL MISMO</p>
+                <p>3. SI REQUIERE SEGURO DE MERCANCÍA ES NECESARIO PEDIR QUE LO AGREGUEN A LA COTIZACIÓN</p>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="totales">
+                <h4>SUB-TOTAL: $20,697.86</h4>
+                <h4>IVA: $3,311.66</h4>
+                <h4 class="total">TOTAL: $24,009.52</h4>
+            </div>
+            <div class="contacto">
+                <h4>CONTACTO:</h4>
+                <p>MARIANA ORNELAS GARCIA</p>
+                <p>Celular: 228 178 1995</p>
+                <p>Oficina: 228 201 9893</p>
+                <p>Email: comer.orza@gmail.com</p>
+                <p>Email: ventas.orza.comercializadora@gmail.com</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

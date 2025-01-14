@@ -117,3 +117,45 @@ def delete_cotizacion(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al eliminar la cotización: {str(e)}"
         )
+
+@router.get("/cotizaciones/{cotizacion_id}/pdf", tags=["Cotizaciones"])
+def descargar_pdf_cotizacion(cotizacion_id: int, db: Session = Depends(get_db)):
+    """
+    Genera y descarga un PDF para una cotización específica.
+    """
+    # Obtener la cotización desde la base de datos
+    crud_cotizacion = CRUDCotizacion(db)
+    cotizacion = crud_cotizacion.obtener_cotizacion(cotizacion_id)
+
+    if not cotizacion:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Cotización no encontrada"
+        )
+
+    # Formatear los datos para el template
+    cotizacion_data = {
+        "id": cotizacion.id,
+        "cliente": cotizacion.cliente,
+        "fecha": cotizacion.fecha.strftime("%d/%m/%Y"),
+        "total": f"${cotizacion.total:.2f}",
+        "detalles": [
+            {
+                "producto": detalle.producto.nombre,
+                "unidad": detalle.producto.unidad_venta,
+                "cantidad": detalle.cantidad,
+                "precio_unitario": f"${detalle.precio_unitario:.2f}",
+                "importe": f"${detalle.total:.2f}",
+            }
+            for detalle in cotizacion.detalles
+        ],
+    }
+
+    # Generar el PDF
+    pdf = generate_pdf(cotizacion_data)
+
+    # Devolver el PDF como respuesta
+    pdf_stream = io.BytesIO(pdf)
+    headers = {
+        "Content-Disposition": f"attachment; filename=Cotizacion_{cotizacion_id}.pdf"
+    }
+    return StreamingResponse(pdf_stream, media_type="application/pdf", headers=headers)

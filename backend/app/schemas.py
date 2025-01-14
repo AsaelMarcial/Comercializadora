@@ -21,6 +21,7 @@ class ProductoBase(BaseModel):
     color: Optional[str] = None
     material: Optional[str] = None
     es_externo: Optional[bool] = False
+    proveedor_id: Optional[int] = None  # Campo para el proveedor
 
     class Config:
         schema_extra = {
@@ -41,7 +42,8 @@ class ProductoBase(BaseModel):
                 "precio_m2_sin_iva": 462.96,
                 "color": "Blanco",
                 "material": "Cerámica",
-                "es_externo": False
+                "es_externo": False,
+                "proveedor_id": 1  # ID del proveedor asociado
             }
         }
 
@@ -275,6 +277,33 @@ class CotizacionResponse(BaseModel):
     total: condecimal(max_digits=10, decimal_places=2)
     usuario_id: int
     detalles: List[CotizacionDetalleResponse]
+
+    class Config:
+        orm_mode = True
+
+class ProveedorBase(BaseModel):
+    nombre: constr(max_length=255)
+    direccion: Optional[constr(max_length=255)] = None
+    telefono: Optional[constr(max_length=20)] = None
+    email: Optional[EmailStr] = None
+    contacto: Optional[constr(max_length=100)] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "nombre": "Proveedor ABC",
+                "direccion": "Calle 123, Ciudad, País",
+                "telefono": "1234567890",
+                "email": "proveedor@abc.com",
+                "contacto": "Juan Pérez"
+            }
+        }
+
+class ProveedorCreate(ProveedorBase):
+    pass
+
+class Proveedor(ProveedorBase):
+    id: int
 
     class Config:
         orm_mode = True

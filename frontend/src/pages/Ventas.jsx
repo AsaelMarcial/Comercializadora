@@ -97,7 +97,7 @@ const Ventas = () => {
                                 <div className="menu-item-content">
                                     <p className="menu-item-nombre">{product.nombre}</p>
                                     <p className="menu-item-precio">
-                                        ${product.precio_pieza_con_iva.toFixed(2)}
+                                        ${product.precio_caja_sin_iva.toFixed(2)}
                                     </p>
                                 </div>
                                 <div className="stepper-container">
