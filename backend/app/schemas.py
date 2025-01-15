@@ -4,7 +4,7 @@ from datetime import datetime
 
 # Esquema para Producto
 class ProductoBase(BaseModel):
-    codigo: constr(max_length=10)
+    codigo: constr(max_length=30)
     nombre: constr(max_length=100)
     formato: Optional[str] = None
     unidad_venta: Optional[str] = None

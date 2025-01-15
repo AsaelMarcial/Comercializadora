@@ -53,7 +53,7 @@ const Home = () => {
 						Bienvenido: <br />
 					</span>
 					<span className='texto-frases'>
-						Asael
+						Hola!
 					</span>
 				</div>
 			</div>
