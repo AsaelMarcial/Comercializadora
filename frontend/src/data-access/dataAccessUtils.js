@@ -1,4 +1,4 @@
-export const API_HOST = 'http://localhost:8000'
+export const API_HOST = 'http://http://147.93.47.106:8000'
 
 // dataAccessUtils.js
 export const processResponse = async (response) => {

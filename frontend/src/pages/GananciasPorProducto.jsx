@@ -114,7 +114,7 @@ const GananciasPorProducto = () => {
                                 <tr key={producto.producto?.id || `producto-${index}`}>
                                     <td>
                                         <img
-                                            src={`http://localhost:8000/uploads/producto_${producto.producto?.id}.jpeg`}
+                                            src={`http://147.93.47.106:8000/uploads/producto_${producto.producto?.id}.jpeg`}
                                             alt={producto.producto?.nombre || 'Sin nombre'}
                                             style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                             onError={(e) => {

@@ -34,7 +34,7 @@ const Ventas = () => {
                         data: 'id',
                         title: 'Imagen',
                         render: (data, type, row) =>
-                            `<img src="http://localhost:8000/uploads/producto_${data}.jpeg" alt="${row.nombre}" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.src='';" />`,
+                            `<img src="http://147.93.47.106:8000/uploads/producto_${data}.jpeg" alt="${row.nombre}" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.src='';" />`,
                     },
                     {
                         data: null,
