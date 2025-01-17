@@ -21,7 +21,8 @@ class ProductoBase(BaseModel):
     color: Optional[str] = None
     material: Optional[str] = None
     es_externo: Optional[bool] = False
-    proveedor_id: Optional[int] = None  # Campo para el proveedor
+    proveedor_id: Optional[int] = None
+    proveedor_nombre: Optional[str] = None  # Nombre del proveedor agregado
 
     class Config:
         schema_extra = {
@@ -43,7 +44,8 @@ class ProductoBase(BaseModel):
                 "color": "Blanco",
                 "material": "Cerámica",
                 "es_externo": False,
-                "proveedor_id": 1  # ID del proveedor asociado
+                "proveedor_id": 1,  # ID del proveedor asociado
+                "proveedor_nombre": "Proveedor ABC"  # Nombre del proveedor asociado
             }
         }
 

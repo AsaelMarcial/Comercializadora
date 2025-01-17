@@ -1,51 +1,48 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { createCotizacion, downloadCotizacionPDF } from '../data-access/cotizacionesDataAccess';
+import { createCotizacion } from '../data-access/cotizacionesDataAccess';
 import NavigationTitle from '../components/NavigationTitle';
+import { toast } from 'react-toastify';
 import '../css/confirmacionCotizacion.css';
 
 const ConfirmacionCotizacion = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { productos, granTotal, cotizacionId } = location.state || {};
+    const { productos, granTotal } = location.state || {};
 
+    // Manejo de la mutación para guardar la cotización
     const mutation = useMutation(createCotizacion, {
         onSuccess: (data) => {
-            alert('Cotización guardada con éxito');
-            // Aquí puedes actualizar el estado local si es necesario
-            console.log('ID de la cotización creada:', data.id);
+            toast.success('Cotización guardada con éxito');
+            navigate(`/home`); // Cambiar a la URL final cuando se defina
         },
         onError: (error) => {
             console.error('Error al guardar la cotización:', error);
-            alert('Hubo un error al guardar la cotización.');
+            toast.error('Hubo un error al guardar la cotización.');
         },
     });
 
+    // Validar que los datos necesarios estén presentes
+    if (!productos || !granTotal) {
+        return <p>Datos incompletos. Por favor, vuelve a intentarlo.</p>;
+    }
+
+    // Manejo del guardado de la cotización
     const handleGuardarCotizacion = () => {
         const cotizacion = {
-            cliente: 'Nombre del Cliente',
+            cliente: 'Nombre del Cliente', // Esto podría ser dinámico en el futuro
             detalles: productos.map((producto) => ({
                 producto_id: producto.producto.id,
                 cantidad: producto.cantidad,
-                precio_unitario: producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100),
+                precio_unitario: parseFloat(
+                    (producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100)).toFixed(2)
+                ),
             })),
-            total: granTotal,
+            total: parseFloat(granTotal.toFixed(2)), // Asegurarse de redondear el total
         };
 
         mutation.mutate(cotizacion);
-    };
-
-    const handleDescargarPDF = async () => {
-        try {
-            if (!cotizacionId) {
-                alert('Debe guardar la cotización antes de descargar el PDF.');
-                return;
-            }
-            await downloadCotizacionPDF(cotizacionId);
-        } catch (error) {
-            alert('Hubo un error al descargar el PDF.');
-        }
     };
 
     return (
@@ -90,9 +87,6 @@ const ConfirmacionCotizacion = () => {
                 </button>
                 <button className="btn btn-primary" onClick={handleGuardarCotizacion}>
                     Guardar Cotización
-                </button>
-                <button className="btn btn-success" onClick={handleDescargarPDF}>
-                    Descargar PDF
                 </button>
             </div>
         </div>

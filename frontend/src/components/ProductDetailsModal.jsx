@@ -29,6 +29,7 @@ const ProductDetailsModal = ({ product, onClose }) => {
                         <h6>Información General</h6>
                         <p><strong>Código:</strong> {product.codigo}</p>
                         <p><strong>Nombre:</strong> {product.nombre}</p>
+                        <p><strong>Proveedor:</strong> {product.proveedor_nombre || 'Sin proveedor'}</p>
                         <p><strong>Formato:</strong> {product.formato || 'No especificado'}</p>
                         <p><strong>Unidad de Venta:</strong> {product.unidad_venta || 'No especificado'}</p>
                         <p><strong>Piezas por Caja:</strong> {product.piezas_caja || 'No especificado'}</p>
@@ -37,9 +38,8 @@ const ProductDetailsModal = ({ product, onClose }) => {
                         <p><strong>M2 por Caja:</strong> {product.m2_caja || 'No especificado'}</p>
                         <p><strong>Color:</strong> {product.color || 'No especificado'}</p>
                         <p><strong>Material:</strong> {product.material || 'No especificado'}</p>
-                        <p><strong>¿Es Externo?:</strong> {product.es_externo ? 'Sí' : 'No'}</p>
 
-                        <h6>Precios</h6>
+                        <h5 style={{ textAlign: 'center', margin: '20px 0' }}>Precios</h5>
                         <p><strong>Precio por Caja (con IVA):</strong> ${product.precio_caja_con_iva || 'No especificado'}</p>
                         <p><strong>Precio por Caja (sin IVA):</strong> ${product.precio_caja_sin_iva || 'No especificado'}</p>
                         <p><strong>Precio por Pieza (con IVA):</strong> ${product.precio_pieza_con_iva || 'No especificado'}</p>

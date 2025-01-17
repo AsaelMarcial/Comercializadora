@@ -2,118 +2,96 @@ import { API_HOST, processResponse } from './dataAccessUtils';
 
 const API_SERVICE = 'cotizaciones';
 
-// Crear una nueva cotización
-export const createCotizacion = async (cotizacion) => {
-    const token = localStorage.getItem('token');
-    try {
-        const response = await fetch(`${API_HOST}/${API_SERVICE}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`, // Incluye el token aquí
-            },
-            body: JSON.stringify(cotizacion),
-        });
+// Función para obtener headers
+const getHeaders = (includeContentType = true) => {
+    const headers = {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+    if (includeContentType) {
+        headers['Content-Type'] = 'application/json';
+    }
+    return headers;
+};
 
+// Función genérica para manejar solicitudes HTTP
+const httpRequest = async (url, method, body = null, includeContentType = true) => {
+    try {
+        const options = {
+            method,
+            headers: getHeaders(includeContentType),
+        };
+
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, options);
         return await processResponse(response);
     } catch (error) {
-        console.error('Error al crear la cotización:', error);
-        throw new Error(`Error al crear la cotización: ${error.message}`);
+        console.error(`Error en la solicitud HTTP (${method} - ${url}):`, error);
+        throw new Error(`Error en la solicitud HTTP: ${error.message}`);
     }
+};
+
+// Crear una nueva cotización
+export const createCotizacion = async (cotizacion) => {
+    if (!cotizacion || !cotizacion.total || !cotizacion.detalles) {
+        throw new Error('La cotización debe tener un total y detalles válidos.');
+    }
+
+    return await httpRequest(`${API_HOST}/${API_SERVICE}`, 'POST', cotizacion);
 };
 
 // Actualizar una cotización existente
 export const updateCotizacion = async (cotizacion) => {
-    const token = localStorage.getItem('token');
-    const { id, ...cotizacionData } = cotizacion; // Extrae el ID y los datos de la cotización
+    const { id, ...cotizacionData } = cotizacion;
 
-    try {
-        const response = await fetch(`${API_HOST}/${API_SERVICE}/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`, // Incluye el token aquí
-            },
-            body: JSON.stringify(cotizacionData),
-        });
-
-        return await processResponse(response);
-    } catch (error) {
-        console.error('Error al actualizar la cotización:', error);
-        throw new Error(`Error al actualizar la cotización: ${error.message}`);
+    if (!id) {
+        throw new Error('El ID de la cotización es requerido para actualizar.');
     }
+
+    return await httpRequest(`${API_HOST}/${API_SERVICE}/${id}`, 'PUT', cotizacionData);
 };
 
 // Obtener una cotización por ID
 export const getCotizacionById = async (id) => {
-    const token = localStorage.getItem('token');
-    try {
-        const response = await fetch(`${API_HOST}/${API_SERVICE}/${id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`, // Incluye el token aquí
-            },
-        });
-
-        return await processResponse(response);
-    } catch (error) {
-        console.error('Error al obtener la cotización:', error);
-        throw new Error(`Error al obtener la cotización: ${error.message}`);
+    if (!id) {
+        throw new Error('El ID de la cotización no puede estar vacío.');
     }
+
+    return await httpRequest(`${API_HOST}/${API_SERVICE}/${id}`, 'GET');
 };
 
 // Obtener todas las cotizaciones
 export const getAllCotizaciones = async () => {
-    const token = localStorage.getItem('token');
-    try {
-        const response = await fetch(`${API_HOST}/${API_SERVICE}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`, // Incluye el token aquí
-            },
-        });
-
-        return await processResponse(response);
-    } catch (error) {
-        console.error('Error al obtener las cotizaciones:', error);
-        throw new Error(`Error al obtener las cotizaciones: ${error.message}`);
-    }
+    return await httpRequest(`${API_HOST}/${API_SERVICE}`, 'GET');
 };
 
 // Eliminar una cotización
 export const deleteCotizacion = async (id) => {
-    const token = localStorage.getItem('token');
-    try {
-        const response = await fetch(`${API_HOST}/${API_SERVICE}/${id}`, {
-            method: 'DELETE',
-            headers: {
-                Authorization: `Bearer ${token}`, // Incluye el token aquí
-            },
-        });
-
-        return await processResponse(response);
-    } catch (error) {
-        console.error('Error al eliminar la cotización:', error);
-        throw new Error(`Error al eliminar la cotización: ${error.message}`);
+    if (!id) {
+        throw new Error('El ID de la cotización no puede estar vacío.');
     }
+
+    return await httpRequest(`${API_HOST}/${API_SERVICE}/${id}`, 'DELETE', null, false);
 };
 
+// Descargar el PDF de una cotización
 export const downloadCotizacionPDF = async (cotizacionId) => {
-    const token = localStorage.getItem('token');
+    if (!cotizacionId) {
+        throw new Error('El ID de la cotización no puede estar vacío.');
+    }
+
     const url = `${API_HOST}/cotizaciones/${cotizacionId}/pdf`;
 
     try {
         const response = await fetch(url, {
             method: 'GET',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers: getHeaders(false),
         });
 
         if (!response.ok) {
-            throw new Error(`Error al descargar el PDF: ${response.statusText}`);
+            throw new Error(`Error al descargar el PDF: ${response.status} - ${response.statusText}`);
         }
 
         // Convertir la respuesta en blob
@@ -132,5 +110,26 @@ export const downloadCotizacionPDF = async (cotizacionId) => {
     } catch (error) {
         console.error('Error al descargar el PDF:', error);
         throw error;
+    }
+};
+
+
+// Cancelar una cotización
+export const cancelCotizacion = async (cotizacionId) => {
+    if (!cotizacionId) throw new Error('El ID de la cotización no puede estar vacío.');
+
+    try {
+        const response = await fetch(`${API_HOST}/${API_SERVICE}/${cotizacionId}/cancel`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        return await processResponse(response);
+    } catch (error) {
+        console.error('Error al cancelar la cotización:', error);
+        throw new Error(`Error al cancelar la cotización: ${error.message}`);
     }
 };

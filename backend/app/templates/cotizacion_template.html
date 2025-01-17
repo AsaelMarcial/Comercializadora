@@ -124,7 +124,7 @@
             align-items: flex-start;
         }
 
-                .totales h4 {
+        .totales h4 {
             margin: 5px 0;
         }
 
@@ -165,10 +165,6 @@
             text-align: right;
         }
 
-        .totales h4 {
-            margin: 5px 0;
-        }
-
         .contacto {
             margin-top: 20px;
         }
@@ -189,7 +185,7 @@
 <body>
     <!-- Header Section -->
     <div class="header">
-        <img src="../../../frontend/public/Logo COMERCIALIZADORA Orza LETRAS BLANCAS SIN FONDO.png" alt="Logo" class="logo">
+        <img src="http://147.93.47.106:3000/Logo%20COMERCIALIZADORA%20Orza%20LETRAS%20BLANCAS%20SIN%20FONDO.png" alt="Logo" class="logo">
         <div class="divider"></div>
         <div class="title">COTIZACIÓN</div>
         <div class="info">
@@ -200,13 +196,14 @@
             </div>
 
             <div class="cotizacion-info">
-                <p><strong>COTIZACIÓN:</strong> 25.10.*0001</p>
-                <p><strong>FECHA:</strong> 25/10/2024</p>
+                <p><strong>COTIZACIÓN:</strong> {{ cotizacion_id }}</p>
+                <p><strong>FECHA:</strong> {{ fecha }}</p>
             </div>
         </div>
     </div>
 
- <div class="product-section">
+    <!-- Product Section -->
+    <div class="product-section">
         <table class="product-table">
             <thead>
                 <tr>
@@ -256,9 +253,9 @@
 
         <div class="right-section">
             <div class="totales">
-                <h4>SUB-TOTAL: $20,697.86</h4>
-                <h4>IVA: $3,311.66</h4>
-                <h4 class="total">TOTAL: $24,009.52</h4>
+                <h4>SUB-TOTAL: ${{ (total / 1.16) | round(2) }}</h4>
+                <h4>IVA: ${{ (total - (total / 1.16)) | round(2) }}</h4>
+                <h4 class="total">TOTAL: ${{ total }}</h4>
             </div>
             <div class="contacto">
                 <h4>CONTACTO:</h4>

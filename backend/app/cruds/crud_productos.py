@@ -46,16 +46,33 @@ class CRUDProducto:
             )
 
     def obtener_producto(self, producto_id: int) -> Producto:
-        db_producto = self.db.query(Producto).filter(Producto.id == producto_id).first()
+        db_producto = (
+            self.db.query(Producto, Proveedor.nombre.label("proveedor_nombre"))
+            .join(Proveedor, Producto.proveedor_id == Proveedor.id, isouter=True)
+            .filter(Producto.id == producto_id)
+            .first()
+        )
         if not db_producto:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Producto no encontrado."
             )
-        return db_producto
+        producto, proveedor_nombre = db_producto
+        producto.proveedor_nombre = proveedor_nombre  # Añadir el nombre del proveedor
+        return producto
 
     def obtener_productos(self):
-        return self.db.query(Producto).all()
+        productos = (
+            self.db.query(Producto, Proveedor.nombre.label("proveedor_nombre"))
+            .join(Proveedor, Producto.proveedor_id == Proveedor.id, isouter=True)
+            .all()
+        )
+        resultado = []
+        for producto, proveedor_nombre in productos:
+            producto_dict = producto.__dict__.copy()
+            producto_dict["proveedor_nombre"] = proveedor_nombre
+            resultado.append(producto_dict)
+        return resultado
 
     def actualizar_producto(self, producto_id: int, producto_data: ProductoCreate, usuario_id: int) -> Producto:
         db_producto = self.db.query(Producto).filter(Producto.id == producto_id).first()

@@ -33,14 +33,16 @@ export const Layout = () => {
 
         {/* Navegación lateral */}
         <ul className="nav-lista">
-          {/* <SidebarButton to="/app" iconClasses="fa-solid fa-house" label="Inicio" /> */}
-          {/* <SidebarButton to="/app/users" iconClasses="bi bi-people-fill" label="Usuarios" /> */}
+          <SidebarButton to="/app" iconClasses="fa-solid fa-house" label="Inicio" />
+          <SidebarButton to="/app/users" iconClasses="bi bi-people-fill" label="Usuarios" />
+          <SidebarButton to="/app/products" iconClasses="fa-solid fa-boxes-stacked" label="Productos" />
+          <SidebarButton to="/app/proveedores" iconClasses="fa-solid fa-people-carry" label="Proveedores" />
+          <SidebarButton to="/app/ventas" iconClasses="fa-solid fa-store" label="Ventas" />
+          <SidebarButton to="/app/ventas/cotizaciones" iconClasses="fa-solid fa-file-invoice-dollar" label="Cotizaciones" />
           {/* <SidebarButton to="/app/incomes" iconClasses="fa-solid fa-money-bill-trend-up" label="Ingresos" /> */}
           {/* <SidebarButton to="/app/outcomes" iconClasses="fa-solid fa-money-bill-transfer" label="Egresos" /> */}
           {/* <SidebarButton to="/app/reports" iconClasses="fa-solid fa-square-poll-vertical" label="Reportes" /> */}
-          {/* <SidebarButton to="/app/ventas" iconClasses="fa-solid fa-store" label="Ventas" /> */}
-          <SidebarButton to="/app/products" iconClasses="fa-solid fa-boxes-stacked" label="Productos" />
-          <SidebarButton to="/app/proveedores" iconClasses="fa-solid fa-people-carry" label="Proveedores" />
+
           {/* <SidebarButton to="/app/help" iconClasses="fa-solid fa-circle-question" label="Ayuda" /> */}
 
           {/* Perfil del usuario */}

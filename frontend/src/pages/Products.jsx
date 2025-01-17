@@ -48,13 +48,11 @@ const Products = () => {
     }
 
     const openImageModal = (productId) => {
-        console.log('Abriendo modal de imagen para el producto con ID:', productId); // Debug
         setSelectedProductId(productId); // Establecer el ID del producto
         setIsShowingImageModal(true); // Abrir el modal de imagen
     };
 
     const closeImageModal = () => {
-        console.log('Cerrando modal de imagen'); // Debug
         setSelectedProductId(null); // Limpiar el ID del producto
         setIsShowingImageModal(false); // Cerrar el modal de imagen
     };
@@ -63,7 +61,7 @@ const Products = () => {
         <>
             <NavigationTitle menu="Inicio" submenu="Productos" />
             {isLoading ? (
-                'Loading...'
+                'Cargando productos...'
             ) : (
                 <>
                     <button
@@ -81,9 +79,9 @@ const Products = () => {
                                     <th className="leading-row">Código</th>
                                     <th>Nombre</th>
                                     <th>Formato</th>
-                                    <th>Precio de Venta</th>
-                                    <th>Stock</th>
-                                    <th>Estado</th>
+                                    <th>Color</th>
+                                    <th>Precio por M2</th>
+                                    <th>Proveedor</th>
                                     <th>Imagen</th>
                                     <th className="trailing-row">Opciones</th>
                                 </tr>
@@ -101,13 +99,13 @@ const Products = () => {
                                         <td className="leading-row">{product.codigo}</td>
                                         <td>{product.nombre}</td>
                                         <td>{product.formato}</td>
-                                        <td>${product.precio_m2_sin_iva}</td>
-                                        <td>{product.stock}</td>
-                                        <td>{product.stock > 0 ? 'Disponible' : 'Agotado'}</td>
+                                        <td>{product.color || 'N/A'}</td>
+                                        <td>${product.precio_m2_sin_iva.toFixed(2)}</td>
+                                        <td>{product.proveedor_nombre || 'Sin proveedor'}</td>
                                         <td>
                                             {product.id ? (
                                                 <img
-                                                    src={`http://147.93.47.106:8000/uploads/producto_${product.id}.jpeg`}
+                                                    src={`http://localhost:8000/uploads/producto_${product.id}.jpeg`}
                                                     alt={product.nombre}
                                                     style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                                     onError={(e) => {

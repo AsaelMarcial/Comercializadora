@@ -95,16 +95,16 @@ export const deleteOutcomeMutation = (id) => {
 };
 
 // User Mutations
-export const createUserMutation = (user) => {
-    createUser(user);
+export const createUserMutation = async (user) => {
+    return await createUser(user);
 };
 
-export const updateUserMutation = (user) => {
-    updateUser(user);
+export const updateUserMutation = async (user) => {
+    return await updateUser(user);
 };
 
-export const deleteUserMutation = (id) => {
-    deleteUser(id);
+export const deleteUserMutation = async (id) => {
+    return await deleteUser(id);
 };
 
 // Income Mutations

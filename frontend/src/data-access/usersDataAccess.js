@@ -37,8 +37,11 @@ export const readAllUsers = () => {
                 },
             });
 
-            // Procesar la respuesta
-            const users = await processResponse(response);
+            if (!response.ok) {
+                throw new Error(`Error en la respuesta del servidor: ${response.status}`);
+            }
+
+            const users = await response.json(); // Asegúrate de que la respuesta sea un JSON válido
             resolve(users);
         } catch (error) {
             console.error("Error al obtener usuarios: ", error);
@@ -46,6 +49,7 @@ export const readAllUsers = () => {
         }
     });
 };
+
 
 export const updateUser = (user) => {
     const { id } = user;

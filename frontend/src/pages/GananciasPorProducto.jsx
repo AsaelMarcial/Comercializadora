@@ -8,23 +8,27 @@ const GananciasPorProducto = () => {
     const navigate = useNavigate();
     const carrito = location.state?.order || []; // Evita undefined para hooks
 
-    // Hooks deben estar fuera de condiciones
+    // Si el carrito está vacío, se maneja al final del render.
     const [productosConGanancia, setProductosConGanancia] = useState(
         carrito.map((producto) => ({
             ...producto,
+            producto: producto.producto || producto, // Asegura que siempre hay un objeto `producto`
             ganancia: 0, // Porcentaje inicial de ganancia
+            precioSeleccionado: producto.precio_pieza_sin_iva || 0, // Manejo de valor predeterminado
+            tipoPrecio: 'pieza', // Tipo de precio seleccionado (pieza, caja, m2)
         }))
     );
 
     const costoTotalBase = useMemo(() => {
         return productosConGanancia.reduce((total, producto) => {
-            return total + producto.producto.precio_pieza_con_iva * producto.cantidad;
+            if (!producto.precioSeleccionado || isNaN(producto.precioSeleccionado)) return total;
+            return total + producto.precioSeleccionado * producto.cantidad;
         }, 0);
     }, [productosConGanancia]);
 
     const totalGanancia = useMemo(() => {
         return productosConGanancia.reduce((total, producto) => {
-            const gananciaUnitaria = (producto.producto.precio_pieza_con_iva * producto.ganancia) / 100;
+            const gananciaUnitaria = (producto.precioSeleccionado * producto.ganancia) / 100;
             return total + gananciaUnitaria * producto.cantidad;
         }, 0);
     }, [productosConGanancia]);
@@ -36,10 +40,35 @@ const GananciasPorProducto = () => {
     const actualizarGanancia = (id, nuevoValor) => {
         setProductosConGanancia((prev) =>
             prev.map((producto) =>
-                producto.producto.id === id
+                producto.producto?.id === id
                     ? { ...producto, ganancia: parseFloat(nuevoValor) || 0 }
                     : producto
             )
+        );
+    };
+
+    const actualizarPrecioSeleccionado = (id, nuevoTipoPrecio) => {
+        setProductosConGanancia((prev) =>
+            prev.map((producto) => {
+                if (producto.producto?.id === id) {
+                    let nuevoPrecio;
+                    switch (nuevoTipoPrecio) {
+                        case 'caja':
+                            nuevoPrecio = producto.producto?.precio_caja_sin_iva || 0;
+                            break;
+                        case 'pieza':
+                            nuevoPrecio = producto.producto?.precio_pieza_sin_iva || 0;
+                            break;
+                        case 'm2':
+                            nuevoPrecio = producto.producto?.precio_m2_sin_iva || 0;
+                            break;
+                        default:
+                            nuevoPrecio = producto.producto?.precio_pieza_sin_iva || 0;
+                    }
+                    return { ...producto, precioSeleccionado: nuevoPrecio, tipoPrecio: nuevoTipoPrecio };
+                }
+                return producto;
+            })
         );
     };
 
@@ -48,10 +77,14 @@ const GananciasPorProducto = () => {
         navigate('/app/ventas/confirmacion', { state: { productos: productosConGanancia, granTotal } });
     };
 
-    // Manejo del caso cuando no hay productos en el carrito
-    if (carrito.length === 0) {
-        navigate('/app/ventas');
-        return null; // Evita el renderizado en caso de redirección
+    // Renderiza un mensaje si el carrito está vacío, pero no condiciona los hooks.
+    if (!carrito.length) {
+        return (
+            <div className="contenedor-ganancias">
+                <NavigationTitle menu="Ventas" submenu="Definir Ganancias por Producto" />
+                <p>El carrito está vacío. Redirigiendo a ventas...</p>
+            </div>
+        );
     }
 
     return (
@@ -67,34 +100,54 @@ const GananciasPorProducto = () => {
                             <th>Producto</th>
                             <th>Cantidad</th>
                             <th>Precio Base</th>
+                            <th>Tipo de Precio</th>
                             <th>Ganancia (%)</th>
                             <th>Precio Final</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {productosConGanancia.map((producto) => {
+                        {productosConGanancia.map((producto, index) => {
                             const precioFinal =
-                                producto.producto.precio_m2_sin_iva * (1 + producto.ganancia / 100);
+                                producto.precioSeleccionado * (1 + producto.ganancia / 100);
 
                             return (
-                                <tr key={producto.producto.id}>
+                                <tr key={producto.producto?.id || `producto-${index}`}>
                                     <td>
                                         <img
-                                            src={`http://localhost:8000/uploads/producto_${producto.producto.id}.jpeg`}
-                                            alt={producto.producto.nombre}
+                                            src={`http://localhost:8000/uploads/producto_${producto.producto?.id}.jpeg`}
+                                            alt={producto.producto?.nombre || 'Sin nombre'}
                                             style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                                            onError={(e) => {
+                                                e.target.src = '';
+                                                e.target.alt = 'Sin imagen';
+                                            }}
                                         />
                                     </td>
-                                    <td>{producto.producto.nombre}</td>
+                                    <td>{producto.producto?.nombre || 'Sin nombre'}</td>
                                     <td>{producto.cantidad}</td>
-                                    <td>${producto.producto.precio_m2_sin_iva.toFixed(2)}</td>
+                                    <td>${producto.precioSeleccionado?.toFixed(2) || 'No disponible'}</td>
+                                    <td>
+                                        <select
+                                            value={producto.tipoPrecio}
+                                            onChange={(e) =>
+                                                actualizarPrecioSeleccionado(
+                                                    producto.producto?.id,
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            <option value="pieza">Por Pieza</option>
+                                            <option value="caja">Por Caja</option>
+                                            <option value="m2">Por M2</option>
+                                        </select>
+                                    </td>
                                     <td>
                                         <input
                                             type="number"
                                             value={producto.ganancia}
                                             onChange={(e) =>
                                                 actualizarGanancia(
-                                                    producto.producto.id,
+                                                    producto.producto?.id,
                                                     e.target.value
                                                 )
                                             }

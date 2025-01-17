@@ -1,0 +1,92 @@
+.cotizacion-modal {
+    width: 90%; /* Aumentar el ancho */
+    max-width: 1200px; /* Limitar el tamaño máximo */
+    height: 80%; /* Aumentar la altura */
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto; /* Habilitar scroll si hay mucho contenido */
+    position: relative; /* Asegurar posicionamiento */
+}
+
+.cotizacion-modal h3 {
+    font-size: 28px; /* Hacer más grande el título */
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.cotizacion-modal .modal-body {
+    margin-bottom: 30px;
+    padding: 10px;
+    overflow: auto;
+}
+
+.cotizacion-modal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.cotizacion-modal table th,
+.cotizacion-modal table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.cotizacion-modal .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.cotizacion-modal .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cotizacion-modal .btn-danger {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.cotizacion-modal .btn-primary {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.cotizacion-modal .btn-secondary {
+    background-color: #bdc3c7;
+    color: #333;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con transparencia */
+    display: flex;
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    z-index: 9999; /* Asegurar que esté encima de otros elementos */
+}
+
+.cotizacion-modal {
+    width: 90%;
+    max-width: 1200px;
+    height: auto;
+    max-height: 80%; /* Limitar la altura */
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto; /* Habilitar scroll si el contenido excede */
+    position: relative;
+}

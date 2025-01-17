@@ -71,22 +71,31 @@ def login(credentials: LoginSchema, db: Session = Depends(get_db)):
 @router.post("/usuarios", response_model=Usuario, tags=["Usuarios"], summary="Crear un nuevo usuario")
 def create_user(usuario: UsuarioCreate, db: Session = Depends(get_db),
                 current_user: Usuario = Depends(get_current_user)):
-    crud_usuario.db = db
+    crud_usuario.db = db  # Asignar la sesión
 
-    if current_user.rol != Role.ADMIN:
-        raise HTTPException(status_code=403, detail="No tienes permiso para realizar esta acción")
+    # Verificar si el usuario ya existe
+    usuario_existente = db.query(UsuarioModel).filter(UsuarioModel.email == usuario.email).first()
+    if usuario_existente:
+        raise HTTPException(status_code=400, detail="El usuario ya existe")
 
-    return crud_usuario.crear_usuario(usuario)
+    # Crear el usuario con la contraseña hasheada
+    nuevo_usuario = UsuarioModel(
+        nombre=usuario.nombre,
+        email=usuario.email,
+        password_hash=get_password_hash(usuario.password),  # Hashea la contraseña correctamente
+        rol=usuario.rol
+    )
+    db.add(nuevo_usuario)
+    db.commit()
+    db.refresh(nuevo_usuario)
+
+    return nuevo_usuario
 
 
 @router.get("/usuarios", response_model=list[Usuario], tags=["Usuarios"], summary="Obtener todos los usuarios")
 def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db),
                current_user: Usuario = Depends(get_current_user)):
     crud_usuario.db = db
-
-    if current_user.rol != Role.ADMIN:
-        raise HTTPException(status_code=403, detail="No tienes permiso para realizar esta acción")
-
     return crud_usuario.obtener_usuarios(skip=skip, limit=limit)
 
 
