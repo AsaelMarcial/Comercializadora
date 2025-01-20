@@ -29,7 +29,7 @@ const ProductDetailsModal = ({ product, onClose }) => {
                         <h6>Información General</h6>
                         <p><strong>Código:</strong> {product.codigo}</p>
                         <p><strong>Nombre:</strong> {product.nombre}</p>
-                        <p><strong>Proveedor:</strong> {product.proveedor_nombre || 'Sin proveedor'}</p>
+                        <p><strong>Proveedor:</strong> {product.proveedor?.nombre || 'Sin proveedor'}</p>
                         <p><strong>Formato:</strong> {product.formato || 'No especificado'}</p>
                         <p><strong>Unidad de Venta:</strong> {product.unidad_venta || 'No especificado'}</p>
                         <p><strong>Piezas por Caja:</strong> {product.piezas_caja || 'No especificado'}</p>

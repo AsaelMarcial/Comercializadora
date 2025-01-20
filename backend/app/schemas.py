@@ -2,6 +2,33 @@ from pydantic import BaseModel, EmailStr, PositiveInt, constr, condecimal
 from typing import Optional, List
 from datetime import datetime
 
+class ProveedorBase(BaseModel):
+    nombre: constr(max_length=255)
+    direccion: Optional[constr(max_length=255)] = None
+    telefono: Optional[constr(max_length=20)] = None
+    email: Optional[EmailStr] = None
+    contacto: Optional[constr(max_length=100)] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "nombre": "Proveedor ABC",
+                "direccion": "Calle 123, Ciudad, País",
+                "telefono": "1234567890",
+                "email": "proveedor@abc.com",
+                "contacto": "Juan Pérez"
+            }
+        }
+
+class ProveedorCreate(ProveedorBase):
+    pass
+
+class Proveedor(ProveedorBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
 # Esquema para Producto
 class ProductoBase(BaseModel):
     codigo: constr(max_length=30)
@@ -22,7 +49,6 @@ class ProductoBase(BaseModel):
     material: Optional[str] = None
     es_externo: Optional[bool] = False
     proveedor_id: Optional[int] = None
-    proveedor_nombre: Optional[str] = None  # Nombre del proveedor agregado
 
     class Config:
         schema_extra = {
@@ -44,8 +70,7 @@ class ProductoBase(BaseModel):
                 "color": "Blanco",
                 "material": "Cerámica",
                 "es_externo": False,
-                "proveedor_id": 1,  # ID del proveedor asociado
-                "proveedor_nombre": "Proveedor ABC"  # Nombre del proveedor asociado
+                "proveedor_id": 1  # ID del proveedor asociado
             }
         }
 
@@ -54,6 +79,7 @@ class ProductoCreate(ProductoBase):
 
 class Producto(ProductoBase):
     id: int
+    proveedor: Optional[Proveedor]  # Relación con el proveedor
 
     class Config:
         orm_mode = True
@@ -189,14 +215,14 @@ class LoginSchema(BaseModel):
 # Esquema para los detalles de la cotización
 class CotizacionDetalleBase(BaseModel):
     producto_id: PositiveInt
-    cantidad: PositiveInt
-    precio_unitario: condecimal(max_digits=10, decimal_places=2)
+    cantidad: condecimal(max_digits=20, decimal_places=2)
+    precio_unitario: condecimal(max_digits=20, decimal_places=2)
 
     class Config:
         schema_extra = {
             "example": {
                 "producto_id": 1,
-                "cantidad": 10,
+                "cantidad": 10.5,
                 "precio_unitario": 50.00
             }
         }
@@ -226,7 +252,7 @@ class CotizacionBase(BaseModel):
                 "detalles": [
                     {
                         "producto_id": 1,
-                        "cantidad": 10,
+                        "cantidad": 10.5,
                         "precio_unitario": 50.00
                     },
                     {
@@ -249,7 +275,7 @@ class CotizacionCreate(BaseModel):
                 "cliente": "Juan Pérez",
                 "total": 1050.50,
                 "detalles": [
-                    {"producto_id": 1, "cantidad": 5, "precio_unitario": 210.10},
+                    {"producto_id": 1, "cantidad": 5.5, "precio_unitario": 210.10},
                     {"producto_id": 2, "cantidad": 2, "precio_unitario": 315.15}
                 ]
             }
@@ -264,7 +290,7 @@ class Cotizacion(CotizacionBase):
 
 class CotizacionDetalleResponse(BaseModel):
     producto_id: int
-    cantidad: int
+    cantidad: condecimal(max_digits=10, decimal_places=2)
     precio_unitario: condecimal(max_digits=10, decimal_places=2)
     total: condecimal(max_digits=10, decimal_places=2)
 
@@ -283,29 +309,4 @@ class CotizacionResponse(BaseModel):
     class Config:
         orm_mode = True
 
-class ProveedorBase(BaseModel):
-    nombre: constr(max_length=255)
-    direccion: Optional[constr(max_length=255)] = None
-    telefono: Optional[constr(max_length=20)] = None
-    email: Optional[EmailStr] = None
-    contacto: Optional[constr(max_length=100)] = None
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "nombre": "Proveedor ABC",
-                "direccion": "Calle 123, Ciudad, País",
-                "telefono": "1234567890",
-                "email": "proveedor@abc.com",
-                "contacto": "Juan Pérez"
-            }
-        }
-
-class ProveedorCreate(ProveedorBase):
-    pass
-
-class Proveedor(ProveedorBase):
-    id: int
-
-    class Config:
-        orm_mode = True

@@ -54,7 +54,7 @@ class Producto(Base):
     # Relaciones
     usuario = relationship("Usuario", back_populates="productos")
     inventario = relationship("Inventario", uselist=False, back_populates="producto")
-    proveedor = relationship("Proveedor")  # Relación con el modelo Proveedor
+    proveedor = relationship("Proveedor", lazy="joined")  # Relación con el modelo Proveedor
 
 # Modelo de Inventario
 class Inventario(Base):
@@ -145,7 +145,7 @@ class Cotizacion(Base):
     id = Column(Integer, primary_key=True, index=True)
     cliente = Column(String(255), nullable=False)
     fecha = Column(TIMESTAMP, default=func.now())
-    total = Column(DECIMAL(10, 2), nullable=False)
+    total = Column(DECIMAL(20, 2), nullable=False)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
 
     usuario = relationship("Usuario")
@@ -158,9 +158,9 @@ class CotizacionDetalle(Base):
     id = Column(Integer, primary_key=True, index=True)
     cotizacion_id = Column(Integer, ForeignKey("cotizaciones.id", ondelete="CASCADE"), nullable=False)
     producto_id = Column(Integer, ForeignKey("productos.id"), nullable=False)
-    cantidad = Column(Integer, nullable=False)
+    cantidad = Column(DECIMAL(10, 2), nullable=False)
     precio_unitario = Column(DECIMAL(10, 2), nullable=False)
-    total = Column(DECIMAL(10, 2), nullable=False)
+    total = Column(DECIMAL(20, 2), nullable=False)
 
     cotizacion = relationship("Cotizacion", back_populates="detalles")
     producto = relationship("Producto")

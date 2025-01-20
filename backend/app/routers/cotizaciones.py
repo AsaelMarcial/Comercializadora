@@ -45,7 +45,7 @@ def create_cotizacion(
     try:
         nueva_cotizacion = crud_cotizacion.crear_cotizacion(
             cotizacion_data=cotizacion,
-            usuario_id=current_user["id"]
+            usuario_id=1
         )
 
         # Generar PDF
@@ -56,7 +56,7 @@ def create_cotizacion(
             "productos": [
                 {
                     "producto_id": detalle.producto_id,
-                    "cantidad": detalle.cantidad,
+                    "cantidad": float(detalle.cantidad),
                     "precio_unitario": float(detalle.precio_unitario),
                     "total": float(detalle.total),
                 }

@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import { useMutation } from 'react-query';
+import React, { useEffect, useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { uploadProductImage } from '../data-access/productsDataAccess';
 
 const UploadImageModal = ({ productId, closeModal }) => {
     const [imageFile, setImageFile] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
+    const queryClient = useQueryClient(); // Acceso a React Query Client
 
     useEffect(() => {
         console.log('UploadImageModal montado con productId:', productId);
@@ -14,7 +15,8 @@ const UploadImageModal = ({ productId, closeModal }) => {
     const uploadImageMutation = useMutation(uploadProductImage, {
         onSuccess: () => {
             alert('Imagen subida correctamente');
-            closeModal(); // Cierra el modal después de subir la imagen
+            queryClient.invalidateQueries('products'); // Fuerza la recarga de los productos
+            closeModal(); // Cierra el modal después de la operación exitosa
         },
         onError: (error) => {
             setErrorMessage(`Error al subir la imagen: ${error.message}`);

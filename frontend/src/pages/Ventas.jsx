@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import NavigationTitle from '../components/NavigationTitle';
@@ -22,14 +22,18 @@ const Ventas = () => {
     useEffect(() => {
         if (products) {
             const table = $(tableRef.current).DataTable({
-                destroy: true, // Limpia la tabla existente
+                destroy: true,
                 data: products,
                 columns: [
                     { data: 'codigo', title: 'Código' },
                     { data: 'nombre', title: 'Nombre' },
                     { data: 'formato', title: 'Formato' },
                     { data: 'color', title: 'Color' },
-                    { data: 'proveedor_nombre', title: 'Proveedor' },
+                    {
+                        data: 'proveedor',
+                        title: 'Proveedor',
+                        render: (data) => (data ? data.nombre : 'Sin proveedor'),
+                    },
                     {
                         data: 'id',
                         title: 'Imagen',
@@ -45,25 +49,31 @@ const Ventas = () => {
                 ],
             });
 
-            // Manejo de clics en botones de agregar al carrito
-            $(tableRef.current).on('click', '.agregar-carrito', function () {
+            // Limpia eventos previos
+            $(tableRef.current).off('click', '.agregar-carrito');
+            $(tableRef.current).off('click', 'tbody tr');
+
+            // Evento para agregar al carrito
+            $(tableRef.current).on('click', '.agregar-carrito', function (e) {
+                e.stopPropagation(); // Evita que el evento afecte a otras interacciones
                 const rowData = table.row($(this).parents('tr')).data();
-                addToOrder(rowData);
+                if (rowData && rowData.id) addToOrder(rowData);
             });
 
-            // Manejo de clics en las filas para abrir modal de detalles
+            // Evento para abrir la modal
             $(tableRef.current).on('click', 'tbody tr', function (e) {
                 if (!$(e.target).hasClass('agregar-carrito')) {
                     const rowData = table.row(this).data();
-                    setSelectedProduct(rowData);
+                    if (rowData) setSelectedProduct(rowData);
                 }
             });
 
             return () => {
-                table.destroy(); // Limpia la tabla al desmontar el componente
+                table.destroy();
             };
         }
     }, [products]);
+
 
     const addToOrder = (producto) => {
         setOrder((prevOrder) => {
@@ -71,11 +81,11 @@ const Ventas = () => {
             if (found) {
                 return prevOrder.map((item) =>
                     item.id === producto.id
-                        ? { ...item, cantidad: item.cantidad + 1 }
+                        ? { ...item, cantidad: parseFloat(item.cantidad) + 1 }
                         : item
                 );
             }
-            return [...prevOrder, { ...producto, cantidad: 1 }];
+            return [...prevOrder, { ...producto, cantidad: '1' }];
         });
     };
 
@@ -86,11 +96,26 @@ const Ventas = () => {
     };
 
     const updateQuantity = (producto, cantidad) => {
-        setOrder((prevOrder) =>
-            prevOrder.map((item) =>
-                item.id === producto.id ? { ...item, cantidad: parseInt(cantidad) } : item
-            )
-        );
+        // Permitir valores vacíos, números o números con punto decimal
+        const decimalRegex = /^(\d+\.?\d*|\d*\.?\d+)$/;
+
+        if (cantidad === '' || decimalRegex.test(cantidad)) {
+            setOrder((prevOrder) =>
+                prevOrder.map((item) =>
+                    item.id === producto.id ? { ...item, cantidad } : item
+                )
+            );
+        }
+    };
+
+    const handleBlur = (producto, cantidad) => {
+        // Convertir el valor a número flotante al perder el foco
+        const parsedCantidad = parseFloat(cantidad);
+        if (isNaN(parsedCantidad) || parsedCantidad <= 0) {
+            updateQuantity(producto, '1'); // Valor predeterminado si el valor no es válido
+        } else {
+            updateQuantity(producto, parsedCantidad.toFixed(2)); // Formatear con 2 decimales
+        }
     };
 
     const handleContinue = () => {
@@ -131,12 +156,12 @@ const Ventas = () => {
                                         <td>{item.nombre}</td>
                                         <td>
                                             <input
-                                                type="number"
-                                                min="1"
+                                                type="text"
                                                 value={item.cantidad}
                                                 onChange={(e) =>
                                                     updateQuantity(item, e.target.value)
                                                 }
+                                                onBlur={(e) => handleBlur(item, e.target.value)}
                                             />
                                         </td>
                                         <td>

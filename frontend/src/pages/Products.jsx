@@ -15,7 +15,8 @@ const Products = () => {
     const { data: products, isLoading } = useQuery({
         ...QUERY_OPTIONS,
         queryKey: 'products',
-        queryFn: readAllProducts
+        queryFn: readAllProducts,
+        refetchOnWindowFocus: false,
     });
     const [isShowingFormModal, setIsShowingFormModal] = useState(false); // Modal del formulario
     const [isShowingImageModal, setIsShowingImageModal] = useState(false); // Modal de carga de imagen
@@ -28,10 +29,16 @@ const Products = () => {
     const deleteMutation = useMutation(deleteProductMutation, DELETE_MUTATION_OPTIONS);
 
     useEffect(() => {
-        document.title = 'Orza - Productos';
+        if (!products) return;
+
+        // Inicializar DataTables
         const table = $(tableRef.current).DataTable(datatableOptions);
-        table.draw();
-    }, [products]);
+
+        // Destruye la tabla cuando los datos cambien o el componente se desmonte
+        return () => {
+            table.destroy();
+        };
+    }, [products]); // Vuelve a ejecutar cuando `products` cambia
 
     async function onDeleteButtonClicked(id) {
         const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este producto?');
@@ -101,7 +108,7 @@ const Products = () => {
                                         <td>{product.formato}</td>
                                         <td>{product.color || 'N/A'}</td>
                                         <td>${product.precio_m2_sin_iva.toFixed(2)}</td>
-                                        <td>{product.proveedor_nombre || 'Sin proveedor'}</td>
+                                        <td>{product.proveedor?.nombre || 'Sin proveedor'}</td>
                                         <td>
                                             {product.id ? (
                                                 <img

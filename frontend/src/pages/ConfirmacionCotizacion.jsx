@@ -15,7 +15,7 @@ const ConfirmacionCotizacion = () => {
     const mutation = useMutation(createCotizacion, {
         onSuccess: (data) => {
             toast.success('Cotización guardada con éxito');
-            navigate(`/home`); // Cambiar a la URL final cuando se defina
+            navigate(`/app/ventas/cotizaciones`); // Cambiar a la URL final cuando se defina
         },
         onError: (error) => {
             console.error('Error al guardar la cotización:', error);
