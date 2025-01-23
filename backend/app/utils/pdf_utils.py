@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 # Ruta de la plantilla HTML
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../templates")
+IMAGE_BASE_URL = "http://147.93.47.106:8000/uploads"  # Base URL para las imágenes
 
 
 def generate_pdf(cotizacion_data):
@@ -26,6 +27,15 @@ def generate_pdf(cotizacion_data):
     if missing_keys:
         logger.error(f"Faltan los campos requeridos: {', '.join(missing_keys)}")
         raise ValueError(f"Faltan los campos requeridos: {', '.join(missing_keys)}")
+
+    # Generar URLs para las imágenes de los productos
+    for producto in cotizacion_data["productos"]:
+        producto_id = producto.get("producto_id")
+        if producto_id:
+            producto["imagen_url"] = f"{IMAGE_BASE_URL}/producto_{producto_id}.jpeg"
+        else:
+            # Asigna una imagen predeterminada si no hay producto_id
+            producto["imagen_url"] = f"{IMAGE_BASE_URL}/default-image.jpeg"
 
     try:
         # Configurar el entorno de plantillas

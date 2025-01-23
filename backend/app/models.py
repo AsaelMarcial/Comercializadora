@@ -161,6 +161,7 @@ class CotizacionDetalle(Base):
     cantidad = Column(DECIMAL(10, 2), nullable=False)
     precio_unitario = Column(DECIMAL(10, 2), nullable=False)
     total = Column(DECIMAL(20, 2), nullable=False)
+    tipo_variante = Column(String(20), nullable=True)  # Nueva columna para registrar la variante
 
     cotizacion = relationship("Cotizacion", back_populates="detalles")
     producto = relationship("Producto")

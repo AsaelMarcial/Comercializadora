@@ -43,7 +43,8 @@ class CRUDCotizacion:
                     producto_id=detalle.producto_id,
                     cantidad=detalle.cantidad,
                     precio_unitario=detalle.precio_unitario,
-                    total=detalle.cantidad * detalle.precio_unitario
+                    total=detalle.cantidad * detalle.precio_unitario,
+                    tipo_variante=detalle.tipo_variante  # Manejo del nuevo campo
                 )
                 self.db.add(nuevo_detalle)
 

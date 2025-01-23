@@ -59,6 +59,7 @@ def create_cotizacion(
                     "cantidad": float(detalle.cantidad),
                     "precio_unitario": float(detalle.precio_unitario),
                     "total": float(detalle.total),
+                    "tipo_variante": detalle.tipo_variante  # Incluimos el nuevo campo
                 }
                 for detalle in nueva_cotizacion.detalles
             ],
@@ -194,6 +195,7 @@ def descargar_pdf_cotizacion(
                         "cantidad": detalle.cantidad,
                         "precio_unitario": float(detalle.precio_unitario),
                         "total": float(detalle.total),
+                        "tipo_variante": detalle.tipo_variante  # Incluimos el nuevo campo
                     }
                     for detalle in cotizacion.detalles
                 ],
@@ -221,3 +223,4 @@ def descargar_pdf_cotizacion(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al descargar el PDF: {str(e)}"
         )
+

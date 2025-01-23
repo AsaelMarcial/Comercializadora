@@ -35,6 +35,7 @@ const Cotizaciones = () => {
                 ...datatableOptions,
                 data: cotizaciones,
                 columns: [
+                    { data: 'id', title: 'Folio' }, // Nueva columna para el folio
                     { data: 'cliente', title: 'Cliente' },
                     { data: 'total', title: 'Total', render: (data) => `$${parseFloat(data).toFixed(2)}` },
                     {
@@ -44,7 +45,7 @@ const Cotizaciones = () => {
                     },
                     {
                         data: null,
-                        title: '',
+                        title: 'Opciones', // Encabezado agregado
                         render: (data) =>
                             `<button class="btn-opciones p-1 delete-button" data-id="${data.id}">
                                 <i class="fa-solid fa-trash"></i>
@@ -91,10 +92,11 @@ const Cotizaciones = () => {
                     <table ref={tableRef} className="table table-hover table-borderless">
                         <thead>
                             <tr>
+                                <th>Folio</th>
                                 <th>Cliente</th>
                                 <th>Total</th>
                                 <th>Fecha</th>
-                                <th></th>
+                                <th>Opciones</th> {/* Encabezado agregado */}
                             </tr>
                         </thead>
                         <tbody></tbody>

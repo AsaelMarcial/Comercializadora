@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { createCotizacion } from '../data-access/cotizacionesDataAccess';
@@ -9,13 +9,13 @@ import '../css/confirmacionCotizacion.css';
 const ConfirmacionCotizacion = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { productos, granTotal } = location.state || {};
+    const { productos, granTotal: totalSinIva } = location.state || {};
+    const [costoEnvio, setCostoEnvio] = useState(0);
 
-    // Manejo de la mutación para guardar la cotización
     const mutation = useMutation(createCotizacion, {
-        onSuccess: (data) => {
+        onSuccess: () => {
             toast.success('Cotización guardada con éxito');
-            navigate(`/app/ventas/cotizaciones`); // Cambiar a la URL final cuando se defina
+            navigate(`/app/ventas/cotizaciones`);
         },
         onError: (error) => {
             console.error('Error al guardar la cotización:', error);
@@ -23,23 +23,26 @@ const ConfirmacionCotizacion = () => {
         },
     });
 
-    // Validar que los datos necesarios estén presentes
-    if (!productos || !granTotal) {
+    if (!productos || !totalSinIva) {
         return <p>Datos incompletos. Por favor, vuelve a intentarlo.</p>;
     }
 
-    // Manejo del guardado de la cotización
+    const totalConEnvio = parseFloat(totalSinIva) + parseFloat(costoEnvio || 0);
+    const iva = totalConEnvio * 0.16;
+    const granTotalConIva = totalConEnvio + iva;
+
     const handleGuardarCotizacion = () => {
         const cotizacion = {
-            cliente: 'Nombre del Cliente', // Esto podría ser dinámico en el futuro
+            cliente: 'Nombre del Cliente',
             detalles: productos.map((producto) => ({
                 producto_id: producto.producto.id,
                 cantidad: producto.cantidad,
                 precio_unitario: parseFloat(
-                    (producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100)).toFixed(2)
+                    (producto.precioSeleccionado * (1 + producto.ganancia / 100)).toFixed(2)
                 ),
+                tipo_variante: producto.tipoPrecio,
             })),
-            total: parseFloat(granTotal.toFixed(2)), // Asegurarse de redondear el total
+            total: parseFloat(granTotalConIva.toFixed(2)),
         };
 
         mutation.mutate(cotizacion);
@@ -54,6 +57,7 @@ const ConfirmacionCotizacion = () => {
                     <thead>
                         <tr>
                             <th>Producto</th>
+                            <th>Variante</th>
                             <th>Cantidad</th>
                             <th>Precio Unitario</th>
                             <th>Total</th>
@@ -62,21 +66,44 @@ const ConfirmacionCotizacion = () => {
                     <tbody>
                         {productos.map((producto) => {
                             const precioUnitario =
-                                producto.producto.precio_pieza_con_iva * (1 + producto.ganancia / 100);
+                                producto.precioSeleccionado * (1 + producto.ganancia / 100);
                             const totalProducto = precioUnitario * producto.cantidad;
 
                             return (
                                 <tr key={producto.producto.id}>
                                     <td>{producto.producto.nombre}</td>
+                                    <td>{producto.tipoPrecio || 'No especificado'}</td>
                                     <td>{producto.cantidad}</td>
                                     <td>${precioUnitario.toFixed(2)}</td>
                                     <td>${totalProducto.toFixed(2)}</td>
                                 </tr>
                             );
                         })}
+                        <tr>
+                            <td colSpan="4"><strong>Costo de Envío:</strong></td>
+                            <td>
+                                <input
+                                    type="number"
+                                    value={costoEnvio}
+                                    onChange={(e) => setCostoEnvio(e.target.value)}
+                                    style={{ width: '100px' }}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colSpan="4"><strong>Subtotal (con envío):</strong></td>
+                            <td>${totalConEnvio.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td colSpan="4"><strong>IVA (16%):</strong></td>
+                            <td>${iva.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td colSpan="4"><strong>Gran Total:</strong></td>
+                            <td>${granTotalConIva.toFixed(2)}</td>
+                        </tr>
                     </tbody>
                 </table>
-                <h4>Total: ${granTotal.toFixed(2)}</h4>
             </div>
             <div className="acciones-cotizacion">
                 <button

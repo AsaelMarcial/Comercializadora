@@ -31,6 +31,7 @@ const CotizacionDetailsModal = ({
                         <thead>
                             <tr>
                                 <th>Producto</th>
+                                <th>Variante</th> {/* Nueva columna */}
                                 <th>Cantidad</th>
                                 <th>Precio Unitario</th>
                                 <th>Total</th>
@@ -40,6 +41,7 @@ const CotizacionDetailsModal = ({
                             {cotizacion.detalles.map((detalle) => (
                                 <tr key={detalle.producto_id}>
                                     <td>{detalle.producto_id}</td>
+                                    <td>{detalle.tipo_variante}</td> {/* Mostrar la variante */}
                                     <td>{detalle.cantidad}</td>
                                     <td>${parseFloat(detalle.precio_unitario).toFixed(2)}</td>
                                     <td>${parseFloat(detalle.total).toFixed(2)}</td>
@@ -78,6 +80,7 @@ CotizacionDetailsModal.propTypes = {
         detalles: PropTypes.arrayOf(
             PropTypes.shape({
                 producto_id: PropTypes.number.isRequired,
+                tipo_variante: PropTypes.string.isRequired, // Nueva validación
                 cantidad: PropTypes.number.isRequired,
                 precio_unitario: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
                 total: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

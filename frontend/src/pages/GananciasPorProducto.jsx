@@ -8,16 +8,35 @@ const GananciasPorProducto = () => {
     const navigate = useNavigate();
     const carrito = location.state?.order || []; // Evita undefined para hooks
 
-    // Si el carrito está vacío, se maneja al final del render.
     const [productosConGanancia, setProductosConGanancia] = useState(
-        carrito.map((producto) => ({
-            ...producto,
-            producto: producto.producto || producto, // Asegura que siempre hay un objeto `producto`
-            ganancia: 0, // Porcentaje inicial de ganancia
-            precioSeleccionado: producto.precio_pieza_sin_iva || 0, // Manejo de valor predeterminado
-            tipoPrecio: 'pieza', // Tipo de precio seleccionado (pieza, caja, m2)
-        }))
+        carrito.map((producto) => {
+            // Determinar el precio inicial válido
+            const tipoPrecioInicial = producto.precio_pieza_sin_iva
+                ? 'pieza'
+                : producto.precio_caja_sin_iva
+                ? 'caja'
+                : producto.precio_m2_sin_iva
+                ? 'm2'
+                : null;
+
+            const precioInicial =
+                tipoPrecioInicial === 'pieza'
+                    ? producto.precio_pieza_sin_iva
+                    : tipoPrecioInicial === 'caja'
+                    ? producto.precio_caja_sin_iva
+                    : producto.precio_m2_sin_iva || 0;
+
+            return {
+                ...producto,
+                producto: producto.producto || producto,
+                ganancia: 0, // Porcentaje inicial de ganancia
+                precioSeleccionado: precioInicial,
+                tipoPrecio: tipoPrecioInicial, // Tipo de precio inicial
+            };
+        })
     );
+
+    const formatPrice = (price) => (price ? `$${parseFloat(price).toFixed(2)}` : 'No disponible');
 
     const costoTotalBase = useMemo(() => {
         return productosConGanancia.reduce((total, producto) => {
@@ -51,7 +70,7 @@ const GananciasPorProducto = () => {
         setProductosConGanancia((prev) =>
             prev.map((producto) => {
                 if (producto.producto?.id === id) {
-                    let nuevoPrecio;
+                    let nuevoPrecio = 0;
                     switch (nuevoTipoPrecio) {
                         case 'caja':
                             nuevoPrecio = producto.producto?.precio_caja_sin_iva || 0;
@@ -65,7 +84,11 @@ const GananciasPorProducto = () => {
                         default:
                             nuevoPrecio = producto.producto?.precio_pieza_sin_iva || 0;
                     }
-                    return { ...producto, precioSeleccionado: nuevoPrecio, tipoPrecio: nuevoTipoPrecio };
+                    return {
+                        ...producto,
+                        precioSeleccionado: nuevoPrecio,
+                        tipoPrecio: nuevoTipoPrecio,
+                    };
                 }
                 return producto;
             })
@@ -73,11 +96,21 @@ const GananciasPorProducto = () => {
     };
 
     const continuarConCotizacion = () => {
+        const productosConTipoValido = productosConGanancia.every(
+            (producto) => producto.tipoPrecio !== null
+        );
+
+        if (!productosConTipoValido) {
+            alert(
+                'Uno o más productos no tienen un tipo de precio válido seleccionado. Verifica y selecciona un precio.'
+            );
+            return;
+        }
+
         console.log('Productos finales:', productosConGanancia);
         navigate('/app/ventas/confirmacion', { state: { productos: productosConGanancia, granTotal } });
     };
 
-    // Renderiza un mensaje si el carrito está vacío, pero no condiciona los hooks.
     if (!carrito.length) {
         return (
             <div className="contenedor-ganancias">
@@ -125,7 +158,7 @@ const GananciasPorProducto = () => {
                                     </td>
                                     <td>{producto.producto?.nombre || 'Sin nombre'}</td>
                                     <td>{producto.cantidad}</td>
-                                    <td>${producto.precioSeleccionado?.toFixed(2) || 'No disponible'}</td>
+                                    <td>{formatPrice(producto.precioSeleccionado)}</td>
                                     <td>
                                         <select
                                             value={producto.tipoPrecio}
@@ -135,10 +168,21 @@ const GananciasPorProducto = () => {
                                                     e.target.value
                                                 )
                                             }
+                                            disabled={
+                                                !producto.producto?.precio_pieza_sin_iva &&
+                                                !producto.producto?.precio_caja_sin_iva &&
+                                                !producto.producto?.precio_m2_sin_iva
+                                            }
                                         >
-                                            <option value="pieza">Por Pieza</option>
-                                            <option value="caja">Por Caja</option>
-                                            <option value="m2">Por M2</option>
+                                            {producto.producto?.precio_pieza_sin_iva && (
+                                                <option value="pieza">Por Pieza</option>
+                                            )}
+                                            {producto.producto?.precio_caja_sin_iva && (
+                                                <option value="caja">Por Caja</option>
+                                            )}
+                                            {producto.producto?.precio_m2_sin_iva && (
+                                                <option value="m2">Por M2</option>
+                                            )}
                                         </select>
                                     </td>
                                     <td>
@@ -146,15 +190,12 @@ const GananciasPorProducto = () => {
                                             type="number"
                                             value={producto.ganancia}
                                             onChange={(e) =>
-                                                actualizarGanancia(
-                                                    producto.producto?.id,
-                                                    e.target.value
-                                                )
+                                                actualizarGanancia(producto.producto?.id, e.target.value)
                                             }
                                             style={{ width: '60px' }}
                                         />
                                     </td>
-                                    <td>${(precioFinal * producto.cantidad).toFixed(2)}</td>
+                                    <td>{formatPrice(precioFinal * producto.cantidad)}</td>
                                 </tr>
                             );
                         })}
@@ -163,9 +204,9 @@ const GananciasPorProducto = () => {
             </div>
 
             <div className="resumen-ganancias">
-                <h4>Costo Total Base: ${costoTotalBase.toFixed(2)}</h4>
-                <h4>Total Ganancia: ${totalGanancia.toFixed(2)}</h4>
-                <h4>Gran Total: ${granTotal.toFixed(2)}</h4>
+                <h4>Costo Total Base: {formatPrice(costoTotalBase)}</h4>
+                <h4>Total Ganancia: {formatPrice(totalGanancia)}</h4>
+                <h4>Gran Total: {formatPrice(granTotal)}</h4>
                 <div className="botones-acciones">
                     <button className="btn btn-danger" onClick={() => navigate('/app/ventas')}>
                         Cancelar

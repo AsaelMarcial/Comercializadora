@@ -217,13 +217,15 @@ class CotizacionDetalleBase(BaseModel):
     producto_id: PositiveInt
     cantidad: condecimal(max_digits=20, decimal_places=2)
     precio_unitario: condecimal(max_digits=20, decimal_places=2)
+    tipo_variante: Optional[str] = None  # Nuevo campo agregado
 
     class Config:
         schema_extra = {
             "example": {
                 "producto_id": 1,
                 "cantidad": 10.5,
-                "precio_unitario": 50.00
+                "precio_unitario": 50.00,
+                "tipo_variante": "Caja"  # Ejemplo del nuevo campo
             }
         }
 
@@ -253,12 +255,14 @@ class CotizacionBase(BaseModel):
                     {
                         "producto_id": 1,
                         "cantidad": 10.5,
-                        "precio_unitario": 50.00
+                        "precio_unitario": 50.00,
+                        "tipo_variante": "Caja"
                     },
                     {
                         "producto_id": 2,
                         "cantidad": 5,
-                        "precio_unitario": 60.00
+                        "precio_unitario": 60.00,
+                        "tipo_variante": "m2"
                     }
                 ]
             }
@@ -275,8 +279,8 @@ class CotizacionCreate(BaseModel):
                 "cliente": "Juan Pérez",
                 "total": 1050.50,
                 "detalles": [
-                    {"producto_id": 1, "cantidad": 5.5, "precio_unitario": 210.10},
-                    {"producto_id": 2, "cantidad": 2, "precio_unitario": 315.15}
+                    {"producto_id": 1, "cantidad": 5.5, "precio_unitario": 210.10, "tipo_variante": "Caja"},
+                    {"producto_id": 2, "cantidad": 2, "precio_unitario": 315.15, "tipo_variante": "m2"}
                 ]
             }
         }
@@ -293,6 +297,7 @@ class CotizacionDetalleResponse(BaseModel):
     cantidad: condecimal(max_digits=10, decimal_places=2)
     precio_unitario: condecimal(max_digits=10, decimal_places=2)
     total: condecimal(max_digits=10, decimal_places=2)
+    tipo_variante: Optional[str] = None  # Nuevo campo incluido
 
     class Config:
         orm_mode = True
@@ -308,5 +313,3 @@ class CotizacionResponse(BaseModel):
 
     class Config:
         orm_mode = True
-
-
