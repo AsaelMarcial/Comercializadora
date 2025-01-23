@@ -183,7 +183,6 @@
     </style>
 </head>
 <body>
-    <!-- Header Section -->
     <div class="header">
         <img src="http://147.93.47.106:3000/Logo%20COMERCIALIZADORA%20Orza%20LETRAS%20BLANCAS%20SIN%20FONDO.png" alt="Logo" class="logo">
         <div class="divider"></div>
@@ -194,15 +193,13 @@
                 <p><strong>PROYECTO:</strong> Nombre del Proyecto</p>
                 <p><strong>DIRECCIÓN:</strong> Dirección del Proyecto</p>
             </div>
-
             <div class="cotizacion-info">
-                <p><strong>COTIZACIÓN:</strong> {{ cotizacion_id }}</p>
-                <p><strong>FECHA:</strong> {{ fecha }}</p>
+                <p><strong>COTIZACIÓN:</strong> {{ cotizacion.id }}</p>
+                <p><strong>FECHA:</strong> {{ cotizacion.fecha }}</p>
             </div>
         </div>
     </div>
 
-    <!-- Product Section -->
     <div class="product-section">
         <table class="product-table">
             <thead>
@@ -222,15 +219,14 @@
                         <img
                             src="{{ producto.imagen_url }}"
                             alt="Producto"
-                            style="width: 50px; height: 50px; object-fit: cover;"
                             onerror="this.src='http://147.93.47.106:8000/uploads/default-image.jpeg';"
                         />
                     </td>
                     <td>{{ producto.nombre }}</td>
-                    <td>{{ producto.unidad }}</td>
+                    <td>{{ producto.tipo_variante }}</td>
                     <td>{{ producto.cantidad }}</td>
-                    <td>${{ producto.precio_unitario }}</td>
-                    <td>${{ producto.importe }}</td>
+                    <td>${{ producto.precio_unitario | round(2) }}</td>
+                    <td>${{ (producto.precio_unitario * producto.cantidad) | round(2) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -270,7 +266,8 @@
                 <p>Celular: 228 178 1995</p>
                 <p>Oficina: 228 201 9893</p>
                 <p>Email: comer.orza@gmail.com</p>
-                <p>Email: ventas.orza.comercializadora@gmail.com</p>
+                <p>Email: </p>
+                <p>ventas.orza.comercializadora@gmail.com</p>
             </div>
         </div>
     </div>
