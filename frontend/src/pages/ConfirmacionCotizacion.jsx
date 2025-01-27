@@ -32,17 +32,22 @@ const ConfirmacionCotizacion = () => {
     const granTotalConIva = totalConEnvio + iva;
 
     const handleGuardarCotizacion = () => {
+        // Convertir costoEnvio a número de forma segura
+        const envio = parseFloat(costoEnvio) || 0;
+
         const cotizacion = {
             cliente: 'Nombre del Cliente',
+            costo_envio: envio, // Asegurar que se envíe el costo de envío
             detalles: productos.map((producto) => ({
                 producto_id: producto.producto.id,
+                nombre: producto.producto.nombre,
                 cantidad: producto.cantidad,
                 precio_unitario: parseFloat(
                     (producto.precioSeleccionado * (1 + producto.ganancia / 100)).toFixed(2)
                 ),
                 tipo_variante: producto.tipoPrecio,
             })),
-            total: parseFloat(granTotalConIva.toFixed(2)),
+            total: parseFloat((granTotalConIva).toFixed(2)), // Total sin modificar (incluye costo_envio ya calculado)
         };
 
         mutation.mutate(cotizacion);

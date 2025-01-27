@@ -50,6 +50,26 @@ export const readAllProducts = async () => {
     }
 };
 
+// Nueva función para obtener un producto por su ID
+export const getProductById = async (id) => {
+    try {
+        const url = `${API_HOST}/${API_SERVICE}/${id}`;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                ...getAuthHeaders(),
+            },
+        });
+
+        const product = await processResponse(response);
+        console.log(`Producto obtenido (ID: ${id}):`, product);
+        return product;
+    } catch (error) {
+        console.error(`Error al obtener producto con ID ${id}:`, error);
+        throw new Error(error.message);
+    }
+};
+
 export const updateProduct = async (product) => {
     const { id } = product;
     try {

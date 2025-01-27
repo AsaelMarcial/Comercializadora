@@ -105,7 +105,7 @@
             object-fit: cover;
         }
 
-        .total-row {
+        .costo-envio-row {
             font-weight: bold;
             background-color: #E0E0E0;
         }
@@ -129,10 +129,10 @@
         }
 
         .totales h4.total {
-            font-size: 14px; /* Tamaño más grande */
+            font-size: 14px;
             font-weight: bold;
             color: #0E3B47;
-            text-decoration: underline; /* Subrayado */
+            text-decoration: underline;
             margin-top: 10px;
         }
 
@@ -157,7 +157,7 @@
         .notas p {
             margin: 5px 0;
             padding-left: 10px;
-            font-size: 9px; /* Reducir tamaño de texto */
+            font-size: 9px;
         }
 
         .right-section {
@@ -177,8 +177,8 @@
         }
 
         .contacto p {
-            margin: 5px 0;
-            font-size: 10px; /* Reducir tamaño de texto */
+            margin: 4px 0;
+            font-size: 9px;
         }
     </style>
 </head>
@@ -229,11 +229,24 @@
                     <td>${{ (producto.precio_unitario * producto.cantidad) | round(2) }}</td>
                 </tr>
                 {% endfor %}
+                <tr class="costo-envio-row">
+                    <td>
+                        <img
+                            src="http://147.93.47.106:3000/camion-de-envio.png"
+                            alt="Envío"
+                            style="width: 50px; height: 50px; object-fit: cover;"
+                        />
+                    </td>
+                    <td>SERVICIO DE UNIDADES COMPLETAS</td>
+                    <td>1</td>
+                    <td></td>
+                    <td></td>
+                    <td>${{ costo_envio | round(2) }}</td>
+                </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Footer Section -->
     <div class="footer">
         <div class="left-section">
             <div class="observaciones">
@@ -266,8 +279,7 @@
                 <p>Celular: 228 178 1995</p>
                 <p>Oficina: 228 201 9893</p>
                 <p>Email: comer.orza@gmail.com</p>
-                <p>Email: </p>
-                <p>ventas.orza.comercializadora@gmail.com</p>
+                <p>Email: ventas.orza.comercializadora@gmail.com</p>
             </div>
         </div>
     </div>

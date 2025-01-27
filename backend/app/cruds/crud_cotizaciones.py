@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException, status
 from app.models import Cotizacion, CotizacionDetalle, Producto
@@ -44,11 +44,11 @@ class CRUDCotizacion:
                     cantidad=detalle.cantidad,
                     precio_unitario=detalle.precio_unitario,
                     total=detalle.cantidad * detalle.precio_unitario,
-                    tipo_variante=detalle.tipo_variante  # Manejo del nuevo campo
+                    tipo_variante=detalle.tipo_variante
                 )
                 self.db.add(nuevo_detalle)
 
-            self.db.commit()  # Confirmar transacción después de procesar detalles
+            self.db.commit()
             logger.info(f"Cotización creada con ID {nueva_cotizacion.id} por el usuario {usuario_id}")
             return nueva_cotizacion
         except Exception as e:
@@ -61,7 +61,12 @@ class CRUDCotizacion:
 
     def obtener_cotizacion(self, cotizacion_id: int) -> Cotizacion:
         try:
-            cotizacion = self.db.query(Cotizacion).filter(Cotizacion.id == cotizacion_id).first()
+            cotizacion = (
+                self.db.query(Cotizacion)
+                .options(joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto))
+                .filter(Cotizacion.id == cotizacion_id)
+                .first()
+            )
             if not cotizacion:
                 logger.warning(f"Cotización con ID {cotizacion_id} no encontrada")
                 raise HTTPException(

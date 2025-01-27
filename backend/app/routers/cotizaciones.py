@@ -56,6 +56,7 @@ def create_cotizacion(
             "productos": [
                 {
                     "producto_id": detalle.producto_id,
+                    "nombre": detalle.producto.nombre if detalle.producto else "Sin nombre",  # Obtén el nombre desde Producto
                     "cantidad": float(detalle.cantidad),
                     "precio_unitario": float(detalle.precio_unitario),
                     "total": float(detalle.total),
@@ -64,6 +65,7 @@ def create_cotizacion(
                 for detalle in nueva_cotizacion.detalles
             ],
             "total": float(nueva_cotizacion.total),
+            "costo_envio": cotizacion.costo_envio,  # Incluye el costo de envío para el PDF
         }
         pdf = generate_pdf(cotizacion_data)
 
@@ -223,4 +225,3 @@ def descargar_pdf_cotizacion(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al descargar el PDF: {str(e)}"
         )
-

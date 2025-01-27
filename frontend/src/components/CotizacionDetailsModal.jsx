@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import '../css/CotizacionDetailsModal.css';
+import { getProductById } from '../data-access/productsDataAccess';
 
 const CotizacionDetailsModal = ({
     cotizacion,
@@ -9,6 +10,29 @@ const CotizacionDetailsModal = ({
     onCancelCotizacion,
     onDownloadPDF,
 }) => {
+    const [productosDetalles, setProductosDetalles] = useState([]);
+
+    useEffect(() => {
+        const fetchProductosDetalles = async () => {
+            const productos = await Promise.all(
+                cotizacion.detalles.map(async (detalle) => {
+                    try {
+                        const producto = await getProductById(detalle.producto_id);
+                        return { ...detalle, nombre: producto.nombre };
+                    } catch (error) {
+                        console.error(`Error al obtener el producto con ID ${detalle.producto_id}:`, error);
+                        return { ...detalle, nombre: 'Nombre no disponible' };
+                    }
+                })
+            );
+            setProductosDetalles(productos);
+        };
+
+        if (cotizacion && cotizacion.detalles) {
+            fetchProductosDetalles();
+        }
+    }, [cotizacion]);
+
     if (!cotizacion || !isShowing) return null;
 
     const handleBackdropClick = (e) => {
@@ -31,17 +55,17 @@ const CotizacionDetailsModal = ({
                         <thead>
                             <tr>
                                 <th>Producto</th>
-                                <th>Variante</th> {/* Nueva columna */}
+                                <th>Variante</th>
                                 <th>Cantidad</th>
                                 <th>Precio Unitario</th>
                                 <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {cotizacion.detalles.map((detalle) => (
+                            {productosDetalles.map((detalle) => (
                                 <tr key={detalle.producto_id}>
-                                    <td>{detalle.producto_id}</td>
-                                    <td>{detalle.tipo_variante}</td> {/* Mostrar la variante */}
+                                    <td>{detalle.nombre}</td>
+                                    <td>{detalle.tipo_variante}</td>
                                     <td>{detalle.cantidad}</td>
                                     <td>${parseFloat(detalle.precio_unitario).toFixed(2)}</td>
                                     <td>${parseFloat(detalle.total).toFixed(2)}</td>
@@ -80,7 +104,7 @@ CotizacionDetailsModal.propTypes = {
         detalles: PropTypes.arrayOf(
             PropTypes.shape({
                 producto_id: PropTypes.number.isRequired,
-                tipo_variante: PropTypes.string.isRequired, // Nueva validación
+                tipo_variante: PropTypes.string.isRequired,
                 cantidad: PropTypes.number.isRequired,
                 precio_unitario: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
                 total: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

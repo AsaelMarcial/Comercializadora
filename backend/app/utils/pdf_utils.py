@@ -59,6 +59,7 @@ def generate_pdf(cotizacion_data):
             },
             productos=cotizacion_data["productos"],  # Lista de productos
             total=cotizacion_data["total"],
+            costo_envio=float(cotizacion_data.get("costo_envio", 0)),  # Asegura que costo_envio sea un número
         )
         logger.info(f"Plantilla renderizada correctamente para la cotización ID {cotizacion_data['id']}.")
     except Exception as e:
