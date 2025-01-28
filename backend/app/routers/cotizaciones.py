@@ -43,12 +43,13 @@ def create_cotizacion(
     """
     crud_cotizacion.db = db
     try:
+        # Crear cotización en la base de datos
         nueva_cotizacion = crud_cotizacion.crear_cotizacion(
             cotizacion_data=cotizacion,
             usuario_id=1
         )
 
-        # Generar PDF
+        # Preparar datos para el PDF
         cotizacion_data = {
             "id": nueva_cotizacion.id,
             "cliente": nueva_cotizacion.cliente,
@@ -56,30 +57,29 @@ def create_cotizacion(
             "productos": [
                 {
                     "producto_id": detalle.producto_id,
-                    "nombre": detalle.producto.nombre if detalle.producto else "Sin nombre",  # Obtén el nombre desde Producto
+                    "nombre": detalle.producto.nombre if detalle.producto else "Sin nombre",
                     "cantidad": float(detalle.cantidad),
                     "precio_unitario": float(detalle.precio_unitario),
                     "total": float(detalle.total),
-                    "tipo_variante": detalle.tipo_variante  # Incluimos el nuevo campo
+                    "tipo_variante": detalle.tipo_variante
                 }
                 for detalle in nueva_cotizacion.detalles
             ],
             "total": float(nueva_cotizacion.total),
-            "costo_envio": cotizacion.costo_envio,  # Incluye el costo de envío para el PDF
+            "costo_envio": cotizacion.costo_envio,
         }
+        # Generar PDF
         pdf = generate_pdf(cotizacion_data)
 
-        # Guardar el PDF en el sistema de archivos
+        # Guardar el PDF
         pdf_path = os.path.join(PDF_STORAGE_PATH, f"Cotizacion_{nueva_cotizacion.id}.pdf")
         with open(pdf_path, "wb") as pdf_file:
             pdf_file.write(pdf)
 
         logger.info(f"PDF generado y guardado en: {pdf_path}")
         return nueva_cotizacion
-    except HTTPException as e:
-        raise e
     except Exception as e:
-        logger.error(f"Error al crear cotización para el usuario {current_user['id']}: {e}")
+        logger.error(f"Error al crear la cotización: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al crear la cotización: {str(e)}"
@@ -146,10 +146,7 @@ def delete_cotizacion(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    """
-    Elimina una cotización y sus detalles asociados.
-    """
-    crud_cotizacion.db = db
+    crud_cotizacion = CRUDCotizacion(db)
     try:
         crud_cotizacion.eliminar_cotizacion(cotizacion_id)
     except HTTPException as e:

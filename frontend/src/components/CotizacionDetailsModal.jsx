@@ -49,7 +49,6 @@ const CotizacionDetailsModal = ({
                     <p><strong>Cliente:</strong> {cotizacion.cliente}</p>
                     <p><strong>Fecha:</strong> {new Date(cotizacion.fecha).toLocaleDateString()}</p>
                     <p><strong>Total:</strong> ${parseFloat(cotizacion.total).toFixed(2)}</p>
-
                     <h4>Productos:</h4>
                     <table>
                         <thead>

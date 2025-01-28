@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import productos, usuarios, inventario, proveedores
+from .routers import productos, usuarios, inventario, proveedores, clientes
 from app.database import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -29,6 +29,7 @@ app.include_router(productos.router)
 app.include_router(usuarios.router)
 app.include_router(inventario.router)
 app.include_router(proveedores.router)
+app.include_router(clientes.router)
 
 
 # Ruta principal de prueba

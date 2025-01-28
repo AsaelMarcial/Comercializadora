@@ -105,6 +105,15 @@
             object-fit: cover;
         }
 
+        /* Alternar colores en las filas */
+        .product-table tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        .product-table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
         .costo-envio-row {
             font-weight: bold;
             background-color: #E0E0E0;
@@ -189,9 +198,9 @@
         <div class="title">COTIZACIÓN</div>
         <div class="info">
             <div class="general-info">
-                <p><strong>ATENCIÓN:</strong> Nombre del Cliente</p>
-                <p><strong>PROYECTO:</strong> Nombre del Proyecto</p>
-                <p><strong>DIRECCIÓN:</strong> Dirección del Proyecto</p>
+                <p><strong>ATENCIÓN:</strong> {{ cotizacion.cliente.nombre }}</p>
+                <p><strong>PROYECTO:</strong> {{ cotizacion.cliente.proyecto }}</p>
+                <p><strong>DIRECCIÓN:</strong> {{ cotizacion.cliente.direccion }}</p>
             </div>
             <div class="cotizacion-info">
                 <p><strong>COTIZACIÓN:</strong> {{ cotizacion.id }}</p>
@@ -225,8 +234,8 @@
                     <td>{{ producto.nombre }}</td>
                     <td>{{ producto.tipo_variante }}</td>
                     <td>{{ producto.cantidad }}</td>
-                    <td>${{ producto.precio_unitario | round(2) }}</td>
-                    <td>${{ (producto.precio_unitario * producto.cantidad) | round(2) }}</td>
+                    <td>${{ producto.precio_unitario | format_number }}</td>
+                    <td>${{ (producto.precio_unitario * producto.cantidad) | format_number }}</td>
                 </tr>
                 {% endfor %}
                 <tr class="costo-envio-row">
@@ -241,7 +250,7 @@
                     <td>1</td>
                     <td></td>
                     <td></td>
-                    <td>${{ costo_envio | round(2) }}</td>
+                    <td>${{ costo_envio | format_number }}</td>
                 </tr>
             </tbody>
         </table>
@@ -269,9 +278,9 @@
 
         <div class="right-section">
             <div class="totales">
-                <h4>SUB-TOTAL: ${{ (total / 1.16) | round(2) }}</h4>
-                <h4>IVA: ${{ (total - (total / 1.16)) | round(2) }}</h4>
-                <h4 class="total">TOTAL: ${{ total }}</h4>
+                <h4>SUB-TOTAL: ${{ (total / 1.16) | format_number }}</h4>
+                <h4>IVA: ${{ (total - (total / 1.16)) | format_number }}</h4>
+                <h4 class="total">TOTAL: ${{ total | format_number }}</h4>
             </div>
             <div class="contacto">
                 <h4>CONTACTO:</h4>

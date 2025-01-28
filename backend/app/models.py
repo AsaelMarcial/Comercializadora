@@ -150,6 +150,8 @@ class Cotizacion(Base):
 
     usuario = relationship("Usuario")
     detalles = relationship("CotizacionDetalle", back_populates="cotizacion")
+    cliente_asociacion = relationship("ClienteCotizacion", back_populates="cotizacion")
+
 
 # Modelo de Detalle de Cotización
 class CotizacionDetalle(Base):
@@ -165,3 +167,24 @@ class CotizacionDetalle(Base):
 
     cotizacion = relationship("Cotizacion", back_populates="detalles")
     producto = relationship("Producto")
+
+class Cliente(Base):
+    __tablename__ = "clientes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(255), nullable=False)
+    proyecto = Column(String(255), nullable=False)
+    direccion = Column(String(255))
+    descuento = Column(DECIMAL(5, 2), nullable=False)  # Porcentaje de ganancia
+    cotizaciones = relationship("ClienteCotizacion", back_populates="cliente")
+
+class ClienteCotizacion(Base):
+    __tablename__ = "clientes_cotizacion"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cliente_id = Column(Integer, ForeignKey("clientes.id", ondelete="CASCADE"), nullable=False)
+    cotizacion_id = Column(Integer, ForeignKey("cotizaciones.id", ondelete="CASCADE"), nullable=False)
+    estado = Column(String(50), nullable=False)  # pendiente, en proceso, completada, cancelada
+
+    cliente = relationship("Cliente", back_populates="cotizaciones")
+    cotizacion = relationship("Cotizacion", back_populates="cliente_asociacion")

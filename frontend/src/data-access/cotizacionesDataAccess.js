@@ -73,6 +73,7 @@ export const deleteCotizacion = async (id) => {
         throw new Error('El ID de la cotización no puede estar vacío.');
     }
 
+    // Realiza la solicitud DELETE
     return await httpRequest(`${API_HOST}/${API_SERVICE}/${id}`, 'DELETE', null, false);
 };
 

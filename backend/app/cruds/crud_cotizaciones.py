@@ -95,20 +95,22 @@ class CRUDCotizacion:
 
     def eliminar_cotizacion(self, cotizacion_id: int):
         try:
+            # Buscar la cotización
             cotizacion = self.db.query(Cotizacion).filter(Cotizacion.id == cotizacion_id).first()
             if not cotizacion:
-                logger.warning(f"Cotización con ID {cotizacion_id} no encontrada para eliminación")
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Cotización no encontrada"
                 )
 
-            # Eliminar la cotización
+            # Eliminar los detalles de la cotización
+            self.db.query(CotizacionDetalle).filter(CotizacionDetalle.cotizacion_id == cotizacion_id).delete()
+
+            # Eliminar la cotización principal
             self.db.delete(cotizacion)
             self.db.commit()
-            logger.info(f"Cotización con ID {cotizacion_id} eliminada")
-            return cotizacion
-        except SQLAlchemyError as e:
+            logger.info(f"Cotización con ID {cotizacion_id} eliminada correctamente.")
+        except Exception as e:
             self.db.rollback()
             logger.error(f"Error al eliminar la cotización con ID {cotizacion_id}: {e}")
             raise HTTPException(

@@ -2,6 +2,7 @@ import os
 import logging
 from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+from babel.numbers import format_decimal  # Importar Babel para el formato de números
 
 # Configurar logging
 logging.basicConfig(
@@ -13,6 +14,22 @@ logger = logging.getLogger(__name__)
 # Ruta de la plantilla HTML
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../templates")
 IMAGE_BASE_URL = "http://147.93.47.106:8000/uploads"  # Base URL para las imágenes
+
+
+def format_number(value):
+    """
+    Formatea un número con comas como separadores de miles y dos decimales.
+    """
+    try:
+        return format_decimal(value, locale="en_US")
+    except Exception as e:
+        logger.error(f"Error al formatear número: {e}")
+        return value
+
+
+# Configurar el entorno de plantillas
+env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+env.filters['format_number'] = format_number  # Registrar el filtro personalizado
 
 
 def generate_pdf(cotizacion_data):
@@ -38,8 +55,7 @@ def generate_pdf(cotizacion_data):
             producto["imagen_url"] = f"{IMAGE_BASE_URL}/default-image.jpeg"
 
     try:
-        # Configurar el entorno de plantillas
-        env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+        # Cargar la plantilla
         template = env.get_template("cotizacion_template.html")
         logger.info("Plantilla cargada correctamente.")
     except TemplateNotFound as e:

@@ -9,7 +9,7 @@ import '../css/confirmacionCotizacion.css';
 const ConfirmacionCotizacion = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { productos, granTotal: totalSinIva } = location.state || {};
+    const { productos, granTotal: totalSinIva, cliente } = location.state || {};
     const [costoEnvio, setCostoEnvio] = useState(0);
 
     const mutation = useMutation(createCotizacion, {
@@ -23,7 +23,7 @@ const ConfirmacionCotizacion = () => {
         },
     });
 
-    if (!productos || !totalSinIva) {
+    if (!productos || !totalSinIva || !cliente) {
         return <p>Datos incompletos. Por favor, vuelve a intentarlo.</p>;
     }
 
@@ -37,7 +37,7 @@ const ConfirmacionCotizacion = () => {
 
         const cotizacion = {
             cliente: 'Nombre del Cliente',
-            costo_envio: envio, // Asegurar que se envíe el costo de envío
+            costo_envio: parseFloat(costoEnvio) || 0,
             detalles: productos.map((producto) => ({
                 producto_id: producto.producto.id,
                 nombre: producto.producto.nombre,
@@ -47,15 +47,23 @@ const ConfirmacionCotizacion = () => {
                 ),
                 tipo_variante: producto.tipoPrecio,
             })),
-            total: parseFloat((granTotalConIva).toFixed(2)), // Total sin modificar (incluye costo_envio ya calculado)
+            total: parseFloat((granTotalConIva).toFixed(2)),
         };
-
         mutation.mutate(cotizacion);
     };
 
     return (
         <div className="confirmacion-cotizacion">
             <NavigationTitle menu="Ventas" submenu="Confirmación de Cotización" />
+
+            {/* Información del cliente */}
+            <div className="detalle-cliente">
+                <h3>Información del Cliente</h3>
+                <p><strong>Nombre:</strong> {cliente.nombre}</p>
+                <p><strong>Dirección:</strong> {cliente.direccion}</p>
+                <p><strong>Descuento:</strong> {cliente.descuento}%</p>
+            </div>
+
             <div className="detalle-cotizacion">
                 <h3>Detalle de la Cotización</h3>
                 <table>

@@ -13,3 +13,4 @@ Pillow
 aiofiles
 weasyprint
 jinja2
+Babel

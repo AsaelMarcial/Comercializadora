@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import NavigationTitle from '../components/NavigationTitle';
+import { readAllClientes } from '../data-access/clientesDataAccess';
 import '../css/ganancias.css';
 
 const GananciasPorProducto = () => {
@@ -8,9 +10,11 @@ const GananciasPorProducto = () => {
     const navigate = useNavigate();
     const carrito = location.state?.order || []; // Evita undefined para hooks
 
+    const { data: clientes, isLoading: isLoadingClientes } = useQuery('clientes', readAllClientes);
+    const [selectedCliente, setSelectedCliente] = useState(null);
+
     const [productosConGanancia, setProductosConGanancia] = useState(
         carrito.map((producto) => {
-            // Determinar el precio inicial válido
             const tipoPrecioInicial = producto.precio_pieza_sin_iva
                 ? 'pieza'
                 : producto.precio_caja_sin_iva
@@ -35,6 +39,17 @@ const GananciasPorProducto = () => {
             };
         })
     );
+
+    useEffect(() => {
+        if (selectedCliente) {
+            setProductosConGanancia((prevProductos) =>
+                prevProductos.map((producto) => ({
+                    ...producto,
+                    ganancia: selectedCliente.descuento || 0, // Aplicar descuento del cliente
+                }))
+            );
+        }
+    }, [selectedCliente]);
 
     const formatPrice = (price) => (price ? `$${parseFloat(price).toFixed(2)}` : 'No disponible');
 
@@ -96,6 +111,11 @@ const GananciasPorProducto = () => {
     };
 
     const continuarConCotizacion = () => {
+        if (!selectedCliente) {
+            alert('Debes seleccionar un cliente para continuar.');
+            return;
+        }
+
         const productosConTipoValido = productosConGanancia.every(
             (producto) => producto.tipoPrecio !== null
         );
@@ -107,22 +127,54 @@ const GananciasPorProducto = () => {
             return;
         }
 
-        console.log('Productos finales:', productosConGanancia);
-        navigate('/app/ventas/confirmacion', { state: { productos: productosConGanancia, granTotal } });
+        navigate('/app/ventas/confirmacion', {
+            state: {
+                productos: productosConGanancia,
+                granTotal: granTotal,
+                cliente: selectedCliente, // Asegúrate de pasar esta información
+            },
+        });
     };
-
-    if (!carrito.length) {
-        return (
-            <div className="contenedor-ganancias">
-                <NavigationTitle menu="Ventas" submenu="Definir Ganancias por Producto" />
-                <p>El carrito está vacío. Redirigiendo a ventas...</p>
-            </div>
-        );
-    }
 
     return (
         <div className="contenedor-ganancias">
             <NavigationTitle menu="Ventas" submenu="Definir Ganancias por Producto" />
+
+            <div style={{ marginBottom: '1rem' }}>
+                <label htmlFor="cliente-select" style={{ fontWeight: 'bold' }}>
+                    Seleccionar Cliente:
+                </label>
+                {isLoadingClientes ? (
+                    <p>Cargando clientes...</p>
+                ) : (
+                    <select
+                        id="cliente-select"
+                        value={selectedCliente?.id || ''}
+                        onChange={(e) =>
+                            setSelectedCliente(
+                                clientes.find((cliente) => cliente.id === parseInt(e.target.value))
+                            )
+                        }
+                        className="form-select"
+                    >
+                        <option value="" disabled>
+                            -- Seleccione un cliente --
+                        </option>
+                        {clientes.map((cliente) => (
+                            <option key={cliente.id} value={cliente.id}>
+                                {cliente.nombre} - {cliente.proyecto} - {cliente.direccion}
+                            </option>
+                        ))}
+                    </select>
+                )}
+            </div>
+
+            {selectedCliente && (
+                <div style={{ marginBottom: '1rem', fontStyle: 'italic' }}>
+                    <strong>Cliente Seleccionado:</strong> {selectedCliente.nombre} -{' '}
+                    {selectedCliente.direccion}
+                </div>
+            )}
 
             <div className="tabla-ganancias">
                 <h3>Productos Seleccionados</h3>

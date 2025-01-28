@@ -213,6 +213,20 @@ class LoginSchema(BaseModel):
         }
 
 # Esquema para los detalles de la cotización
+class ClienteInfo(BaseModel):
+    nombre: constr(max_length=255)
+    proyecto: Optional[str] = None
+    direccion: Optional[str] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "nombre": "Cliente ABC",
+                "proyecto": "Proyecto XYZ",
+                "direccion": "Calle 123, Ciudad, País"
+            }
+        }
+
 class CotizacionDetalleBase(BaseModel):
     producto_id: PositiveInt
     cantidad: condecimal(max_digits=20, decimal_places=2)
@@ -272,18 +286,18 @@ class CotizacionCreate(BaseModel):
     cliente: str
     total: condecimal(max_digits=10, decimal_places=2)
     detalles: list[CotizacionDetalleCreate]
-    costo_envio: Optional[condecimal(max_digits=10, decimal_places=2)] = 0.00  # Agregado campo costo_envio
+    costo_envio: Optional[condecimal(max_digits=10, decimal_places=2)] = 0.00
 
     class Config:
         schema_extra = {
             "example": {
-                "cliente": "Juan Pérez",
+                "cliente": "Cliente ABC",
                 "total": 1050.50,
                 "detalles": [
                     {"producto_id": 1, "cantidad": 5.5, "precio_unitario": 210.10, "tipo_variante": "Caja"},
                     {"producto_id": 2, "cantidad": 2, "precio_unitario": 315.15, "tipo_variante": "m2"}
                 ],
-                "costo_envio": 50.00  # Ejemplo del costo de envío
+                "costo_envio": 50.00
             }
         }
 
@@ -314,6 +328,63 @@ class CotizacionResponse(BaseModel):
     total: condecimal(max_digits=10, decimal_places=2)
     usuario_id: int
     detalles: List[CotizacionDetalleResponse]
+
+    class Config:
+        orm_mode = True
+
+
+# Schema base para Cliente
+class ClienteBase(BaseModel):
+    nombre: constr(max_length=255)
+    proyecto: Optional[str] = None
+    direccion: Optional[str] = None
+    descuento: Optional[float] = None  # Porcentaje de descuento como flotante positivo
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "nombre": "Cliente ABC",
+                "proyecto": "Proyecto XYZ",
+                "direccion": "Calle 123, Ciudad, País",
+                "descuento": 10.5
+            }
+        }
+
+
+class ClienteCreate(ClienteBase):
+    pass
+
+
+class ClienteResponse(ClienteBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class ClienteCotizacionBase(BaseModel):
+    cotizacion_id: PositiveInt
+    cliente_id: PositiveInt
+    estado: Optional[str] = "pendiente"  # Estados posibles: pendiente, en proceso, completada, cancelada
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "cotizacion_id": 1,
+                "cliente_id": 2,
+                "estado": "pendiente"
+            }
+        }
+
+
+class ClienteCotizacionCreate(ClienteCotizacionBase):
+    pass
+
+
+class ClienteCotizacionResponse(ClienteCotizacionBase):
+    id: int
+    cliente: Optional[ClienteResponse]  # Relación opcional con el cliente
+    cotizacion: Optional[dict]  # Relación opcional con la cotización (puedes ajustar según sea necesario)
 
     class Config:
         orm_mode = True

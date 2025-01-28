@@ -5,19 +5,23 @@ import {
     getAllCotizaciones,
     cancelCotizacion,
     downloadCotizacionPDF,
+    deleteCotizacion,
 } from '../data-access/cotizacionesDataAccess';
+import { readAllClientes } from '../data-access/clientesDataAccess';
 import { datatableOptions } from '../utils/datatables';
 import $ from 'jquery';
 import CotizacionDetailsModal from '../components/CotizacionDetailsModal';
 
 const Cotizaciones = () => {
     const { data: cotizaciones, isLoading } = useQuery('cotizaciones', getAllCotizaciones);
+    const { data: clientes, isLoading: isLoadingClientes } = useQuery('clientes', readAllClientes);
     const queryClient = useQueryClient();
     const [isShowingModal, setIsShowingModal] = useState(false);
     const [selectedCotizacion, setSelectedCotizacion] = useState(null);
+    const [selectedCliente, setSelectedCliente] = useState('');
     const tableRef = useRef();
 
-    const cancelMutation = useMutation(cancelCotizacion, {
+    const cancelMutation = useMutation(deleteCotizacion, {
         onSuccess: () => {
             queryClient.invalidateQueries('cotizaciones');
             alert('Cotización cancelada con éxito.');
@@ -35,7 +39,7 @@ const Cotizaciones = () => {
                 ...datatableOptions,
                 data: cotizaciones,
                 columns: [
-                    { data: 'id', title: 'Folio' }, // Nueva columna para el folio
+                    { data: 'id', title: 'Folio' },
                     { data: 'cliente', title: 'Cliente' },
                     { data: 'total', title: 'Total', render: (data) => `$${parseFloat(data).toFixed(2)}` },
                     {
@@ -45,7 +49,7 @@ const Cotizaciones = () => {
                     },
                     {
                         data: null,
-                        title: 'Opciones', // Encabezado agregado
+                        title: 'Opciones',
                         render: (data) =>
                             `<button class="btn-opciones p-1 delete-button" data-id="${data.id}">
                                 <i class="fa-solid fa-trash"></i>
@@ -54,7 +58,7 @@ const Cotizaciones = () => {
                 ],
             });
 
-            $(tableRef.current).off('click', '.delete-button'); // Evita múltiples bindings
+            $(tableRef.current).off('click', '.delete-button');
             $(tableRef.current).on('click', '.delete-button', function () {
                 const id = $(this).data('id');
                 handleCancelCotizacion(id);
@@ -96,7 +100,7 @@ const Cotizaciones = () => {
                                 <th>Cliente</th>
                                 <th>Total</th>
                                 <th>Fecha</th>
-                                <th>Opciones</th> {/* Encabezado agregado */}
+                                <th>Opciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>

@@ -24,6 +24,11 @@ import {
     updateProveedor,
     deleteProveedor
 } from "../data-access/proveedoresDataAccess";
+import {
+    createCliente,
+    updateCliente,
+    deleteCliente
+} from "../data-access/clientesDataAccess.js";
 
 export const CREATE_MUTATION_OPTIONS = {
     onMutate: async () => {
@@ -144,4 +149,17 @@ export const updateProveedorMutation = async (proveedor) => {
 
 export const deleteProveedorMutation = async (id) => {
     return await deleteProveedor(id);
+};
+
+// Cliente Mutations
+export const createClienteMutation = async (cliente) => {
+    return await createCliente(cliente);
+};
+
+export const updateClienteMutation = async (cliente) => {
+    return await updateCliente(cliente);
+};
+
+export const deleteClienteMutation = async (id) => {
+    return await deleteCliente(id);
 };
