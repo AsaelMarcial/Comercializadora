@@ -287,6 +287,8 @@ class CotizacionCreate(BaseModel):
     total: condecimal(max_digits=10, decimal_places=2)
     detalles: list[CotizacionDetalleCreate]
     costo_envio: Optional[condecimal(max_digits=10, decimal_places=2)] = 0.00
+    cliente_id: int
+    variante_envio: str
 
     class Config:
         schema_extra = {
@@ -297,7 +299,8 @@ class CotizacionCreate(BaseModel):
                     {"producto_id": 1, "cantidad": 5.5, "precio_unitario": 210.10, "tipo_variante": "Caja"},
                     {"producto_id": 2, "cantidad": 2, "precio_unitario": 315.15, "tipo_variante": "m2"}
                 ],
-                "costo_envio": 50.00
+                "costo_envio": 50.00,
+                "cliente_id" : 1
             }
         }
 

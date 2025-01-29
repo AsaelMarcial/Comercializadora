@@ -25,6 +25,7 @@ crud_cotizacion = CRUDCotizacion(db=None)
 PDF_STORAGE_PATH = os.path.join(os.path.dirname(__file__), "../pdf_storage")
 os.makedirs(PDF_STORAGE_PATH, exist_ok=True)
 
+
 @router.post(
     "/cotizaciones",
     response_model=CotizacionResponse,
@@ -33,9 +34,9 @@ os.makedirs(PDF_STORAGE_PATH, exist_ok=True)
     summary="Crear una nueva cotización"
 )
 def create_cotizacion(
-    cotizacion: CotizacionCreate,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+        cotizacion: CotizacionCreate,
+        db: Session = Depends(get_db),
+        current_user: dict = Depends(get_current_user)
 ):
     """
     Crear una nueva cotización con sus detalles.
@@ -43,40 +44,13 @@ def create_cotizacion(
     """
     crud_cotizacion.db = db
     try:
-        # Crear cotización en la base de datos
+        # Crear cotización en la base de datos y generar PDF dentro del CRUD
         nueva_cotizacion = crud_cotizacion.crear_cotizacion(
             cotizacion_data=cotizacion,
-            usuario_id=1
+            usuario_id=1  # Se puede cambiar por `current_user['id']` si se requiere autenticación
         )
 
-        # Preparar datos para el PDF
-        cotizacion_data = {
-            "id": nueva_cotizacion.id,
-            "cliente": nueva_cotizacion.cliente,
-            "fecha": nueva_cotizacion.fecha.strftime("%d/%m/%Y"),
-            "productos": [
-                {
-                    "producto_id": detalle.producto_id,
-                    "nombre": detalle.producto.nombre if detalle.producto else "Sin nombre",
-                    "cantidad": float(detalle.cantidad),
-                    "precio_unitario": float(detalle.precio_unitario),
-                    "total": float(detalle.total),
-                    "tipo_variante": detalle.tipo_variante
-                }
-                for detalle in nueva_cotizacion.detalles
-            ],
-            "total": float(nueva_cotizacion.total),
-            "costo_envio": cotizacion.costo_envio,
-        }
-        # Generar PDF
-        pdf = generate_pdf(cotizacion_data)
-
-        # Guardar el PDF
-        pdf_path = os.path.join(PDF_STORAGE_PATH, f"Cotizacion_{nueva_cotizacion.id}.pdf")
-        with open(pdf_path, "wb") as pdf_file:
-            pdf_file.write(pdf)
-
-        logger.info(f"PDF generado y guardado en: {pdf_path}")
+        logger.info(f"Cotización creada exitosamente con ID {nueva_cotizacion.id}")
         return nueva_cotizacion
     except Exception as e:
         logger.error(f"Error al crear la cotización: {e}")
@@ -84,6 +58,7 @@ def create_cotizacion(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al crear la cotización: {str(e)}"
         )
+
 
 @router.get(
     "/cotizaciones/{cotizacion_id}",
@@ -169,11 +144,11 @@ def descargar_pdf_cotizacion(
     current_user: dict = Depends(get_current_user)
 ):
     """
-    Genera y descarga un PDF para una cotización específica.
+    Descarga un PDF para una cotización específica.
     """
     crud_cotizacion.db = db
     try:
-        # Obtener la cotización desde la base de datos
+        # Verificar si la cotización existe
         cotizacion = crud_cotizacion.obtener_cotizacion(cotizacion_id)
         if not cotizacion:
             raise HTTPException(
@@ -183,26 +158,10 @@ def descargar_pdf_cotizacion(
         # Verificar si el PDF ya existe
         pdf_path = os.path.join(PDF_STORAGE_PATH, f"Cotizacion_{cotizacion_id}.pdf")
         if not os.path.exists(pdf_path):
-            # Generar el PDF si no existe
-            cotizacion_data = {
-                "id": cotizacion.id,
-                "cliente": cotizacion.cliente,
-                "fecha": cotizacion.fecha.strftime("%d/%m/%Y"),
-                "productos": [
-                    {
-                        "producto_id": detalle.producto_id,
-                        "cantidad": detalle.cantidad,
-                        "precio_unitario": float(detalle.precio_unitario),
-                        "total": float(detalle.total),
-                        "tipo_variante": detalle.tipo_variante  # Incluimos el nuevo campo
-                    }
-                    for detalle in cotizacion.detalles
-                ],
-                "total": float(cotizacion.total),
-            }
-            pdf = generate_pdf(cotizacion_data)
-            with open(pdf_path, "wb") as pdf_file:
-                pdf_file.write(pdf)
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="El PDF de la cotización no ha sido generado aún."
+            )
 
         # Leer y enviar el PDF como respuesta
         pdf_stream = io.BytesIO()
@@ -214,6 +173,7 @@ def descargar_pdf_cotizacion(
             "Content-Disposition": f"attachment; filename=Cotizacion_{cotizacion_id}.pdf"
         }
         return StreamingResponse(pdf_stream, media_type="application/pdf", headers=headers)
+
     except HTTPException as e:
         raise e
     except Exception as e:

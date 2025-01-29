@@ -198,9 +198,9 @@
         <div class="title">COTIZACIÓN</div>
         <div class="info">
             <div class="general-info">
-                <p><strong>ATENCIÓN:</strong> {{ cotizacion.cliente.nombre }}</p>
-                <p><strong>PROYECTO:</strong> {{ cotizacion.cliente.proyecto }}</p>
-                <p><strong>DIRECCIÓN:</strong> {{ cotizacion.cliente.direccion }}</p>
+                <p><strong>CLIENTE:</strong> {{ nombre }}</p>
+                <p><strong>PROYECTO:</strong> {{ proyecto }}</p>
+                <p><strong>DIRECCIÓN:</strong> {{ direccion }}</p>
             </div>
             <div class="cotizacion-info">
                 <p><strong>COTIZACIÓN:</strong> {{ cotizacion.id }}</p>
@@ -231,11 +231,11 @@
                             onerror="this.src='http://147.93.47.106:8000/uploads/default-image.jpeg';"
                         />
                     </td>
-                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.nombre }}{% if producto.color %} {{ producto.color }}{% endif %}{% if producto.formato %} {{ producto.formato }}{% endif %}</td>
                     <td>{{ producto.tipo_variante }}</td>
                     <td>{{ producto.cantidad }}</td>
                     <td>${{ producto.precio_unitario | format_number }}</td>
-                    <td>${{ (producto.precio_unitario * producto.cantidad) | format_number }}</td>
+                    <td>${{ (producto.precio_unitario | float * producto.cantidad | float) | format_number }}</td>
                 </tr>
                 {% endfor %}
                 <tr class="costo-envio-row">
@@ -246,7 +246,7 @@
                             style="width: 50px; height: 50px; object-fit: cover;"
                         />
                     </td>
-                    <td>SERVICIO DE UNIDADES COMPLETAS</td>
+                    <td>{{ variante_envio }}</td>
                     <td>1</td>
                     <td></td>
                     <td></td>

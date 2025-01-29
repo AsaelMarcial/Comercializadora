@@ -11,6 +11,7 @@ const ConfirmacionCotizacion = () => {
     const location = useLocation();
     const { productos, granTotal: totalSinIva, cliente } = location.state || {};
     const [costoEnvio, setCostoEnvio] = useState(0);
+    const [varianteEnvio, setVarianteEnvio] = useState('Servicio de Paquetería'); // Variante inicial
 
     const mutation = useMutation(createCotizacion, {
         onSuccess: () => {
@@ -32,12 +33,12 @@ const ConfirmacionCotizacion = () => {
     const granTotalConIva = totalConEnvio + iva;
 
     const handleGuardarCotizacion = () => {
-        // Convertir costoEnvio a número de forma segura
         const envio = parseFloat(costoEnvio) || 0;
 
         const cotizacion = {
-            cliente: 'Nombre del Cliente',
-            costo_envio: parseFloat(costoEnvio) || 0,
+            cliente: cliente.nombre,
+            costo_envio: envio,
+            cliente_id: cliente.id,
             detalles: productos.map((producto) => ({
                 producto_id: producto.producto.id,
                 nombre: producto.producto.nombre,
@@ -48,6 +49,7 @@ const ConfirmacionCotizacion = () => {
                 tipo_variante: producto.tipoPrecio,
             })),
             total: parseFloat((granTotalConIva).toFixed(2)),
+            variante_envio: varianteEnvio, // Agregamos la variante del envío
         };
         mutation.mutate(cotizacion);
     };
@@ -92,8 +94,20 @@ const ConfirmacionCotizacion = () => {
                                 </tr>
                             );
                         })}
+                        {/* Fila para el envío */}
                         <tr>
-                            <td colSpan="4"><strong>Costo de Envío:</strong></td>
+                            <td>Servicio de Envío</td>
+                            <td>
+                                <select
+                                    value={varianteEnvio}
+                                    onChange={(e) => setVarianteEnvio(e.target.value)}
+                                    style={{ width: '180px' }}
+                                >
+                                    <option value="Servicio de Paquetería">Servicio de Paquetería</option>
+                                    <option value="Servicio de Unidades Completas">Servicio de Unidades Completas</option>
+                                </select>
+                            </td>
+                            <td>1</td>
                             <td>
                                 <input
                                     type="number"
@@ -102,6 +116,7 @@ const ConfirmacionCotizacion = () => {
                                     style={{ width: '100px' }}
                                 />
                             </td>
+                            <td>${parseFloat(costoEnvio || 0).toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td colSpan="4"><strong>Subtotal (con envío):</strong></td>

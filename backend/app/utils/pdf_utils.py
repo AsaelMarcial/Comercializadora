@@ -17,14 +17,12 @@ IMAGE_BASE_URL = "http://147.93.47.106:8000/uploads"  # Base URL para las imáge
 
 
 def format_number(value):
-    """
-    Formatea un número con comas como separadores de miles y dos decimales.
-    """
     try:
-        return format_decimal(value, locale="en_US")
+        return format_decimal(value, format="#,##0.00", locale="en_US")  # Siempre 2 decimales
     except Exception as e:
         logger.error(f"Error al formatear número: {e}")
-        return value
+        return f"{value:.2f}"  # Fallback a 2 decimales en caso de error
+
 
 
 # Configurar el entorno de plantillas
@@ -39,7 +37,9 @@ def generate_pdf(cotizacion_data):
     :return: Archivo PDF generado.
     """
     # Validar datos requeridos
-    required_keys = ["id", "fecha", "cliente", "productos", "total"]
+    logger.info(f"Datos recibidos en generate_pdf: {cotizacion_data}")
+
+    required_keys = ["id", "fecha", "cliente_nombre", "cliente_proyecto", "cliente_direccion", "productos", "total"]
     missing_keys = [key for key in required_keys if key not in cotizacion_data]
     if missing_keys:
         logger.error(f"Faltan los campos requeridos: {', '.join(missing_keys)}")
@@ -66,16 +66,27 @@ def generate_pdf(cotizacion_data):
         raise RuntimeError(f"Error al cargar la plantilla: {e}")
 
     try:
+        # Asegurar que los datos del cliente están completos
+        cliente_render = {
+            "nombre": cotizacion_data.get("cliente_nombre", "N/A"),
+            "proyecto": cotizacion_data.get("cliente_proyecto", "N/A"),
+            "direccion": cotizacion_data.get("cliente_direccion", "N/A")
+        }
+
+        logger.info(f"Datos que se renderizan en el PDF: {cliente_render}")
         # Renderizar el HTML con los datos
         rendered_html = template.render(
             cotizacion={
                 "id": cotizacion_data["id"],
                 "fecha": cotizacion_data["fecha"],
-                "cliente": cotizacion_data["cliente"],
             },
+            nombre=cotizacion_data.get("cliente_nombre", "N/A"),
+            proyecto=cotizacion_data.get("cliente_proyecto", "N/A"),
+            direccion=cotizacion_data.get("cliente_direccion", "N/A"),
             productos=cotizacion_data["productos"],  # Lista de productos
             total=cotizacion_data["total"],
             costo_envio=float(cotizacion_data.get("costo_envio", 0)),  # Asegura que costo_envio sea un número
+            variante_envio=cotizacion_data.get("variante_envio", "N/A"),
         )
         logger.info(f"Plantilla renderizada correctamente para la cotización ID {cotizacion_data['id']}.")
     except Exception as e:
