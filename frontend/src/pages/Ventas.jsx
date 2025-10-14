@@ -1,210 +1,353 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import NavigationTitle from '../components/NavigationTitle';
 import { readAllProducts } from '../data-access/productsDataAccess';
 import { QUERY_OPTIONS } from '../utils/useQuery';
-import $ from 'jquery';
-import '../css/ventas.css';
 import ProductDetailsModal from '../components/ProductDetailsModal';
+import '../css/ventas.css';
+
+const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
 
 const Ventas = () => {
-    const [order, setOrder] = useState([]);
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const navigate = useNavigate();
     const { data: products, isLoading } = useQuery({
         ...QUERY_OPTIONS,
         queryKey: 'products',
         queryFn: readAllProducts,
+        refetchOnWindowFocus: false,
     });
-    const tableRef = useRef(null);
-    const navigate = useNavigate();
 
-    useEffect(() => {
-        if (products) {
-            const table = $(tableRef.current).DataTable({
-                destroy: true,
-                data: products,
-                columns: [
-                    { data: 'codigo', title: 'Código' },
-                    { data: 'nombre', title: 'Nombre' },
-                    { data: 'formato', title: 'Formato' },
-                    { data: 'color', title: 'Color' },
-                    {
-                        data: 'proveedor',
-                        title: 'Proveedor',
-                        render: (data) => (data ? data.nombre : 'Sin proveedor'),
-                    },
-                    {
-                        data: 'id',
-                        title: 'Imagen',
-                        render: (data, type, row) =>
-                            `<img src="http://147.93.47.106:8000/uploads/producto_${data}.jpeg" alt="${row.nombre}" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.src='';" />`,
-                    },
-                    {
-                        data: null,
-                        title: 'Acciones',
-                        render: () =>
-                            `<button class="btn btn-primary agregar-carrito">Agregar</button>`,
-                    },
-                ],
-            });
+    const [order, setOrder] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [formatFilter, setFormatFilter] = useState('todos');
 
-            // Limpia eventos previos
-            $(tableRef.current).off('click', '.agregar-carrito');
-            $(tableRef.current).off('click', 'tbody tr');
-
-            // Evento para agregar al carrito
-            $(tableRef.current).on('click', '.agregar-carrito', function (e) {
-                e.stopPropagation(); // Evita que el evento afecte a otras interacciones
-                const rowData = table.row($(this).parents('tr')).data();
-                if (rowData && rowData.id) addToOrder(rowData);
-            });
-
-            // Evento para abrir la modal
-            $(tableRef.current).on('click', 'tbody tr', function (e) {
-                if (!$(e.target).hasClass('agregar-carrito')) {
-                    const rowData = table.row(this).data();
-                    if (rowData) setSelectedProduct(rowData);
-                }
-            });
-
-            return () => {
-                table.destroy();
-            };
-        }
+    const sortedProducts = useMemo(() => {
+        if (!products) return [];
+        return [...products].sort((a, b) => a.nombre.localeCompare(b.nombre));
     }, [products]);
 
+    const availableFormats = useMemo(() => {
+        if (!sortedProducts.length) return [];
+        const formats = new Set(sortedProducts.map((product) => product.formato).filter(Boolean));
+        return Array.from(formats).sort((a, b) => a.localeCompare(b));
+    }, [sortedProducts]);
 
-    const addToOrder = (producto) => {
-        setOrder((prevOrder) => {
-            const found = prevOrder.find((item) => item.id === producto.id);
-            if (found) {
-                return prevOrder.map((item) =>
-                    item.id === producto.id
-                        ? { ...item, cantidad: parseFloat(item.cantidad) + 1 }
+    const filteredProducts = useMemo(() => {
+        const normalizedSearch = searchTerm.trim().toLowerCase();
+        return sortedProducts.filter((product) => {
+            const productName = (product.nombre || '').toLowerCase();
+            const productCode = (product.codigo || '').toLowerCase();
+            const supplierName = (product.proveedor?.nombre || '').toLowerCase();
+            const productFormat = (product.formato || '').toLowerCase();
+
+            const matchesSearch =
+                !normalizedSearch ||
+                productName.includes(normalizedSearch) ||
+                productCode.includes(normalizedSearch) ||
+                supplierName.includes(normalizedSearch);
+
+            const matchesFormat = formatFilter === 'todos' || productFormat === formatFilter.toLowerCase();
+
+            return matchesSearch && matchesFormat;
+        });
+    }, [sortedProducts, searchTerm, formatFilter]);
+
+    const totalInventory = useMemo(() => sortedProducts.length, [sortedProducts]);
+
+    const totalOrderItems = useMemo(
+        () =>
+            order.reduce((accumulator, current) => {
+                const quantity = parseFloat(current.cantidad) || 0;
+                return accumulator + quantity;
+            }, 0),
+        [order]
+    );
+
+    const estimatedOrderValue = useMemo(
+        () =>
+            order.reduce((accumulator, current) => {
+                const quantity = parseFloat(current.cantidad) || 0;
+                const price = parseFloat(current.precio_m2_sin_iva) || 0;
+                return accumulator + quantity * price;
+            }, 0),
+        [order]
+    );
+
+    const addToOrder = (product) => {
+        setOrder((previousOrder) => {
+            const existing = previousOrder.find((item) => item.id === product.id);
+            if (existing) {
+                return previousOrder.map((item) =>
+                    item.id === product.id
+                        ? { ...item, cantidad: (parseFloat(item.cantidad) + 1).toString() }
                         : item
                 );
             }
-            return [...prevOrder, { ...producto, cantidad: '1' }];
+            return [...previousOrder, { ...product, cantidad: '1' }];
         });
     };
 
-    const removeFromOrder = (producto) => {
-        setOrder((prevOrder) =>
-            prevOrder.filter((item) => item.id !== producto.id)
-        );
+    const removeFromOrder = (productId) => {
+        setOrder((previousOrder) => previousOrder.filter((item) => item.id !== productId));
     };
 
-    const updateQuantity = (producto, cantidad) => {
-        // Permitir valores vacíos, números o números con punto decimal
+    const updateQuantity = (productId, value) => {
         const decimalRegex = /^(\d+\.?\d*|\d*\.?\d+)$/;
-
-        if (cantidad === '' || decimalRegex.test(cantidad)) {
-            setOrder((prevOrder) =>
-                prevOrder.map((item) =>
-                    item.id === producto.id ? { ...item, cantidad } : item
-                )
+        if (value === '' || decimalRegex.test(value)) {
+            setOrder((previousOrder) =>
+                previousOrder.map((item) => (item.id === productId ? { ...item, cantidad: value } : item))
             );
         }
     };
 
-    const handleBlur = (producto, cantidad) => {
-        // Convertir el valor a número flotante al perder el foco
-        const parsedCantidad = parseFloat(cantidad);
-        if (isNaN(parsedCantidad) || parsedCantidad <= 0) {
-            updateQuantity(producto, '1'); // Valor predeterminado si el valor no es válido
+    const handleBlur = (productId, value) => {
+        const parsed = parseFloat(value);
+        if (Number.isNaN(parsed) || parsed <= 0) {
+            updateQuantity(productId, '1');
         } else {
-            updateQuantity(producto, parsedCantidad.toFixed(2)); // Formatear con 2 decimales
+            updateQuantity(productId, parsed.toFixed(2));
         }
     };
 
     const handleContinue = () => {
-        if (order.length === 0) {
+        if (!order.length) {
             alert('El carrito está vacío. Agrega productos para continuar.');
             return;
         }
-        console.log('Estado del carrito antes de navegar:', order);
         navigate('/app/ventas/ganancias', { state: { order } });
     };
 
+    const handleClearCart = () => {
+        if (!order.length) return;
+        const shouldClear = window.confirm('¿Deseas vaciar el carrito por completo?');
+        if (shouldClear) {
+            setOrder([]);
+        }
+    };
+
+    const handleShowDetails = (product) => {
+        setSelectedProduct(product);
+    };
+
+    const handleImageError = (event) => {
+        event.currentTarget.style.opacity = '0';
+    };
+
     return (
-        <div className="ventas-container">
-            <NavigationTitle menu="Inicio" submenu="Ventas" />
-
-            <div className="ventas-main">
-                {/* Contenedor de productos */}
-                <div className="products-list-container">
-                    <h3>Productos</h3>
-                    <table ref={tableRef} className="products-table"></table>
-                </div>
-
-                {/* Carrito */}
-                <div className="cart-container">
-                    <h4>Carrito</h4>
-                    {order.length > 0 ? (
-                        <table className="cart-table">
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {order.map((item) => (
-                                    <tr key={item.id}>
-                                        <td>{item.nombre}</td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                value={item.cantidad}
-                                                onChange={(e) =>
-                                                    updateQuantity(item, e.target.value)
-                                                }
-                                                onBlur={(e) => handleBlur(item, e.target.value)}
-                                            />
-                                        </td>
-                                        <td>
-                                            <button
-                                                className="btn btn-danger"
-                                                onClick={() => removeFromOrder(item)}
-                                            >
-                                                Eliminar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>No hay productos en el carrito.</p>
-                    )}
-
-                    <div className="cart-actions">
-                        <button
-                            className="btn btn-danger"
-                            onClick={() => setOrder([])}
-                        >
-                            Vaciar Carrito
-                        </button>
-                        <button
-                            className="btn btn-primary"
-                            onClick={handleContinue}
-                        >
-                            Continuar
-                        </button>
+        <>
+            <NavigationTitle menu="Ventas" submenu="Registrar" />
+            <div className="sales">
+                <section className="sales__hero">
+                    <div className="sales__hero-copy">
+                        <p className="sales__hero-eyebrow">Panel de ventas</p>
+                        <h1 className="sales__hero-title">Arma tu pedido con una experiencia más ágil</h1>
+                        <p className="sales__hero-subtitle">
+                            Explora el inventario con tarjetas visuales, agrega productos al carrito y llega al cálculo de
+                            ganancias en menos pasos.
+                        </p>
+                        <div className="sales__hero-actions">
+                            <div className="sales__hero-stat">
+                                <span className="sales__hero-label">Productos disponibles</span>
+                                <strong>{totalInventory}</strong>
+                            </div>
+                            <div className="sales__hero-stat">
+                                <span className="sales__hero-label">Unidades en el carrito</span>
+                                <strong>{totalOrderItems.toFixed(2)}</strong>
+                            </div>
+                            <div className="sales__hero-stat">
+                                <span className="sales__hero-label">Valor estimado</span>
+                                <strong>${estimatedOrderValue.toFixed(2)}</strong>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <div className="sales__hero-figure" aria-hidden="true">
+                        <div className="sales__hero-badge">
+                            <i className="fa-solid fa-receipt"></i>
+                            <span>Nuevo flujo de venta</span>
+                        </div>
+                        <div className="sales__hero-illustration">
+                            <i className="fa-solid fa-cart-plus"></i>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="sales__workspace">
+                    <div className="sales__products-panel">
+                        <header className="sales__toolbar" aria-label="Herramientas de búsqueda">
+                            <div className="sales__search">
+                                <i className="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                <input
+                                    type="search"
+                                    placeholder="Buscar por código, nombre o proveedor"
+                                    value={searchTerm}
+                                    onChange={(event) => setSearchTerm(event.target.value)}
+                                />
+                            </div>
+                            <div className="sales__filters">
+                                <label htmlFor="format-filter">Formato</label>
+                                <select
+                                    id="format-filter"
+                                    value={formatFilter}
+                                    onChange={(event) => setFormatFilter(event.target.value)}
+                                >
+                                    <option value="todos">Todos</option>
+                                    {availableFormats.map((format) => (
+                                        <option value={format} key={format}>
+                                            {format}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </header>
+
+                        <div className="sales__grid" aria-live="polite">
+                            {isLoading ? (
+                                <p className="sales__empty">Cargando catálogo...</p>
+                            ) : filteredProducts.length ? (
+                                filteredProducts.map((product) => {
+                                    const supplierName = product.proveedor?.nombre || 'Sin proveedor asignado';
+                                    const price = product.precio_m2_sin_iva
+                                        ? `$${parseFloat(product.precio_m2_sin_iva).toFixed(2)}/m²`
+                                        : 'Precio no disponible';
+                                    const imageSrc = `${IMAGE_BASE_URL}/producto_${product.id}.jpeg`;
+
+                                    return (
+                                        <article
+                                            key={product.id}
+                                            className="sales-card"
+                                            role="group"
+                                            aria-label={`Producto ${product.nombre}`}
+                                        >
+                                            <button
+                                                type="button"
+                                                className="sales-card__focus"
+                                                onClick={() => handleShowDetails(product)}
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        event.preventDefault();
+                                                        handleShowDetails(product);
+                                                    }
+                                                }}
+                                            >
+                                                <div className="sales-card__media">
+                                                    <img
+                                                        src={imageSrc}
+                                                        alt={`Imagen de ${product.nombre}`}
+                                                        onError={handleImageError}
+                                                    />
+                                                </div>
+                                                <div className="sales-card__body">
+                                                    <h3>{product.nombre}</h3>
+                                                    <p className="sales-card__code">Código: {product.codigo || 'Sin código'}</p>
+                                                    <ul className="sales-card__meta">
+                                                        <li>
+                                                            <i className="fa-solid fa-box"></i>
+                                                            {product.formato || 'Formato sin definir'}
+                                                        </li>
+                                                        <li>
+                                                            <i className="fa-solid fa-palette"></i>
+                                                            {product.color || 'Color no especificado'}
+                                                        </li>
+                                                        <li>
+                                                            <i className="fa-solid fa-user-tie"></i>
+                                                            {supplierName}
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </button>
+                                            <footer className="sales-card__footer">
+                                                <span className="sales-card__price">{price}</span>
+                                                <button
+                                                    type="button"
+                                                    className="sales-card__add"
+                                                    onClick={() => addToOrder(product)}
+                                                >
+                                                    <i className="fa-solid fa-cart-plus"></i> Agregar
+                                                </button>
+                                            </footer>
+                                        </article>
+                                    );
+                                })
+                            ) : (
+                                <p className="sales__empty">
+                                    No encontramos productos con esos filtros. Intenta ajustar la búsqueda o restablecer los
+                                    filtros.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <aside className="sales__cart" aria-live="polite">
+                        <header className="sales__cart-header">
+                            <h2>Carrito de venta</h2>
+                            <p>Organiza las cantidades antes de continuar al cálculo de ganancias.</p>
+                        </header>
+
+                        {order.length ? (
+                            <ul className="sales__cart-list">
+                                {order.map((item) => (
+                                    <li className="sales__cart-item" key={item.id}>
+                                        <div className="sales__cart-info">
+                                            <h3>{item.nombre}</h3>
+                                            <span className="sales__cart-code">{item.codigo || 'Sin código'}</span>
+                                        </div>
+                                        <div className="sales__cart-actions">
+                                            <label htmlFor={`quantity-${item.id}`}>Cantidad</label>
+                                            <input
+                                                id={`quantity-${item.id}`}
+                                                type="text"
+                                                inputMode="decimal"
+                                                value={item.cantidad}
+                                                onChange={(event) => updateQuantity(item.id, event.target.value)}
+                                                onBlur={(event) => handleBlur(item.id, event.target.value)}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="sales__cart-remove"
+                                                onClick={() => removeFromOrder(item.id)}
+                                                aria-label={`Eliminar ${item.nombre} del carrito`}
+                                            >
+                                                <i className="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="sales__cart-empty">
+                                Aún no has agregado productos. Selecciona artículos del catálogo para comenzar una venta.
+                            </p>
+                        )}
+
+                        <div className="sales__cart-summary">
+                            <div>
+                                <span>Total de unidades</span>
+                                <strong>{totalOrderItems.toFixed(2)}</strong>
+                            </div>
+                            <div>
+                                <span>Valor estimado</span>
+                                <strong>${estimatedOrderValue.toFixed(2)}</strong>
+                            </div>
+                        </div>
+
+                        <div className="sales__cart-cta">
+                            <button type="button" className="sales__ghost-button" onClick={handleClearCart}>
+                                <i className="fa-solid fa-eraser"></i> Vaciar carrito
+                            </button>
+                            <button type="button" className="sales__primary-button" onClick={handleContinue}>
+                                Continuar a ganancias <i className="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </aside>
+                </section>
             </div>
 
-            {/* Modal para mostrar detalles del producto */}
             {selectedProduct && (
-                <ProductDetailsModal
-                    product={selectedProduct}
-                    onClose={() => setSelectedProduct(null)}
-                />
+                <ProductDetailsModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
             )}
-        </div>
+        </>
     );
 };
 
