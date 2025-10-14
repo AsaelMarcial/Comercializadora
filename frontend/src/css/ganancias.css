@@ -1,15 +1,12 @@
 :root {
-    --profit-surface: #ffffff;
-    --profit-surface-muted: rgba(255, 255, 255, 0.75);
-    --profit-surface-strong: rgba(255, 255, 255, 0.9);
-    --profit-border: rgba(15, 23, 42, 0.12);
-    --profit-text: #0f172a;
-    --profit-text-muted: rgba(15, 23, 42, 0.68);
-    --profit-text-soft: rgba(71, 85, 105, 0.82);
-    --profit-accent: #2563eb;
-    --profit-accent-soft: rgba(37, 99, 235, 0.1);
-    --profit-warning: #b45309;
-    --profit-shadow: 0 22px 45px -25px rgba(15, 23, 42, 0.25);
+    --profit-bg: radial-gradient(circle at top left, #4f46e5, #0ea5e9 65%, #1e1b4b);
+    --profit-card-bg: rgba(15, 23, 42, 0.85);
+    --profit-border: rgba(148, 163, 184, 0.25);
+    --profit-text: #f8fafc;
+    --profit-muted: #cbd5f5;
+    --profit-accent: #38bdf8;
+    --profit-warning: #facc15;
+    --profit-shadow: 0 22px 45px -20px rgba(15, 23, 42, 0.45);
     --profit-radius-lg: 28px;
     --profit-radius-md: 20px;
     --profit-transition: all 0.25s ease;
@@ -20,7 +17,7 @@
     flex-direction: column;
     gap: 2.5rem;
     padding: 1rem 1.5rem 3rem;
-    background: linear-gradient(180deg, #f5f7ff 0%, #ffffff 55%, #f1f5f9 100%);
+    background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
     color: var(--profit-text);
     min-height: calc(100vh - 140px);
 }
@@ -30,22 +27,22 @@
     display: grid;
     gap: 2rem;
     padding: 2.5rem;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(14, 165, 233, 0.85));
+    background: var(--profit-bg);
     border-radius: var(--profit-radius-lg);
     overflow: hidden;
-    box-shadow: 0 25px 60px -24px rgba(37, 99, 235, 0.45);
+    box-shadow: var(--profit-shadow);
     isolation: isolate;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    align-items: center;
 }
 
 .profit__hero::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.25), transparent 55%),
-        radial-gradient(circle at 85% 15%, rgba(125, 211, 252, 0.35), transparent 60%);
-    opacity: 1;
+    inset: -60% 25% auto -25%;
+    height: 420px;
+    background: radial-gradient(circle, rgba(148, 163, 184, 0.4), transparent 70%);
+    opacity: 0.35;
+    transform: rotate(-12deg);
+    filter: blur(32px);
     z-index: -1;
 }
 
@@ -53,15 +50,14 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    max-width: 640px;
-    color: #f8fafc;
+    max-width: 620px;
 }
 
 .profit__hero-eyebrow {
     font-size: 0.95rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(248, 250, 252, 0.75);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .profit__hero-title {
@@ -72,7 +68,7 @@
 
 .profit__hero-subtitle {
     font-size: 1rem;
-    color: rgba(248, 250, 252, 0.78);
+    color: rgba(248, 250, 252, 0.75);
     line-height: 1.6;
 }
 
@@ -85,9 +81,9 @@
 
 .profit__hero-stat {
     padding: 1rem 1.25rem;
-    background: rgba(15, 23, 42, 0.22);
+    background: rgba(15, 23, 42, 0.35);
     border-radius: var(--profit-radius-md);
-    border: 1px solid rgba(226, 232, 240, 0.24);
+    border: 1px solid rgba(226, 232, 240, 0.12);
     backdrop-filter: blur(10px);
     display: grid;
     gap: 0.35rem;
@@ -105,40 +101,40 @@
 
 .profit__hero-figure {
     position: relative;
-    display: grid;
-    gap: 1.5rem;
-    justify-items: center;
-    align-self: start;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 1rem;
 }
 
 .profit__hero-illustration {
-    width: clamp(180px, 26vw, 260px);
+    width: clamp(160px, 28vw, 260px);
     aspect-ratio: 1 / 1;
-    border-radius: 36px;
-    background: rgba(15, 23, 42, 0.18);
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.45);
     display: grid;
     place-items: center;
     font-size: clamp(3rem, 5vw, 4rem);
-    color: #f8fafc;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: inset 0 0 18px rgba(59, 130, 246, 0.35);
+    color: var(--profit-accent);
+    border: 1px solid rgba(226, 232, 240, 0.2);
+    box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.4);
 }
 
 .profit__hero-badge {
-    position: relative;
+    position: absolute;
+    top: 10%;
+    right: 10%;
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    background: rgba(15, 23, 42, 0.22);
+    background: rgba(15, 23, 42, 0.75);
     padding: 0.75rem 1.1rem;
     border-radius: 999px;
     font-size: 0.9rem;
     letter-spacing: 0.04em;
-    border: 1px solid rgba(226, 232, 240, 0.25);
-    color: #f8fafc;
+    border: 1px solid rgba(226, 232, 240, 0.15);
 }
-
 
 .profit__panel {
     display: grid;
@@ -147,7 +143,7 @@
 }
 
 .profit__sidebar {
-    background: var(--profit-surface);
+    background: var(--profit-card-bg);
     border-radius: var(--profit-radius-lg);
     padding: 1.75rem;
     border: 1px solid var(--profit-border);
@@ -164,7 +160,7 @@
 }
 
 .profit__sidebar-header p {
-    color: var(--profit-text-muted);
+    color: rgba(226, 232, 240, 0.7);
     line-height: 1.5;
 }
 
@@ -176,12 +172,11 @@
 
 .profit__sidebar-field label {
     font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--profit-text);
+    font-weight: 500;
 }
 
 .profit__sidebar select {
-    background: var(--profit-surface-muted);
+    background: rgba(15, 23, 42, 0.5);
     color: var(--profit-text);
     border: 1px solid var(--profit-border);
     border-radius: 16px;
@@ -192,17 +187,17 @@
 
 .profit__sidebar select:focus {
     outline: none;
-    border-color: rgba(37, 99, 235, 0.55);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    border-color: rgba(56, 189, 248, 0.65);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35);
 }
 
 .profit__sidebar-hint {
-    color: var(--profit-text-muted);
+    color: rgba(226, 232, 240, 0.65);
     font-size: 0.9rem;
 }
 
 .profit__client-card {
-    background: var(--profit-surface-strong);
+    background: rgba(15, 23, 42, 0.55);
     border-radius: var(--profit-radius-md);
     padding: 1.5rem;
     border: 1px solid var(--profit-border);
@@ -216,13 +211,13 @@
 }
 
 .profit__client-info p {
-    color: var(--profit-text-muted);
+    color: rgba(226, 232, 240, 0.75);
     margin-top: 0.25rem;
 }
 
 .profit__client-info span {
     font-size: 0.9rem;
-    color: var(--profit-text-soft);
+    color: rgba(148, 163, 184, 0.9);
 }
 
 .profit__client-actions {
@@ -237,9 +232,9 @@
 }
 
 .profit-product {
-    background: var(--profit-surface);
+    background: rgba(15, 23, 42, 0.75);
     border-radius: var(--profit-radius-lg);
-    border: 1px solid var(--profit-border);
+    border: 1px solid rgba(148, 163, 184, 0.2);
     padding: 1.75rem;
     display: grid;
     gap: 1.5rem;
@@ -249,7 +244,7 @@
 
 .profit-product:hover {
     transform: translateY(-4px);
-    border-color: rgba(37, 99, 235, 0.35);
+    border-color: rgba(56, 189, 248, 0.45);
 }
 
 .profit-product__header {
@@ -264,8 +259,8 @@
     aspect-ratio: 1 / 1;
     border-radius: 20px;
     overflow: hidden;
-    background: rgba(148, 163, 184, 0.15);
-    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.3);
     display: grid;
     place-items: center;
     position: relative;
@@ -300,11 +295,10 @@
 .profit-product__title h3 {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--profit-text);
 }
 
 .profit-product__title p {
-    color: var(--profit-text-soft);
+    color: rgba(203, 213, 225, 0.8);
     margin-top: 0.4rem;
 }
 
@@ -317,12 +311,11 @@
 
 .profit-product__quantity span {
     font-size: 0.85rem;
-    color: var(--profit-text-muted);
+    color: rgba(203, 213, 225, 0.75);
 }
 
 .profit-product__quantity strong {
     font-size: 1.3rem;
-    color: var(--profit-text);
 }
 
 .profit-product__grid {
@@ -335,20 +328,19 @@
     display: grid;
     gap: 0.35rem;
     padding: 0.9rem 1rem;
-    background: rgba(148, 163, 184, 0.08);
+    background: rgba(15, 23, 42, 0.6);
     border-radius: 18px;
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .profit-product__grid dt {
     font-size: 0.85rem;
-    color: var(--profit-text-soft);
+    color: rgba(203, 213, 225, 0.7);
 }
 
 .profit-product__grid dd {
     font-size: 1.05rem;
     font-weight: 600;
-    color: var(--profit-text);
 }
 
 .profit-product__field {
@@ -357,16 +349,15 @@
 }
 
 .profit-product__field label {
-    font-weight: 600;
+    font-weight: 500;
     font-size: 0.95rem;
-    color: var(--profit-text);
 }
 
 .profit-product__field select,
 .profit-product__field input[type='number'] {
     width: 100%;
-    background: var(--profit-surface-muted);
-    border: 1px solid var(--profit-border);
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.3);
     border-radius: 16px;
     padding: 0.75rem 1rem;
     color: var(--profit-text);
@@ -377,8 +368,8 @@
 .profit-product__field select:focus,
 .profit-product__field input[type='number']:focus {
     outline: none;
-    border-color: rgba(37, 99, 235, 0.55);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    border-color: rgba(56, 189, 248, 0.7);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
 }
 
 .profit-product__field select:disabled {
@@ -388,7 +379,7 @@
 
 .profit-product__helper {
     font-size: 0.85rem;
-    color: rgba(220, 38, 38, 0.85);
+    color: rgba(248, 113, 113, 0.85);
 }
 
 .profit-product__gain-control {
@@ -409,7 +400,6 @@
 .profit-product__gain-value {
     font-weight: 600;
     font-size: 1.05rem;
-    color: var(--profit-text);
 }
 
 .profit-product__quick-actions {
@@ -419,18 +409,17 @@
 }
 
 .profit-product__quick-actions button {
-    background: var(--profit-accent-soft);
-    border: 1px solid rgba(37, 99, 235, 0.2);
-    color: var(--profit-accent);
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: var(--profit-text);
     border-radius: 999px;
     padding: 0.45rem 0.9rem;
     font-size: 0.85rem;
-    font-weight: 600;
     transition: var(--profit-transition);
 }
 
 .profit-product__quick-actions button:hover {
-    background: rgba(37, 99, 235, 0.18);
+    background: rgba(56, 189, 248, 0.25);
 }
 
 .profit__summary {
@@ -440,7 +429,7 @@
 
 .profit__summary-card {
     width: min(420px, 100%);
-    background: var(--profit-surface);
+    background: rgba(15, 23, 42, 0.85);
     border-radius: var(--profit-radius-lg);
     padding: 2rem;
     border: 1px solid var(--profit-border);
@@ -455,7 +444,7 @@
 }
 
 .profit__summary-card header p {
-    color: var(--profit-text-muted);
+    color: rgba(226, 232, 240, 0.7);
 }
 
 .profit__summary-card dl {
@@ -465,18 +454,17 @@
 
 .profit__summary-card dt {
     font-size: 0.9rem;
-    color: var(--profit-text-soft);
+    color: rgba(203, 213, 225, 0.8);
 }
 
 .profit__summary-card dd {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--profit-text);
 }
 
 .profit__summary-warning {
-    background: rgba(251, 191, 36, 0.16);
-    border: 1px solid rgba(251, 191, 36, 0.35);
+    background: rgba(250, 204, 21, 0.15);
+    border: 1px solid rgba(250, 204, 21, 0.35);
     color: var(--profit-warning);
     border-radius: 16px;
     padding: 0.9rem 1rem;
@@ -501,9 +489,9 @@
 }
 
 .profit__primary-button {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: #f8fafc;
-    box-shadow: 0 10px 25px -15px rgba(37, 99, 235, 0.6);
+    background: linear-gradient(135deg, #38bdf8 0%, #4f46e5 100%);
+    color: var(--profit-text);
+    box-shadow: 0 10px 25px -15px rgba(56, 189, 248, 0.8);
 }
 
 .profit__primary-button:hover {
@@ -511,13 +499,13 @@
 }
 
 .profit__ghost-button {
-    background: var(--profit-surface-muted);
-    color: var(--profit-text);
-    border-color: var(--profit-border);
+    background: rgba(15, 23, 42, 0.4);
+    color: var(--profit-muted);
+    border-color: rgba(148, 163, 184, 0.3);
 }
 
 .profit__ghost-button:hover {
-    background: rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.65);
 }
 
 .profit__empty {
@@ -527,15 +515,14 @@
 }
 
 .profit__empty-card {
-    background: var(--profit-surface);
+    background: rgba(15, 23, 42, 0.78);
     border-radius: var(--profit-radius-lg);
     padding: 3rem 2.5rem;
     text-align: center;
-    border: 1px solid var(--profit-border);
+    border: 1px solid rgba(148, 163, 184, 0.25);
     display: grid;
     gap: 1.25rem;
     width: min(480px, 100%);
-    box-shadow: var(--profit-shadow);
 }
 
 .profit__empty-card i {
