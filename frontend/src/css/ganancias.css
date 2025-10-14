@@ -1,131 +1,611 @@
-.main-container {
+:root {
+    --profit-surface: #ffffff;
+    --profit-surface-muted: rgba(255, 255, 255, 0.75);
+    --profit-surface-strong: rgba(255, 255, 255, 0.9);
+    --profit-border: rgba(15, 23, 42, 0.12);
+    --profit-text: #0f172a;
+    --profit-text-muted: rgba(15, 23, 42, 0.68);
+    --profit-text-soft: rgba(71, 85, 105, 0.82);
+    --profit-accent: #2563eb;
+    --profit-accent-soft: rgba(37, 99, 235, 0.1);
+    --profit-warning: #b45309;
+    --profit-shadow: 0 22px 45px -25px rgba(15, 23, 42, 0.25);
+    --profit-radius-lg: 28px;
+    --profit-radius-md: 20px;
+    --profit-transition: all 0.25s ease;
+}
+
+.profit {
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    background-color: #f3f3f3;
-    border-radius: 15px;
-    margin: 16px auto;
-    max-width: 90%;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    gap: 2.5rem;
+    padding: 1rem 1.5rem 3rem;
+    background: linear-gradient(180deg, #f5f7ff 0%, #ffffff 55%, #f1f5f9 100%);
+    color: var(--profit-text);
+    min-height: calc(100vh - 140px);
 }
 
-.header {
-    text-align: center;
-    margin-bottom: 16px;
-}
-
-.header h2 {
-    font-size: 24px;
-    color: #6a728f;
-}
-
-.table-productos {
-    border-radius: 10px;
-    background-color: white;
+.profit__hero {
+    position: relative;
+    display: grid;
+    gap: 2rem;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(14, 165, 233, 0.85));
+    border-radius: var(--profit-radius-lg);
     overflow: hidden;
-    padding: 10px;
-    margin-bottom: 16px;
+    box-shadow: 0 25px 60px -24px rgba(37, 99, 235, 0.45);
+    isolation: isolate;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    align-items: center;
 }
 
-table {
+.profit__hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.25), transparent 55%),
+        radial-gradient(circle at 85% 15%, rgba(125, 211, 252, 0.35), transparent 60%);
+    opacity: 1;
+    z-index: -1;
+}
+
+.profit__hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 640px;
+    color: #f8fafc;
+}
+
+.profit__hero-eyebrow {
+    font-size: 0.95rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(248, 250, 252, 0.75);
+}
+
+.profit__hero-title {
+    font-size: clamp(1.9rem, 2.5vw + 1rem, 2.8rem);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.profit__hero-subtitle {
+    font-size: 1rem;
+    color: rgba(248, 250, 252, 0.78);
+    line-height: 1.6;
+}
+
+.profit__hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.profit__hero-stat {
+    padding: 1rem 1.25rem;
+    background: rgba(15, 23, 42, 0.22);
+    border-radius: var(--profit-radius-md);
+    border: 1px solid rgba(226, 232, 240, 0.24);
+    backdrop-filter: blur(10px);
+    display: grid;
+    gap: 0.35rem;
+}
+
+.profit__stat-label {
+    font-size: 0.85rem;
+    color: rgba(248, 250, 252, 0.72);
+}
+
+.profit__stat-value {
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.profit__hero-figure {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    justify-items: center;
+    align-self: start;
+    padding: 1rem;
+}
+
+.profit__hero-illustration {
+    width: clamp(180px, 26vw, 260px);
+    aspect-ratio: 1 / 1;
+    border-radius: 36px;
+    background: rgba(15, 23, 42, 0.18);
+    display: grid;
+    place-items: center;
+    font-size: clamp(3rem, 5vw, 4rem);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 0 18px rgba(59, 130, 246, 0.35);
+}
+
+.profit__hero-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(15, 23, 42, 0.22);
+    padding: 0.75rem 1.1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    border: 1px solid rgba(226, 232, 240, 0.25);
+    color: #f8fafc;
+}
+
+
+.profit__panel {
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+    gap: 2rem;
+}
+
+.profit__sidebar {
+    background: var(--profit-surface);
+    border-radius: var(--profit-radius-lg);
+    padding: 1.75rem;
+    border: 1px solid var(--profit-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: var(--profit-shadow);
+}
+
+.profit__sidebar-header h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.profit__sidebar-header p {
+    color: var(--profit-text-muted);
+    line-height: 1.5;
+}
+
+.profit__sidebar-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.profit__sidebar-field label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--profit-text);
+}
+
+.profit__sidebar select {
+    background: var(--profit-surface-muted);
+    color: var(--profit-text);
+    border: 1px solid var(--profit-border);
+    border-radius: 16px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: var(--profit-transition);
+}
+
+.profit__sidebar select:focus {
+    outline: none;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.profit__sidebar-hint {
+    color: var(--profit-text-muted);
+    font-size: 0.9rem;
+}
+
+.profit__client-card {
+    background: var(--profit-surface-strong);
+    border-radius: var(--profit-radius-md);
+    padding: 1.5rem;
+    border: 1px solid var(--profit-border);
+    display: grid;
+    gap: 1.25rem;
+}
+
+.profit__client-info h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.profit__client-info p {
+    color: var(--profit-text-muted);
+    margin-top: 0.25rem;
+}
+
+.profit__client-info span {
+    font-size: 0.9rem;
+    color: var(--profit-text-soft);
+}
+
+.profit__client-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.profit__products {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.profit-product {
+    background: var(--profit-surface);
+    border-radius: var(--profit-radius-lg);
+    border: 1px solid var(--profit-border);
+    padding: 1.75rem;
+    display: grid;
+    gap: 1.5rem;
+    transition: var(--profit-transition);
+    box-shadow: var(--profit-shadow);
+}
+
+.profit-product:hover {
+    transform: translateY(-4px);
+    border-color: rgba(37, 99, 235, 0.35);
+}
+
+.profit-product__header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1.25rem;
+    align-items: center;
+}
+
+.profit-product__thumbnail {
+    width: 72px;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(148, 163, 184, 0.15);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    display: grid;
+    place-items: center;
+    position: relative;
+}
+
+.profit-product__thumbnail img {
     width: 100%;
-    border-collapse: collapse;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
 }
 
-thead {
-    background-color: #f4f4f4;
+.profit-product__thumbnail::after {
+    content: '\f03e';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: rgba(148, 163, 184, 0.55);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-thead th {
-    padding: 10px;
-    text-align: left;
-    color: #6a728f;
+.profit-product__thumbnail img.profit-product__image--fallback,
+.profit-product__thumbnail img[alt='Producto sin nombre'] {
+    opacity: 0;
 }
 
-tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+.profit-product__thumbnail--empty::after {
+    opacity: 1;
 }
 
-tbody tr:hover {
-    background-color: #e9e9e9;
+.profit-product__title h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--profit-text);
 }
 
-tbody td {
-    padding: 10px;
-    text-align: left;
+.profit-product__title p {
+    color: var(--profit-text-soft);
+    margin-top: 0.4rem;
 }
 
-input[type="number"] {
+.profit-product__quantity {
+    display: grid;
+    justify-items: end;
+    text-align: right;
+    gap: 0.35rem;
+}
+
+.profit-product__quantity span {
+    font-size: 0.85rem;
+    color: var(--profit-text-muted);
+}
+
+.profit-product__quantity strong {
+    font-size: 1.3rem;
+    color: var(--profit-text);
+}
+
+.profit-product__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem 1.5rem;
+}
+
+.profit-product__grid div {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem;
+    background: rgba(148, 163, 184, 0.08);
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.profit-product__grid dt {
+    font-size: 0.85rem;
+    color: var(--profit-text-soft);
+}
+
+.profit-product__grid dd {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--profit-text);
+}
+
+.profit-product__field {
+    display: grid;
+    gap: 0.7rem;
+}
+
+.profit-product__field label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--profit-text);
+}
+
+.profit-product__field select,
+.profit-product__field input[type='number'] {
     width: 100%;
-    padding: 8px;
-    margin: 5px 0;
-    border: 1px solid #ced4da;
-    border-radius: 10px;
-    font-size: 14px;
+    background: var(--profit-surface-muted);
+    border: 1px solid var(--profit-border);
+    border-radius: 16px;
+    padding: 0.75rem 1rem;
+    color: var(--profit-text);
+    font-size: 0.95rem;
+    transition: var(--profit-transition);
 }
 
-button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.profit-product__field select:focus,
+.profit-product__field input[type='number']:focus {
+    outline: none;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
-button.btn-primary {
-    background-color: #6a728f;
-    color: white;
+.profit-product__field select:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
-button.btn-primary:hover {
-    background-color: #505869;
+.profit-product__helper {
+    font-size: 0.85rem;
+    color: rgba(220, 38, 38, 0.85);
 }
 
-button.btn-secondary {
-    background-color: #ced4da;
-    color: #333;
+.profit-product__gain-control {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px auto;
+    gap: 0.75rem;
+    align-items: center;
 }
 
-button.btn-secondary:hover {
-    background-color: #b5bcc4;
+.profit-product__gain-control input[type='range'] {
+    accent-color: var(--profit-accent);
 }
 
-.footer {
+.profit-product__gain-control input[type='number'] {
+    text-align: right;
+}
+
+.profit-product__gain-value {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--profit-text);
+}
+
+.profit-product__quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.profit-product__quick-actions button {
+    background: var(--profit-accent-soft);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    color: var(--profit-accent);
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: var(--profit-transition);
+}
+
+.profit-product__quick-actions button:hover {
+    background: rgba(37, 99, 235, 0.18);
+}
+
+.profit__summary {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    margin-top: 16px;
 }
 
-textarea {
-    width: 100%;
-    padding: 8px;
-    border-radius: 15px;
-    border: solid 0.5px #ced4da;
-    margin-bottom: 16px;
+.profit__summary-card {
+    width: min(420px, 100%);
+    background: var(--profit-surface);
+    border-radius: var(--profit-radius-lg);
+    padding: 2rem;
+    border: 1px solid var(--profit-border);
+    box-shadow: var(--profit-shadow);
+    display: grid;
+    gap: 1.5rem;
 }
 
-.highlight-row {
-    background-color: #dae0e7;
-}
-.resumen-ganancias {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #f3f3f3;
-    border-radius: 10px;
-    text-align: center;
+.profit__summary-card header h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
-.resumen-ganancias h4 {
-    margin: 10px 0;
+.profit__summary-card header p {
+    color: var(--profit-text-muted);
 }
 
-.botones-acciones {
+.profit__summary-card dl {
+    display: grid;
+    gap: 1rem;
+}
+
+.profit__summary-card dt {
+    font-size: 0.9rem;
+    color: var(--profit-text-soft);
+}
+
+.profit__summary-card dd {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--profit-text);
+}
+
+.profit__summary-warning {
+    background: rgba(251, 191, 36, 0.16);
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    color: var(--profit-warning);
+    border-radius: 16px;
+    padding: 0.9rem 1rem;
+    line-height: 1.4;
+}
+
+.profit__summary-actions {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 1rem;
+}
+
+.profit__primary-button,
+.profit__ghost-button {
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 16px;
+    padding: 0.85rem 1.4rem;
+    border: 1px solid transparent;
+    transition: var(--profit-transition);
+    cursor: pointer;
+}
+
+.profit__primary-button {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #f8fafc;
+    box-shadow: 0 10px 25px -15px rgba(37, 99, 235, 0.6);
+}
+
+.profit__primary-button:hover {
+    transform: translateY(-2px);
+}
+
+.profit__ghost-button {
+    background: var(--profit-surface-muted);
+    color: var(--profit-text);
+    border-color: var(--profit-border);
+}
+
+.profit__ghost-button:hover {
+    background: rgba(148, 163, 184, 0.18);
+}
+
+.profit__empty {
+    display: flex;
+    justify-content: center;
+    padding: 4rem 0 6rem;
+}
+
+.profit__empty-card {
+    background: var(--profit-surface);
+    border-radius: var(--profit-radius-lg);
+    padding: 3rem 2.5rem;
+    text-align: center;
+    border: 1px solid var(--profit-border);
+    display: grid;
+    gap: 1.25rem;
+    width: min(480px, 100%);
+    box-shadow: var(--profit-shadow);
+}
+
+.profit__empty-card i {
+    font-size: 2.5rem;
+    color: var(--profit-accent);
+}
+
+.profit__skeleton {
+    height: 48px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, rgba(148, 163, 184, 0.12), rgba(148, 163, 184, 0.24), rgba(148, 163, 184, 0.12));
+    animation: profit-skeleton 1.5s infinite;
+}
+
+@keyframes profit-skeleton {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .profit__panel {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profit__sidebar {
+        position: sticky;
+        top: 104px;
+    }
+}
+
+@media (max-width: 768px) {
+    .profit {
+        padding: 1rem;
+    }
+
+    .profit__hero {
+        padding: 2rem;
+    }
+
+    .profit-product__header {
+        grid-template-columns: 1fr;
+        justify-items: start;
+    }
+
+    .profit-product__quantity {
+        justify-items: start;
+        text-align: left;
+    }
+
+    .profit-product__gain-control {
+        grid-template-columns: 1fr;
+    }
+
+    .profit__summary-actions {
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .profit *,
+    .profit__hero::before {
+        transition: none !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
 }
