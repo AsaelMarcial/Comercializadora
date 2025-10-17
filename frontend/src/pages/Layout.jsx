@@ -15,51 +15,63 @@ export const Layout = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Eliminar el token
-    navigate('/login'); // Redirigir al login
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (
     <>
-      {/* Sidebar */}
-      <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        <div className="logo-detalles" onClick={toggleSidebar}>
-          <div className="logo_nombre">ORZA</div>
-          <i
-            className={`bx ${isSidebarOpen ? 'bx-menu-alt-right' : 'bx-menu'}`}
-            id="btn"
-          ></i>
+      <aside className={`sidebar ${isSidebarOpen ? 'sidebar--open' : ''}`}>
+        <div className="sidebar__top">
+          <button
+            type="button"
+            className="sidebar__toggle"
+            onClick={toggleSidebar}
+            aria-label={isSidebarOpen ? 'Contraer menú lateral' : 'Expandir menú lateral'}
+          >
+            <i className={`fa-solid ${isSidebarOpen ? 'fa-chevron-left' : 'fa-bars'}`} aria-hidden="true"></i>
+          </button>
+          <div className="sidebar__brand">
+            <span className="sidebar__brand-mark" aria-hidden="true">ORZA</span>
+            <span className="sidebar__brand-subtitle">Comercializadora</span>
+          </div>
         </div>
 
-        {/* Navegación lateral */}
-        <ul className="nav-lista">
-          <SidebarButton to="/app" iconClasses="fa-solid fa-house" label="Inicio" />
-          <SidebarButton to="/app/users" iconClasses="bi bi-people-fill" label="Usuarios" />
-          <SidebarButton to="/app/products" iconClasses="fa-solid fa-boxes-stacked" label="Productos" />
-          <SidebarButton to="/app/clientes" iconClasses="fa-solid fa-address-book" label="Clientes" />
-          <SidebarButton to="/app/proveedores" iconClasses="fa-solid fa-people-carry" label="Proveedores" />
-          <SidebarButton to="/app/ventas" iconClasses="fa-solid fa-store" label="Ventas" />
-          <SidebarButton to="/app/ventas/cotizaciones" iconClasses="fa-solid fa-file-invoice-dollar" label="Cotizaciones" />
-          {/* <SidebarButton to="/app/incomes" iconClasses="fa-solid fa-money-bill-trend-up" label="Ingresos" /> */}
-          {/* <SidebarButton to="/app/outcomes" iconClasses="fa-solid fa-money-bill-transfer" label="Egresos" /> */}
-          {/* <SidebarButton to="/app/reports" iconClasses="fa-solid fa-square-poll-vertical" label="Reportes" /> */}
+        <nav className="sidebar__navigation" aria-label="Menú principal">
+          <p className="sidebar__section-label">Panel</p>
+          <ul className="sidebar__nav-list">
+            <SidebarButton to="/app" iconClasses="fa-solid fa-gauge-high" label="Inicio" />
+            <SidebarButton to="/app/users" iconClasses="fa-solid fa-user-group" label="Usuarios" />
+            <SidebarButton to="/app/products" iconClasses="fa-solid fa-box-archive" label="Productos" />
+            <SidebarButton to="/app/clientes" iconClasses="fa-solid fa-address-card" label="Clientes" />
+            <SidebarButton to="/app/proveedores" iconClasses="fa-solid fa-truck-ramp-box" label="Proveedores" />
+          </ul>
 
-          {/* <SidebarButton to="/app/help" iconClasses="fa-solid fa-circle-question" label="Ayuda" /> */}
+          <p className="sidebar__section-label">Operaciones</p>
+          <ul className="sidebar__nav-list">
+            <SidebarButton to="/app/ventas" iconClasses="fa-solid fa-store" label="Ventas" />
+            <SidebarButton to="/app/ventas/cotizaciones" iconClasses="fa-solid fa-file-signature" label="Cotizaciones" />
+          </ul>
+        </nav>
 
-          {/* Perfil del usuario */}
-          <li className="perfil">
-            <div className="perfil-detalles">
-              <div className="perfil_nombre">Usuario</div>
-              <div className="perfil_correo">ejemplo@ejemplo.com</div>
-            </div>
-            <i className="bx bx-log-out" id="log_out" onClick={handleLogout}></i>
-          </li>
-        </ul>
-      </div>
+        <div className="sidebar__profile">
+          <div className="sidebar__profile-details">
+            <span className="sidebar__profile-name">Usuario</span>
+            <span className="sidebar__profile-email">ejemplo@ejemplo.com</span>
+          </div>
+          <button
+            type="button"
+            className="sidebar__logout"
+            onClick={handleLogout}
+            aria-label="Cerrar sesión"
+          >
+            <i className="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+          </button>
+        </div>
+      </aside>
 
-      {/* Sección principal */}
       <section className="main-seccion">
-        <Outlet /> {/* Renderizado de las rutas hijas */}
+        <Outlet />
       </section>
     </>
   );
