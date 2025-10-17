@@ -136,7 +136,7 @@ const Users = () => {
         return () => {
             tableElement.off('click', '.edit-btn', handleEditClick);
             tableElement.off('click', '.delete-btn', handleDeleteClick);
-            table.destroy();
+            table.destroy(true);
         };
     }, [users, onDeleteButtonClicked]);
 

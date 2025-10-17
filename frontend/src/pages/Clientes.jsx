@@ -86,7 +86,7 @@ const Clientes = () => {
         const tableInstance = tableElement.DataTable(datatableOptions);
 
         return () => {
-            tableInstance.destroy();
+            tableInstance.destroy(true);
         };
     }, [clientes, isLoading]);
 

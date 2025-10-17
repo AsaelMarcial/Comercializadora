@@ -98,16 +98,13 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
   background: rgba(56, 189, 248, 0.18);
   color: #f8fafc;
   font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 1;
+  letter-spacing: 0.1em;
 }
 
 .sidebar__brand-subtitle {
