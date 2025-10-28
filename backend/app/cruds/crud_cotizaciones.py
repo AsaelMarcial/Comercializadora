@@ -6,6 +6,7 @@ from app.schemas import CotizacionCreate, ClienteCotizacionCreate
 from app.cruds.crud_clientes import CRUDClienteCotizacion
 import logging
 from app.utils.pdf_utils import generate_pdf
+from app.utils.remision_pdf_utils import generate_nota_remision_pdf
 import io
 import os
 
@@ -17,6 +18,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 PDF_STORAGE_PATH = os.path.join(os.path.dirname(__file__), "../pdf_storage")
+os.makedirs(PDF_STORAGE_PATH, exist_ok=True)
 
 class CRUDCotizacion:
     def __init__(self, db: Session):
@@ -123,6 +125,41 @@ class CRUDCotizacion:
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail=f"Error al generar el PDF: {str(e)}"
+                )
+
+            remision_data_pdf = {
+                "id": nueva_cotizacion.id,
+                "fecha": nueva_cotizacion.fecha.strftime("%d/%m/%Y"),
+                "cliente_nombre": cliente_nombre,
+                "cliente_proyecto": cliente_proyecto,
+                "cliente_direccion": cliente_direccion,
+                "productos": [
+                    {
+                        "producto_id": detalle.producto_id,
+                        "nombre": detalle.producto.nombre if detalle.producto else "Sin nombre",
+                        "color": detalle.producto.color if detalle.producto else None,
+                        "formato": detalle.producto.formato if detalle.producto else None,
+                        "cantidad": float(detalle.cantidad),
+                        "tipo_variante": detalle.tipo_variante,
+                    }
+                    for detalle in nueva_cotizacion.detalles
+                ],
+            }
+
+            try:
+                remision_pdf = generate_nota_remision_pdf(remision_data_pdf)
+                remision_pdf_path = os.path.join(PDF_STORAGE_PATH, f"NotaRemision_{nueva_cotizacion.id}.pdf")
+                with open(remision_pdf_path, "wb") as remision_file:
+                    remision_file.write(remision_pdf)
+
+                logger.info(f"Nota de remisión generada y guardada en: {remision_pdf_path}")
+            except Exception as e:
+                logger.error(
+                    f"Error al generar la nota de remisión para la cotización {nueva_cotizacion.id}: {e}"
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error al generar la nota de remisión: {str(e)}"
                 )
 
             logger.info(f"Cotización creada con ID {nueva_cotizacion.id} por el usuario {usuario_id}")
