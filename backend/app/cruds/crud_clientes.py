@@ -5,11 +5,6 @@ from app.models import Cliente, ClienteCotizacion
 from app.schemas import ClienteCreate, ClienteCotizacionCreate
 import logging
 
-# Configurar logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 class CRUDCliente:

@@ -1,3 +1,7 @@
+from app.logging_config import setup_logging
+
+setup_logging()
+
 from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer

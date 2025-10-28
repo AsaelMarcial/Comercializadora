@@ -11,11 +11,6 @@ from app.utils.remision_pdf_utils import generate_nota_remision_pdf
 from app.models import Cliente, ClienteCotizacion
 import logging
 
-# Configurar logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 router = APIRouter()

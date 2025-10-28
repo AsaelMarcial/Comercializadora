@@ -4,10 +4,6 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from babel.numbers import format_decimal
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../templates")

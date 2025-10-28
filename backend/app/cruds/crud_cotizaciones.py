@@ -7,14 +7,8 @@ from app.cruds.crud_clientes import CRUDClienteCotizacion
 import logging
 from app.utils.pdf_utils import generate_pdf
 from app.utils.remision_pdf_utils import generate_nota_remision_pdf
-import io
 import os
 
-# Configurar logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 PDF_STORAGE_PATH = os.path.join(os.path.dirname(__file__), "../pdf_storage")

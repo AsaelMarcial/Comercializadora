@@ -4,11 +4,6 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from babel.numbers import format_decimal  # Importar Babel para el formato de números
 
-# Configurar logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 # Ruta de la plantilla HTML
