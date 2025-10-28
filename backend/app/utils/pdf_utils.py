@@ -1,12 +1,50 @@
 import os
 import logging
+import logging.handlers
+from pathlib import Path
 from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from babel.numbers import format_decimal  # Importar Babel para el formato de números
 
-logger = logging.getLogger("app.pdf.cotizacion")
-logger.setLevel(logging.INFO)
-logger.propagate = True
+
+
+def _configure_logger(name: str) -> logging.Logger:
+    """Return a logger that always writes into the shared app.log file."""
+
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+
+    log_directory = Path(
+        os.getenv("LOG_DIR", Path(__file__).resolve().parents[1] / "logs")
+    )
+    log_directory.mkdir(parents=True, exist_ok=True)
+    log_file = log_directory / "app.log"
+
+    has_rotating_handler = any(
+        isinstance(handler, logging.handlers.RotatingFileHandler)
+        and Path(getattr(handler, "baseFilename", "")) == log_file
+        for handler in logger.handlers
+    )
+
+    if not has_rotating_handler:
+        rotating_handler = logging.handlers.RotatingFileHandler(
+            log_file,
+            maxBytes=5 * 1024 * 1024,
+            backupCount=5,
+            encoding="utf-8",
+        )
+        rotating_handler.setFormatter(
+            logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
+        )
+        logger.addHandler(rotating_handler)
+
+    logger.propagate = False
+    return logger
+
+
+logger = _configure_logger("app.pdf.cotizacion")
 
 # Ruta de la plantilla HTML
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../templates")
