@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 def setup_logging() -> None:
-    """Configure logging to output to stdout and a rotating file.
+    """Configure logging to output to a rotating file.
 
     The configuration respects ``LOG_LEVEL`` and ``LOG_DIR`` environment
     variables, defaulting to ``INFO`` and ``app/logs`` respectively. The
@@ -37,12 +37,6 @@ def setup_logging() -> None:
             },
         },
         "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-                "level": log_level,
-                "formatter": "standard",
-                "stream": "ext://sys.stdout",
-            },
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": log_level,
@@ -54,30 +48,25 @@ def setup_logging() -> None:
             },
         },
         "loggers": {
-            "app": {
-                "level": log_level,
-                "handlers": ["console", "file"],
-                "propagate": False,
-            },
             "uvicorn": {
                 "level": log_level,
-                "handlers": ["console", "file"],
+                "handlers": ["file"],
                 "propagate": False,
             },
             "uvicorn.error": {
                 "level": log_level,
-                "handlers": ["console", "file"],
+                "handlers": ["file"],
                 "propagate": False,
             },
             "uvicorn.access": {
                 "level": log_level,
-                "handlers": ["console", "file"],
+                "handlers": ["file"],
                 "propagate": False,
             },
         },
         "root": {
             "level": log_level,
-            "handlers": ["console", "file"],
+            "handlers": ["file"],
         },
     }
 
