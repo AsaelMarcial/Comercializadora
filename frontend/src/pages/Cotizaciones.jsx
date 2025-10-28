@@ -1,7 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import NavigationTitle from '../components/NavigationTitle';
-import { getAllCotizaciones, cancelCotizacion, downloadCotizacionPDF } from '../data-access/cotizacionesDataAccess';
+import {
+    getAllCotizaciones,
+    cancelCotizacion,
+    downloadCotizacionPDF,
+    downloadNotaRemisionPDF,
+} from '../data-access/cotizacionesDataAccess';
 import CotizacionDetailsModal from '../components/CotizacionDetailsModal';
 import { toast } from 'react-toastify';
 import '../css/cotizaciones.css';
@@ -123,6 +128,16 @@ const Cotizaciones = () => {
         } catch (error) {
             console.error('Error al descargar el PDF:', error);
             toast('No se pudo descargar la cotización.', { type: 'error' });
+        }
+    };
+
+    const handleDownloadNotaRemision = async (id) => {
+        try {
+            await downloadNotaRemisionPDF(id);
+            toast('Descarga iniciada', { type: 'success' });
+        } catch (error) {
+            console.error('Error al descargar la nota de remisión:', error);
+            toast('No se pudo descargar la nota de remisión.', { type: 'error' });
         }
     };
 
@@ -305,6 +320,14 @@ const Cotizaciones = () => {
                                                         </button>
                                                         <button
                                                             type="button"
+                                                            className="quotes__action"
+                                                            onClick={() => handleDownloadNotaRemision(cotizacion.id)}
+                                                            aria-label={`Descargar nota de remisión de la cotización ${cotizacion.id}`}
+                                                        >
+                                                            <i className="fa-solid fa-truck" aria-hidden="true"></i>
+                                                        </button>
+                                                        <button
+                                                            type="button"
                                                             className="quotes__action quotes__action--danger"
                                                             onClick={() => handleCancelCotizacion(cotizacion.id)}
                                                             aria-label={`Cancelar cotización ${cotizacion.id}`}
@@ -350,6 +373,7 @@ const Cotizaciones = () => {
                     onClose={handleCloseDetails}
                     onCancelCotizacion={handleCancelCotizacion}
                     onDownloadPDF={handleDownloadQuote}
+                    onDownloadNotaRemision={handleDownloadNotaRemision}
                 />
             )}
         </>

@@ -7,7 +7,8 @@ from app.cruds.crud_cotizaciones import CRUDCotizacion
 from app.schemas import CotizacionCreate, CotizacionResponse
 from app.database import get_db
 from app.auth import get_current_user
-from app.utils.pdf_utils import generate_pdf
+from app.utils.remision_pdf_utils import generate_nota_remision_pdf
+from app.models import Cliente, ClienteCotizacion
 import logging
 
 # Configurar logging
@@ -181,4 +182,96 @@ def descargar_pdf_cotizacion(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al descargar el PDF: {str(e)}"
+        )
+
+
+@router.get(
+    "/cotizaciones/{cotizacion_id}/nota-remision",
+    tags=["Cotizaciones"],
+    summary="Descargar nota de remisión de una cotización",
+)
+def descargar_nota_remision(
+    cotizacion_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    """Genera y descarga la nota de remisión para una cotización específica."""
+    crud_cotizacion.db = db
+    try:
+        cotizacion = crud_cotizacion.obtener_cotizacion(cotizacion_id)
+        if not cotizacion:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Cotización no encontrada"
+            )
+
+        cliente = (
+            db.query(Cliente)
+            .join(ClienteCotizacion, ClienteCotizacion.cliente_id == Cliente.id)
+            .filter(ClienteCotizacion.cotizacion_id == cotizacion_id)
+            .first()
+        )
+
+        cliente_proyecto = (
+            cliente.proyecto if cliente and getattr(cliente, "proyecto", None) else "N/A"
+        )
+        cliente_direccion = (
+            cliente.direccion if cliente and getattr(cliente, "direccion", None) else "N/A"
+        )
+
+        remision_data = {
+            "id": cotizacion.id,
+            "fecha": cotizacion.fecha.strftime("%d/%m/%Y"),
+            "cliente_nombre": cliente.nombre if cliente else cotizacion.cliente,
+            "cliente_proyecto": cliente_proyecto,
+            "cliente_direccion": cliente_direccion,
+            "productos": [
+                {
+                    "producto_id": detalle.producto_id,
+                    "nombre": detalle.producto.nombre if detalle.producto else "Sin nombre",
+                    "color": getattr(detalle.producto, "color", None) if detalle.producto else None,
+                    "formato": getattr(detalle.producto, "formato", None) if detalle.producto else None,
+                    "cantidad": float(detalle.cantidad),
+                    "tipo_variante": detalle.tipo_variante,
+                }
+                for detalle in (cotizacion.detalles or [])
+            ],
+        }
+
+        pdf_path = os.path.join(PDF_STORAGE_PATH, f"NotaRemision_{cotizacion_id}.pdf")
+
+        try:
+            pdf_bytes = generate_nota_remision_pdf(remision_data)
+            with open(pdf_path, "wb") as pdf_file:
+                pdf_file.write(pdf_bytes)
+        except Exception as e:
+            logger.error(
+                "Error al generar la nota de remisión para la cotización %s: %s",
+                cotizacion_id,
+                e
+            )
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al generar la nota de remisión: {str(e)}"
+            )
+
+        pdf_stream = io.BytesIO(pdf_bytes)
+        pdf_stream.seek(0)
+
+        headers = {
+            "Content-Disposition": f"attachment; filename=NotaRemision_{cotizacion_id}.pdf"
+        }
+        return StreamingResponse(pdf_stream, media_type="application/pdf", headers=headers)
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(
+            "Error al descargar la nota de remisión de la cotización con ID %s: %s",
+            cotizacion_id,
+            e,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al descargar la nota de remisión: {str(e)}"
         )

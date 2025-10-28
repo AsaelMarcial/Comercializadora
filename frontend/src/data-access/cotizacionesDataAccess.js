@@ -115,6 +115,41 @@ export const downloadCotizacionPDF = async (cotizacionId) => {
 };
 
 
+// Descargar la nota de remisión de una cotización
+export const downloadNotaRemisionPDF = async (cotizacionId) => {
+    if (!cotizacionId) {
+        throw new Error('El ID de la cotización no puede estar vacío.');
+    }
+
+    const url = `${API_HOST}/cotizaciones/${cotizacionId}/nota-remision`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: getHeaders(false),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error al descargar la nota de remisión: ${response.status} - ${response.statusText}`);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `NotaRemision_${cotizacionId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        console.log('Nota de remisión descargada con éxito');
+    } catch (error) {
+        console.error('Error al descargar la nota de remisión:', error);
+        throw error;
+    }
+};
+
+
 // Cancelar una cotización
 export const cancelCotizacion = async (cotizacionId) => {
     if (!cotizacionId) throw new Error('El ID de la cotización no puede estar vacío.');

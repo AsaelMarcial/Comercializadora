@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Nota de Remisión</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #000000;
+            background-color: #F9F9F9;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #0E3B47;
+            padding: 20px 20px 0 20px;
+            position: relative;
+            color: #FFFFFF;
+        }
+
+        .logo {
+            width: 200px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .divider {
+            width: 100%;
+            height: 2px;
+            background-color: #FFC107;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
+
+        .general-info {
+            margin-left: 10px;
+        }
+
+        .general-info p,
+        .remision-info p {
+            margin: 5px 0;
+        }
+
+        .remision-info {
+            margin-right: 20px;
+            text-align: right;
+        }
+
+        .product-section {
+            padding: 20px;
+            background-color: #FFFFFF;
+            margin: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: #FFFFFF;
+        }
+
+        .product-table th {
+            background-color: #0E3B47;
+            color: #FFFFFF;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #CCCCCC;
+        }
+
+        .product-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #CCCCCC;
+        }
+
+        .product-table img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .product-table tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        .product-table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        .footer {
+            margin: 20px;
+            font-size: 10px;
+            color: #333333;
+        }
+
+        .footer strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .footer p {
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="http://147.93.47.106:3000/Logo%20COMERCIALIZADORA%20Orza%20LETRAS%20BLANCAS%20SIN%20FONDO.png" alt="Logo" class="logo" />
+        <div class="divider"></div>
+        <div class="title">NOTA DE REMISIÓN</div>
+        <div class="info">
+            <div class="general-info">
+                <p><strong>Cliente:</strong> {{ nombre }}</p>
+                <p><strong>Proyecto:</strong> {{ proyecto }}</p>
+                <p><strong>Dirección:</strong> {{ direccion }}</p>
+            </div>
+            <div class="remision-info">
+                <p><strong>Folio:</strong> {{ remision.id }}</p>
+                <p><strong>Fecha:</strong> {{ remision.fecha }}</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="product-section">
+        <h3>Productos solicitados</h3>
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Producto</th>
+                    <th>Variante</th>
+                    <th>Formato</th>
+                    <th>Color</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td>
+                        <img src="{{ producto.imagen_url }}" alt="Imagen del producto {{ producto.nombre }}" />
+                    </td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.tipo_variante or 'N/A' }}</td>
+                    <td>{{ producto.formato or 'N/A' }}</td>
+                    <td>{{ producto.color or 'N/A' }}</td>
+                    <td>{{ producto.cantidad|format_number }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <footer class="footer">
+        <strong>Nota:</strong>
+        <p>Este documento se utiliza únicamente como referencia para la solicitud de productos al proveedor.</p>
+        <p>No incluye información de precios ni condiciones comerciales.</p>
+    </footer>
+</body>
+</html>

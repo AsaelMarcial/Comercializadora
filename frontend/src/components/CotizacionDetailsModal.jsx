@@ -9,6 +9,7 @@ const CotizacionDetailsModal = ({
     onClose,
     onCancelCotizacion,
     onDownloadPDF,
+    onDownloadNotaRemision,
 }) => {
     const [productosDetalles, setProductosDetalles] = useState([]);
 
@@ -86,6 +87,12 @@ const CotizacionDetailsModal = ({
                     >
                         Descargar PDF
                     </button>
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => onDownloadNotaRemision(cotizacion.id)}
+                    >
+                        Nota de remisión
+                    </button>
                     <button className="btn btn-secondary" onClick={onClose}>
                         Cerrar
                     </button>
@@ -114,6 +121,7 @@ CotizacionDetailsModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     onCancelCotizacion: PropTypes.func.isRequired,
     onDownloadPDF: PropTypes.func.isRequired,
+    onDownloadNotaRemision: PropTypes.func.isRequired,
 };
 
 export default CotizacionDetailsModal;
