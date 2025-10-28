@@ -45,16 +45,22 @@ def login(credentials: LoginSchema, db: Session = Depends(get_db)):
     user = db.query(UsuarioModel).filter(UsuarioModel.email == credentials.email).first()
 
     if not user:
-        logger.error("Usuario no encontrado")
+        logger.warning(
+            "Intento de inicio de sesión con usuario inexistente: %s",
+            credentials.email,
+        )
         raise HTTPException(status_code=401, detail="Usuario no encontrado")
 
-    logger.info(f"Usuario encontrado: {user.email}")
-
     if not verify_password(credentials.password, user.password_hash):
-        logger.error("Credenciales inválidas")
+        logger.warning(
+            "Intento de inicio de sesión con contraseña incorrecta para %s",
+            credentials.email,
+        )
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
 
     access_token = create_access_token(data={"sub": user.email, "rol": user.rol, "id": user.id})
+
+    logger.info("Inicio de sesión exitoso para %s", user.email)
 
     return {
         "access_token": access_token,

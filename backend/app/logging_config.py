@@ -26,6 +26,8 @@ def setup_logging() -> None:
     log_directory.mkdir(parents=True, exist_ok=True)
     log_file = log_directory / "app.log"
 
+    logging.captureWarnings(True)
+
     logging_config = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -52,6 +54,11 @@ def setup_logging() -> None:
             },
         },
         "loggers": {
+            "app": {
+                "level": log_level,
+                "handlers": ["console", "file"],
+                "propagate": False,
+            },
             "uvicorn": {
                 "level": log_level,
                 "handlers": ["console", "file"],
