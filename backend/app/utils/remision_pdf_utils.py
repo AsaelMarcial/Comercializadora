@@ -4,7 +4,9 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from babel.numbers import format_decimal
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app.pdf.remision")
+logger.setLevel(logging.INFO)
+logger.propagate = True
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../templates")
 IMAGE_BASE_URL = "http://147.93.47.106:8000/uploads"
@@ -14,7 +16,7 @@ def format_number(value):
     try:
         return format_decimal(value, format="#,##0.##", locale="en_US")
     except Exception as exc:
-        logger.error(f"Error al formatear número en nota de remisión: {exc}")
+        logger.exception("Error al formatear número en nota de remisión: %s", exc)
         return f"{float(value):.2f}" if value is not None else "0"
 
 
@@ -24,7 +26,11 @@ env.filters['format_number'] = format_number
 
 def generate_nota_remision_pdf(remision_data):
     """Genera un PDF con la información para la nota de remisión."""
-    logger.info("Generando nota de remisión con datos: %s", remision_data)
+    logger.info(
+        "Iniciando generación de nota de remisión para la cotización %s",
+        remision_data.get("id"),
+    )
+    logger.debug("Datos recibidos para nota de remisión: %s", remision_data)
 
     required_keys = [
         "id",
@@ -36,8 +42,16 @@ def generate_nota_remision_pdf(remision_data):
     ]
     missing = [key for key in required_keys if key not in remision_data]
     if missing:
-        logger.error("Faltan campos requeridos para la nota de remisión: %s", ", ".join(missing))
+        logger.error(
+            "Faltan campos requeridos para la nota de remisión: %s", ", ".join(missing)
+        )
         raise ValueError(f"Faltan los campos requeridos: {', '.join(missing)}")
+
+    logger.info(
+        "Preparando %s productos para la nota de remisión %s",
+        len(remision_data["productos"]),
+        remision_data["id"],
+    )
 
     for producto in remision_data["productos"]:
         producto_id = producto.get("producto_id")
@@ -48,12 +62,15 @@ def generate_nota_remision_pdf(remision_data):
 
     try:
         template = env.get_template("nota_remision_template.html")
-        logger.info("Plantilla de nota de remisión cargada correctamente.")
+        logger.info(
+            "Plantilla 'nota_remision_template.html' cargada correctamente desde %s",
+            TEMPLATE_DIR,
+        )
     except TemplateNotFound as exc:
-        logger.error("Plantilla de nota de remisión no encontrada: %s", exc)
+        logger.exception("Plantilla de nota de remisión no encontrada: %s", exc)
         raise FileNotFoundError(f"Plantilla no encontrada: {exc}") from exc
     except Exception as exc:  # noqa: BLE001 - logging detallado
-        logger.error("Error al cargar la plantilla de nota de remisión: %s", exc)
+        logger.exception("Error al cargar la plantilla de nota de remisión: %s", exc)
         raise RuntimeError(f"Error al cargar la plantilla: {exc}") from exc
 
     try:
@@ -67,9 +84,12 @@ def generate_nota_remision_pdf(remision_data):
             direccion=remision_data.get("cliente_direccion", "N/A"),
             productos=remision_data["productos"],
         )
-        logger.info("HTML de nota de remisión renderizado correctamente para ID %s", remision_data["id"])
+        logger.info(
+            "HTML de nota de remisión renderizado correctamente para ID %s",
+            remision_data["id"],
+        )
     except Exception as exc:  # noqa: BLE001
-        logger.error("Error al renderizar la nota de remisión: %s", exc)
+        logger.exception("Error al renderizar la nota de remisión: %s", exc)
         raise ValueError(f"Error al renderizar la plantilla: {exc}") from exc
 
     try:
@@ -77,5 +97,5 @@ def generate_nota_remision_pdf(remision_data):
         logger.info("PDF de nota de remisión generado exitosamente para ID %s", remision_data["id"])
         return pdf_file
     except Exception as exc:  # noqa: BLE001
-        logger.error("Error al generar el PDF de la nota de remisión: %s", exc)
+        logger.exception("Error al generar el PDF de la nota de remisión: %s", exc)
         raise RuntimeError(f"Error al generar el PDF: {exc}") from exc

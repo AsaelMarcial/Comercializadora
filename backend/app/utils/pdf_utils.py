@@ -4,7 +4,9 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from babel.numbers import format_decimal  # Importar Babel para el formato de números
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app.pdf.cotizacion")
+logger.setLevel(logging.INFO)
+logger.propagate = True
 
 # Ruta de la plantilla HTML
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../templates")
@@ -15,7 +17,7 @@ def format_number(value):
     try:
         return format_decimal(value, format="#,##0.00", locale="en_US")  # Siempre 2 decimales
     except Exception as e:
-        logger.error(f"Error al formatear número: {e}")
+        logger.exception("Error al formatear número para PDF de cotización: %s", e)
         return f"{value:.2f}"  # Fallback a 2 decimales en caso de error
 
 
@@ -32,7 +34,8 @@ def generate_pdf(cotizacion_data):
     :return: Archivo PDF generado.
     """
     # Validar datos requeridos
-    logger.info(f"Datos recibidos en generate_pdf: {cotizacion_data}")
+    logger.info("Iniciando generación de PDF de cotización para ID %s", cotizacion_data.get("id"))
+    logger.debug("Datos recibidos en generate_pdf: %s", cotizacion_data)
 
     required_keys = ["id", "fecha", "cliente_nombre", "cliente_proyecto", "cliente_direccion", "productos", "total"]
     missing_keys = [key for key in required_keys if key not in cotizacion_data]
@@ -41,6 +44,12 @@ def generate_pdf(cotizacion_data):
         raise ValueError(f"Faltan los campos requeridos: {', '.join(missing_keys)}")
 
     # Generar URLs para las imágenes de los productos
+    logger.info(
+        "Preparando %s productos para la cotización %s",
+        len(cotizacion_data["productos"]),
+        cotizacion_data["id"],
+    )
+
     for producto in cotizacion_data["productos"]:
         producto_id = producto.get("producto_id")
         if producto_id:
@@ -52,12 +61,15 @@ def generate_pdf(cotizacion_data):
     try:
         # Cargar la plantilla
         template = env.get_template("cotizacion_template.html")
-        logger.info("Plantilla cargada correctamente.")
+        logger.info(
+            "Plantilla 'cotizacion_template.html' cargada correctamente desde %s",
+            TEMPLATE_DIR,
+        )
     except TemplateNotFound as e:
-        logger.error(f"Plantilla no encontrada: {e}")
+        logger.exception("Plantilla de cotización no encontrada: %s", e)
         raise FileNotFoundError(f"Plantilla no encontrada: {e}")
     except Exception as e:
-        logger.error(f"Error al cargar la plantilla: {e}")
+        logger.exception("Error inesperado al cargar la plantilla de cotización: %s", e)
         raise RuntimeError(f"Error al cargar la plantilla: {e}")
 
     try:
@@ -68,7 +80,7 @@ def generate_pdf(cotizacion_data):
             "direccion": cotizacion_data.get("cliente_direccion", "N/A")
         }
 
-        logger.info(f"Datos que se renderizan en el PDF: {cliente_render}")
+        logger.debug("Datos que se renderizan en el PDF: %s", cliente_render)
         # Renderizar el HTML con los datos
         rendered_html = template.render(
             cotizacion={
@@ -83,16 +95,21 @@ def generate_pdf(cotizacion_data):
             costo_envio=float(cotizacion_data.get("costo_envio", 0)),  # Asegura que costo_envio sea un número
             variante_envio=cotizacion_data.get("variante_envio", "N/A"),
         )
-        logger.info(f"Plantilla renderizada correctamente para la cotización ID {cotizacion_data['id']}.")
+        logger.info(
+            "Plantilla renderizada correctamente para la cotización ID %s",
+            cotizacion_data["id"],
+        )
     except Exception as e:
-        logger.error(f"Error al renderizar la plantilla: {e}")
+        logger.exception("Error al renderizar la plantilla de cotización: %s", e)
         raise ValueError(f"Error al renderizar la plantilla: {e}")
 
     try:
         # Crear el PDF a partir del HTML renderizado
         pdf_file = HTML(string=rendered_html).write_pdf()
-        logger.info(f"PDF generado exitosamente para la cotización ID {cotizacion_data['id']}.")
+        logger.info(
+            "PDF generado exitosamente para la cotización ID %s", cotizacion_data["id"]
+        )
         return pdf_file
     except Exception as e:
-        logger.error(f"Error al generar el PDF: {e}")
+        logger.exception("Error al generar el PDF de cotización: %s", e)
         raise RuntimeError(f"Error al generar el PDF: {e}")
