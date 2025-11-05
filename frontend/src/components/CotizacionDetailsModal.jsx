@@ -47,6 +47,26 @@ const CotizacionDetailsModal = ({
                 <h3>Detalles de Cotización</h3>
                 <div className="modal-body">
                     <p><strong>Cliente:</strong> {cotizacion.cliente}</p>
+                    {(cotizacion.proyecto_nombre ||
+                        cotizacion.proyecto?.nombre ||
+                        cotizacion.proyectoNombre) && (
+                        <p>
+                            <strong>Proyecto:</strong>{' '}
+                            {cotizacion.proyecto_nombre ||
+                                cotizacion.proyecto?.nombre ||
+                                cotizacion.proyectoNombre}
+                        </p>
+                    )}
+                    {(cotizacion.proyecto_direccion ||
+                        cotizacion.proyecto?.direccion ||
+                        cotizacion.proyectoDireccion) && (
+                        <p>
+                            <strong>Dirección del proyecto:</strong>{' '}
+                            {cotizacion.proyecto_direccion ||
+                                cotizacion.proyecto?.direccion ||
+                                cotizacion.proyectoDireccion}
+                        </p>
+                    )}
                     <p><strong>Fecha:</strong> {new Date(cotizacion.fecha).toLocaleDateString()}</p>
                     <p><strong>Total:</strong> ${parseFloat(cotizacion.total).toFixed(2)}</p>
                     <h4>Productos:</h4>
@@ -100,6 +120,12 @@ CotizacionDetailsModal.propTypes = {
         cliente: PropTypes.string.isRequired,
         fecha: PropTypes.string.isRequired,
         total: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        proyecto_nombre: PropTypes.string,
+        proyecto_direccion: PropTypes.string,
+        proyecto: PropTypes.shape({
+            nombre: PropTypes.string,
+            direccion: PropTypes.string,
+        }),
         detalles: PropTypes.arrayOf(
             PropTypes.shape({
                 producto_id: PropTypes.number.isRequired,

@@ -206,6 +206,18 @@
     font-weight: 500;
 }
 
+.quote-confirmation__project-name {
+    display: inline-block;
+    font-weight: 600;
+}
+
+.quote-confirmation__project-address {
+    display: inline-block;
+    color: rgba(226, 232, 240, 0.7);
+    font-size: 0.9rem;
+    margin-top: 0.15rem;
+}
+
 .quote-confirmation__shipping {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
