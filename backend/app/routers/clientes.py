@@ -1,6 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas import ClienteCreate, ClienteResponse, ClienteCotizacionCreate, ClienteCotizacionResponse
+from app.schemas import (
+    ClienteCreate,
+    ClienteUpdate,
+    ClienteResponse,
+    ClienteCotizacionCreate,
+    ClienteCotizacionResponse,
+)
 from app.cruds.crud_clientes import CRUDCliente, CRUDClienteCotizacion
 from app.database import get_db
 from app.auth import get_current_user
@@ -151,9 +157,14 @@ def get_cotizaciones_cliente(
         )
 
 @router.put("/clientes/{cliente_id}", response_model=ClienteResponse, tags=["Clientes"])
-def actualizar_cliente(cliente_id: int, cliente_data: ClienteCreate, db: Session = Depends(get_db)):
+def actualizar_cliente(
+    cliente_id: int,
+    cliente_data: ClienteUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
     """
     Actualiza un cliente existente.
     """
-    crud_clientes = CRUDCliente(db)
-    return crud_clientes.actualizar_cliente(cliente_id, cliente_data)
+    crud_cliente = CRUDCliente(db)
+    return crud_cliente.actualizar_cliente(cliente_id, cliente_data)
