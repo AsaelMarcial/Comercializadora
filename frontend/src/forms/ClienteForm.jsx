@@ -1,94 +1,93 @@
-import React, { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import React, { useEffect, useMemo, useState } from 'react';
 import FormField from '../components/FormField';
-import {
-    createClienteMutation,
-    updateClienteMutation,
-    CREATE_MUTATION_OPTIONS,
-    UPDATE_MUTATION_OPTIONS
-} from '../utils/mutations';
 
-const ClienteForm = ({ cancelAction, clienteUpdate }) => {
-    const [cliente, setCliente] = useState(clienteUpdate ?? {
-        nombre: '',
-        direccion: '',
-        proyecto: '',
-        descuento: ''
-    });
+const emptyProject = { nombre: '', descripcion: '' };
 
-    const queryClient = useQueryClient();
+const buildInitialState = (clienteUpdate) => ({
+    id: clienteUpdate?.id,
+    nombre: clienteUpdate?.nombre ?? '',
+    direccion: clienteUpdate?.direccion ?? '',
+    descuento: clienteUpdate?.descuento ?? '',
+    proyectos: Array.isArray(clienteUpdate?.proyectos)
+        ? clienteUpdate.proyectos.map((proyecto) => ({
+            id: proyecto.id,
+            nombre: proyecto.nombre ?? '',
+            descripcion: proyecto.descripcion ?? '',
+        }))
+        : [],
+});
 
-    const createMutation = useMutation(createClienteMutation, {
-        ...CREATE_MUTATION_OPTIONS,
-        onSuccess: () => {
-            queryClient.invalidateQueries('clientes');
-            resetForm(); // Limpia el formulario
-            cancelAction(); // Cierra el modal
-        }
-    });
+const ClienteForm = ({ cancelAction, clienteUpdate, onSave }) => {
+    const [formData, setFormData] = useState(() => buildInitialState(clienteUpdate));
 
-    const updateMutation = useMutation(updateClienteMutation, {
-        ...UPDATE_MUTATION_OPTIONS,
-        onSuccess: () => {
-            queryClient.invalidateQueries('clientes');
-            resetForm(); // Limpia el formulario
-            cancelAction(); // Cierra el modal
-        }
-    });
+    useEffect(() => {
+        setFormData(buildInitialState(clienteUpdate));
+    }, [clienteUpdate]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setCliente((prevCliente) => ({
-            ...prevCliente,
-            [name]: value
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
         }));
     };
 
-    const submitCliente = async () => {
-        try {
-            if (cliente.id) {
-                await updateMutation.mutateAsync(cliente); // Actualización
-            } else {
-                await createMutation.mutateAsync(cliente); // Creación
-            }
-        } catch (error) {
-            console.error('Error al guardar el cliente:', error);
-        }
-    };
-
-
-    const resetForm = () => {
-        setCliente({
-            nombre: '',
-            direccion: '',
-            proyecto: '',
-            descuento: ''
+    const handleProjectChange = (index, field, value) => {
+        setFormData((prev) => {
+            const proyectos = [...prev.proyectos];
+            proyectos[index] = {
+                ...proyectos[index],
+                [field]: value,
+            };
+            return { ...prev, proyectos };
         });
     };
 
+    const handleAddProject = () => {
+        setFormData((prev) => ({
+            ...prev,
+            proyectos: [...prev.proyectos, { ...emptyProject }],
+        }));
+    };
+
+    const handleRemoveProject = (index) => {
+        setFormData((prev) => ({
+            ...prev,
+            proyectos: prev.proyectos.filter((_, projectIndex) => projectIndex !== index),
+        }));
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const sanitizedProjects = formData.proyectos.filter(
+            (proyecto) => proyecto.nombre.trim() || proyecto.descripcion.trim()
+        );
+
+        if (onSave) {
+            onSave({
+                ...formData,
+                proyectos: sanitizedProjects,
+            });
+        }
+    };
+
+    const handleCancel = () => {
+        setFormData(buildInitialState(null));
+        cancelAction();
+    };
+
+    const hasProjects = useMemo(() => formData.proyectos.length > 0, [formData.proyectos.length]);
+
     return (
-        <div>
-            <div className="modal-header">
-                <h2>{cliente.id ? 'Editar Cliente' : 'Registrar Cliente'}</h2>
-                <button
-                    type="button"
-                    className="close-button"
-                    onClick={() => {
-                        resetForm(); // Limpia el formulario
-                        cancelAction(); // Cierra el modal
-                    }}
-                >
-                    &times;
-                </button>
-            </div>
-            <form>
-                <div className="modal-body">
+        <form className="cliente-form" onSubmit={handleSubmit}>
+            <div className="modal-body cliente-form__body">
+                <div className="cliente-form__fields">
                     <FormField
                         name="nombre"
                         inputType="text"
                         iconClasses="fa-solid fa-user"
                         placeholder="Nombre del Cliente"
-                        value={cliente.nombre}
+                        value={formData.nombre}
                         onChange={handleInputChange}
                     />
                     <FormField
@@ -96,15 +95,7 @@ const ClienteForm = ({ cancelAction, clienteUpdate }) => {
                         inputType="text"
                         iconClasses="fa-solid fa-map-marker-alt"
                         placeholder="Dirección"
-                        value={cliente.direccion}
-                        onChange={handleInputChange}
-                    />
-                    <FormField
-                        name="proyecto"
-                        inputType="text"
-                        iconClasses="fa-solid fa-project-diagram"
-                        placeholder="Proyecto"
-                        value={cliente.proyecto}
+                        value={formData.direccion}
                         onChange={handleInputChange}
                     />
                     <FormField
@@ -112,27 +103,72 @@ const ClienteForm = ({ cancelAction, clienteUpdate }) => {
                         inputType="number"
                         iconClasses="fa-solid fa-percent"
                         placeholder="Descuento (%)"
-                        value={cliente.descuento}
+                        value={formData.descuento}
                         onChange={handleInputChange}
                     />
                 </div>
-                <div className="modal-footer">
-                    <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => {
-                            resetForm(); // Limpia el formulario
-                            cancelAction(); // Cierra el modal
-                        }}
-                    >
-                        Cancelar
-                    </button>
-                    <button type="button" className="btn btn-primary" onClick={submitCliente}>
-                        {`${cliente.id ? 'Actualizar' : 'Guardar'}`}
-                    </button>
-                </div>
-            </form>
-        </div>
+
+                <section className="cliente-form__projects">
+                    <header className="cliente-form__projects-header">
+                        <h3>Proyectos</h3>
+                        <button type="button" className="cliente-form__add-project" onClick={handleAddProject}>
+                            <i className="fa-solid fa-circle-plus" aria-hidden="true"></i>
+                            Agregar proyecto
+                        </button>
+                    </header>
+
+                    {hasProjects ? (
+                        <ul className="cliente-form__project-list">
+                            {formData.proyectos.map((proyecto, index) => (
+                                <li key={proyecto.id ?? index} className="cliente-form__project-item">
+                                    <div className="cliente-form__project-fields">
+                                        <label className="cliente-form__project-label">
+                                            Nombre del proyecto
+                                            <input
+                                                type="text"
+                                                value={proyecto.nombre}
+                                                onChange={(event) =>
+                                                    handleProjectChange(index, 'nombre', event.target.value)
+                                                }
+                                                placeholder="Ej. Implementación CRM"
+                                            />
+                                        </label>
+                                        <label className="cliente-form__project-label">
+                                            Descripción
+                                            <textarea
+                                                value={proyecto.descripcion}
+                                                onChange={(event) =>
+                                                    handleProjectChange(index, 'descripcion', event.target.value)
+                                                }
+                                                placeholder="Detalles o alcance del proyecto"
+                                            />
+                                        </label>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="cliente-form__remove-project"
+                                        onClick={() => handleRemoveProject(index)}
+                                        aria-label="Eliminar proyecto"
+                                    >
+                                        <i className="fa-solid fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="cliente-form__empty-projects">Aún no has añadido proyectos para este cliente.</p>
+                    )}
+                </section>
+            </div>
+            <div className="modal-footer cliente-form__footer">
+                <button type="button" className="btn btn-danger" onClick={handleCancel}>
+                    Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary">
+                    {formData.id ? 'Actualizar cliente' : 'Registrar cliente'}
+                </button>
+            </div>
+        </form>
     );
 };
 
