@@ -342,6 +342,303 @@
     max-width: 38ch;
 }
 
+.cliente-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.cliente-form__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.cliente-form__fields {
+    display: grid;
+    gap: 1rem;
+}
+
+.cliente-form__projects {
+    background: rgba(240, 253, 250, 0.75);
+    border: 1px solid rgba(15, 118, 110, 0.18);
+    border-radius: 16px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cliente-form__projects-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.cliente-form__projects-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.cliente-form__add-project {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--clients-primary);
+    color: #f0fdf4;
+    padding: 0.5rem 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.cliente-form__add-project:hover,
+.cliente-form__add-project:focus-visible {
+    background: var(--clients-primary-dark);
+    transform: translateY(-1px);
+}
+
+.cliente-form__project-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cliente-form__project-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: #ffffff;
+    border: 1px solid rgba(15, 118, 110, 0.12);
+    border-radius: 14px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px -22px rgba(15, 118, 110, 0.35);
+}
+
+.cliente-form__project-fields {
+    display: grid;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.cliente-form__project-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--clients-muted);
+}
+
+.cliente-form__project-label input,
+.cliente-form__project-label textarea {
+    border-radius: 10px;
+    border: 1px solid rgba(15, 118, 110, 0.2);
+    padding: 0.65rem 0.75rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--clients-text);
+    resize: vertical;
+    min-height: 42px;
+}
+
+.cliente-form__project-label textarea {
+    min-height: 72px;
+}
+
+.cliente-form__remove-project {
+    border: none;
+    background: var(--clients-danger-bg);
+    color: var(--clients-danger);
+    border-radius: 10px;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.cliente-form__remove-project:hover,
+.cliente-form__remove-project:focus-visible {
+    background: rgba(220, 38, 38, 0.18);
+    transform: translateY(-1px);
+}
+
+.cliente-form__empty-projects {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--clients-muted);
+}
+
+.cliente-form__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.clients__projects-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.clients__project-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.clients__project-chip {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    background: rgba(236, 253, 245, 0.8);
+    border: 1px solid rgba(15, 118, 110, 0.18);
+    border-radius: 14px;
+    padding: 0.75rem 0.85rem;
+}
+
+.clients__project-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.clients__project-name {
+    font-weight: 700;
+    color: var(--clients-primary-dark);
+}
+
+.clients__project-description {
+    font-size: 0.9rem;
+    color: var(--clients-muted);
+}
+
+.clients__project-actions {
+    display: inline-flex;
+    gap: 0.4rem;
+}
+
+.clients__chip-action {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 118, 110, 0.12);
+    color: var(--clients-primary);
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.clients__chip-action:hover,
+.clients__chip-action:focus-visible {
+    transform: translateY(-1px);
+    background: rgba(15, 118, 110, 0.22);
+    border-color: rgba(15, 118, 110, 0.25);
+}
+
+.clients__chip-action--danger {
+    background: var(--clients-danger-bg);
+    color: var(--clients-danger);
+}
+
+.clients__chip-action--danger:hover,
+.clients__chip-action--danger:focus-visible {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.35);
+}
+
+.clients__project-empty {
+    font-size: 0.92rem;
+    color: var(--clients-muted);
+}
+
+.clients__project-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px dashed rgba(15, 118, 110, 0.35);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--clients-primary);
+    padding: 0.55rem 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.clients__project-add:hover,
+.clients__project-add:focus-visible {
+    background: rgba(236, 253, 245, 0.85);
+    transform: translateY(-1px);
+    border-color: rgba(15, 118, 110, 0.55);
+}
+
+.clients__project-form,
+.clients__reassign-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.clients__project-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--clients-muted);
+}
+
+.clients__project-form-field input,
+.clients__project-form-field textarea,
+.clients__project-form-field select {
+    border-radius: 10px;
+    border: 1px solid rgba(15, 118, 110, 0.2);
+    padding: 0.65rem 0.75rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--clients-text);
+    background: #ffffff;
+}
+
+.clients__project-form-field textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.clients__project-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.clients__reassign-copy {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--clients-muted);
+}
+
+.clients__reassign-copy strong {
+    color: var(--clients-primary-dark);
+}
+
 @media (max-width: 768px) {
     .clients__hero {
         grid-template-columns: 1fr;
