@@ -15,6 +15,7 @@ const GananciasPorProducto = () => {
 
     const { data: clientes, isLoading: isLoadingClientes } = useQuery('clientes', readAllClientes);
     const [selectedCliente, setSelectedCliente] = useState(null);
+    const [selectedProyecto, setSelectedProyecto] = useState(null);
 
     const [productosConGanancia, setProductosConGanancia] = useState(() =>
         carrito.map((producto) => {
@@ -52,6 +53,10 @@ const GananciasPorProducto = () => {
                 }))
             );
         }
+    }, [selectedCliente]);
+
+    useEffect(() => {
+        setSelectedProyecto(null);
     }, [selectedCliente]);
 
     const formatCurrency = (value) =>
@@ -185,6 +190,11 @@ const GananciasPorProducto = () => {
             return;
         }
 
+        if (!selectedProyecto) {
+            alert('Debes seleccionar un proyecto para continuar.');
+            return;
+        }
+
         if (productosConPrecioInvalido) {
             alert(
                 'Uno o más productos no tienen un tipo de precio válido seleccionado. Verifica y selecciona un precio.'
@@ -196,10 +206,22 @@ const GananciasPorProducto = () => {
             state: {
                 productos: productosConGanancia,
                 granTotal: granTotal,
-                cliente: selectedCliente, // Asegúrate de pasar esta información
+                cliente: selectedCliente,
+                proyectoSeleccionado: {
+                    proyectoId: selectedProyecto.id,
+                    proyectoNombre: selectedProyecto.nombre,
+                    proyectoDireccion: selectedProyecto.direccion,
+                },
             },
         });
     };
+
+    const clienteTieneProyectos = useMemo(
+        () => Array.isArray(selectedCliente?.proyectos) && selectedCliente.proyectos.length > 0,
+        [selectedCliente]
+    );
+
+    const canContinue = Boolean(selectedCliente && selectedProyecto && !productosConPrecioInvalido);
 
     return (
         <>
@@ -270,32 +292,70 @@ const GananciasPorProducto = () => {
                                         <select
                                             id="cliente-select"
                                             value={selectedCliente?.id || ''}
-                                            onChange={(event) =>
-                                                setSelectedCliente(
+                                            onChange={(event) => {
+                                                const nuevoCliente =
                                                     clientes?.find(
                                                         (cliente) => cliente.id === parseInt(event.target.value, 10)
-                                                    ) || null
-                                                )
-                                            }
+                                                    ) || null;
+                                                setSelectedCliente(nuevoCliente);
+                                            }}
                                         >
                                             <option value="" disabled>
                                                 Selecciona un cliente
                                             </option>
                                             {clientes?.map((cliente) => (
                                                 <option key={cliente.id} value={cliente.id}>
-                                                    {cliente.nombre} · {cliente.proyecto || 'Sin proyecto'}
+                                                    {cliente.nombre}
                                                 </option>
                                             ))}
                                         </select>
                                     )}
                                 </div>
 
+                                {selectedCliente && (
+                                    <div className="profit__sidebar-field">
+                                        <label htmlFor="proyecto-select">Proyecto</label>
+                                        {clienteTieneProyectos ? (
+                                            <select
+                                                id="proyecto-select"
+                                                value={selectedProyecto?.id || ''}
+                                                onChange={(event) => {
+                                                    const proyecto = selectedCliente.proyectos?.find(
+                                                        (item) => item.id === parseInt(event.target.value, 10)
+                                                    );
+                                                    setSelectedProyecto(proyecto || null);
+                                                }}
+                                            >
+                                                <option value="" disabled>
+                                                    Selecciona un proyecto
+                                                </option>
+                                                {selectedCliente.proyectos?.map((proyecto) => (
+                                                    <option key={proyecto.id} value={proyecto.id}>
+                                                        {proyecto.nombre}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            <p className="profit__sidebar-hint">
+                                                Este cliente no tiene proyectos registrados. Registra uno para poder
+                                                continuar.
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+
                                 {selectedCliente ? (
                                     <div className="profit__client-card">
                                         <div className="profit__client-info">
                                             <h3>{selectedCliente.nombre}</h3>
-                                            <p>{selectedCliente.proyecto || 'Proyecto no especificado'}</p>
-                                            <span>{selectedCliente.direccion || 'Sin dirección registrada'}</span>
+                                            {selectedProyecto ? (
+                                                <>
+                                                    <p>{selectedProyecto.nombre}</p>
+                                                    <span>{selectedProyecto.direccion || 'Sin dirección registrada'}</span>
+                                                </>
+                                            ) : (
+                                                <p>Selecciona un proyecto para ver sus detalles.</p>
+                                            )}
                                         </div>
                                         <div className="profit__client-actions">
                                             <button
@@ -507,7 +567,12 @@ const GananciasPorProducto = () => {
                                     <button type="button" className="profit__ghost-button" onClick={() => navigate('/app/ventas')}>
                                         Volver
                                     </button>
-                                    <button type="button" className="profit__primary-button" onClick={continuarConCotizacion}>
+                                    <button
+                                        type="button"
+                                        className="profit__primary-button"
+                                        onClick={continuarConCotizacion}
+                                        disabled={!canContinue}
+                                    >
                                         Continuar a confirmación
                                     </button>
                                 </div>

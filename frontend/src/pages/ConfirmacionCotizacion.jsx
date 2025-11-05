@@ -32,6 +32,7 @@ const ConfirmacionCotizacion = () => {
         [locationState]
     );
     const cliente = locationState?.cliente;
+    const proyectoSeleccionado = locationState?.proyectoSeleccionado || null;
 
     const [costoEnvio, setCostoEnvio] = useState('0');
     const [varianteEnvio, setVarianteEnvio] = useState(shippingOptions[0].value);
@@ -69,6 +70,9 @@ const ConfirmacionCotizacion = () => {
     const handleGuardarCotizacion = (event) => {
         event.preventDefault();
 
+        const proyectoId =
+            proyectoSeleccionado?.proyectoId || proyectoSeleccionado?.id || cliente?.proyecto_id || null;
+
         const cotizacion = {
             cliente: cliente?.nombre,
             costo_envio: envio,
@@ -89,6 +93,10 @@ const ConfirmacionCotizacion = () => {
             total: parseFloat(granTotalConIva.toFixed(2)),
             variante_envio: varianteEnvio,
         };
+
+        if (proyectoId) {
+            cotizacion.proyecto_id = proyectoId;
+        }
 
         mutation.mutate(cotizacion);
     };
@@ -136,6 +144,11 @@ const ConfirmacionCotizacion = () => {
                         <span className="quote-confirmation__chip" role="listitem">
                             {totalProductos} unidad{totalProductos === 1 ? '' : 'es'} totales
                         </span>
+                        {proyectoSeleccionado && (
+                            <span className="quote-confirmation__chip" role="listitem">
+                                Proyecto: {proyectoSeleccionado.proyectoNombre || proyectoSeleccionado.nombre}
+                            </span>
+                        )}
                         <span className="quote-confirmation__chip" role="listitem">
                             {varianteEnvio}
                         </span>
@@ -165,6 +178,21 @@ const ConfirmacionCotizacion = () => {
                             <dt>Dirección</dt>
                             <dd>{cliente.direccion || 'Sin dirección registrada'}</dd>
                         </div>
+                        {proyectoSeleccionado && (
+                            <div>
+                                <dt>Proyecto</dt>
+                                <dd>
+                                    <span className="quote-confirmation__project-name">
+                                        {proyectoSeleccionado.proyectoNombre || proyectoSeleccionado.nombre}
+                                    </span>
+                                    <br />
+                                    <span className="quote-confirmation__project-address">
+                                        {proyectoSeleccionado.proyectoDireccion || proyectoSeleccionado.direccion ||
+                                            'Dirección no especificada'}
+                                    </span>
+                                </dd>
+                            </div>
+                        )}
                         <div>
                             <dt>Descuento negociado</dt>
                             <dd>{cliente.descuento ? `${cliente.descuento}%` : 'Sin descuento'}</dd>

@@ -65,9 +65,18 @@ const Cotizaciones = () => {
         const normalizedSearch = searchTerm.trim().toLowerCase();
 
         return sortedQuotes.filter((quote) => {
+            const searchableFields = [
+                quote.cliente,
+                quote.id,
+                quote.total,
+                quote.proyecto_nombre,
+                quote.proyecto?.nombre,
+                quote.proyectoNombre,
+            ];
+
             const matchesSearch =
                 !normalizedSearch ||
-                [quote.cliente, quote.id, quote.total]
+                searchableFields
                     .map((field) => (field ?? '').toString().toLowerCase())
                     .some((value) => value.includes(normalizedSearch));
 
@@ -189,7 +198,7 @@ const Cotizaciones = () => {
                         <i className="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                         <input
                             type="search"
-                            placeholder="Buscar por folio, cliente o total"
+                            placeholder="Buscar por folio, cliente, proyecto o total"
                             value={searchTerm}
                             onChange={(event) => setSearchTerm(event.target.value)}
                         />
@@ -242,6 +251,7 @@ const Cotizaciones = () => {
                                     <tr>
                                         <th scope="col">Folio</th>
                                         <th scope="col">Cliente</th>
+                                        <th scope="col">Proyecto</th>
                                         <th scope="col">Fecha</th>
                                         <th scope="col">Total</th>
                                         <th scope="col">Ítems</th>
@@ -271,6 +281,12 @@ const Cotizaciones = () => {
                                             >
                                                 <td data-title="Folio">{cotizacion.id}</td>
                                                 <td data-title="Cliente">{cotizacion.cliente}</td>
+                                                <td data-title="Proyecto">
+                                                    {cotizacion.proyecto_nombre ||
+                                                        cotizacion.proyecto?.nombre ||
+                                                        cotizacion.proyectoNombre ||
+                                                        'Sin proyecto asignado'}
+                                                </td>
                                                 <td data-title="Fecha">
                                                     {new Date(cotizacion.fecha).toLocaleDateString()}
                                                 </td>

@@ -39,7 +39,20 @@ export const createCotizacion = async (cotizacion) => {
         throw new Error('La cotización debe tener un total y detalles válidos.');
     }
 
-    return await httpRequest(`${API_HOST}/${API_SERVICE}`, 'POST', cotizacion);
+    const payload = {
+        ...cotizacion,
+    };
+
+    if (payload.proyecto_id !== undefined && payload.proyecto_id !== null) {
+        const parsedProyectoId = Number(payload.proyecto_id);
+        if (Number.isNaN(parsedProyectoId)) {
+            delete payload.proyecto_id;
+        } else {
+            payload.proyecto_id = parsedProyectoId;
+        }
+    }
+
+    return await httpRequest(`${API_HOST}/${API_SERVICE}`, 'POST', payload);
 };
 
 // Actualizar una cotización existente
