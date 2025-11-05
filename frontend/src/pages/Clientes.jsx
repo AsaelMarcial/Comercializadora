@@ -37,7 +37,7 @@ const Clientes = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [projectFilter, setProjectFilter] = useState('todos');
     const [projectModalState, setProjectModalState] = useState(initialProjectModalState);
-    const [projectDraft, setProjectDraft] = useState({ nombre: '', descripcion: '', id: undefined });
+    const [projectDraft, setProjectDraft] = useState({ nombre: '', descripcion: '', direccion: '', id: undefined });
     const [reassignModalState, setReassignModalState] = useState(initialReassignModalState);
     const queryClient = useQueryClient();
 
@@ -47,7 +47,7 @@ const Clientes = () => {
 
     const closeProjectModal = useCallback(() => {
         setProjectModalState(initialProjectModalState);
-        setProjectDraft({ nombre: '', descripcion: '', id: undefined });
+        setProjectDraft({ nombre: '', descripcion: '', direccion: '', id: undefined });
     }, [setProjectModalState, setProjectDraft]);
 
     const closeReassignModal = useCallback(() => {
@@ -245,6 +245,7 @@ const Clientes = () => {
             id: project?.id,
             nombre: project?.nombre ?? '',
             descripcion: project?.descripcion ?? '',
+            direccion: project?.direccion ?? '',
         });
     };
 
@@ -294,6 +295,7 @@ const Clientes = () => {
             proyecto: {
                 nombre: projectDraft.nombre.trim(),
                 descripcion: projectDraft.descripcion.trim(),
+                direccion: projectDraft.direccion.trim(),
             },
         };
 
@@ -568,6 +570,15 @@ const Clientes = () => {
                             value={projectDraft.nombre}
                             onChange={(event) => handleProjectDraftChange('nombre', event.target.value)}
                             placeholder="Ej. Implementación CRM"
+                        />
+                    </label>
+                    <label className="clients__project-form-field">
+                        Dirección
+                        <input
+                            type="text"
+                            value={projectDraft.direccion}
+                            onChange={(event) => handleProjectDraftChange('direccion', event.target.value)}
+                            placeholder="Ej. Calle 123, Ciudad"
                         />
                     </label>
                     <label className="clients__project-form-field">
