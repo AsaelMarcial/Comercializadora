@@ -35,7 +35,7 @@ class CRUDCotizacion:
             # Validar proyecto asociado si se proporciona
             proyecto = None
             proyecto_nombre = None
-            proyecto_direccion = None
+            proyecto_direccion = ""
 
             if cotizacion_data.proyecto_id is not None:
                 proyecto = (
@@ -48,11 +48,15 @@ class CRUDCotizacion:
                         status_code=status.HTTP_404_NOT_FOUND,
                         detail=f"Proyecto con ID {cotizacion_data.proyecto_id} no encontrado."
                     )
-                proyecto_nombre = proyecto.nombre
-                proyecto_direccion = proyecto.direccion
+                proyecto_nombre = proyecto.nombre or ""
+                proyecto_direccion = (
+                    proyecto.direccion
+                    if proyecto.direccion
+                    else (cliente.direccion or "")
+                )
             else:
-                proyecto_nombre = cliente.proyecto or None
-                proyecto_direccion = cliente.direccion or None
+                proyecto_nombre = cliente.proyecto or ""
+                proyecto_direccion = cliente.direccion or ""
 
             # Crear la cotización con el nombre del cliente
             nueva_cotizacion = Cotizacion(
@@ -110,7 +114,11 @@ class CRUDCotizacion:
             # Incluir información completa del cliente y del proyecto seleccionado para el PDF
             cliente_nombre = cliente.nombre
             proyecto_nombre = nueva_cotizacion.proyecto_nombre or "Sin proyecto seleccionado"
-            proyecto_direccion = nueva_cotizacion.proyecto_direccion or "Dirección no especificada"
+            proyecto_direccion = (
+                nueva_cotizacion.proyecto_direccion
+                if nueva_cotizacion.proyecto_direccion
+                else "Dirección no especificada"
+            )
 
             # Crear el diccionario para el PDF
             cotizacion_data_pdf = {

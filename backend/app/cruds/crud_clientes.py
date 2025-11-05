@@ -43,7 +43,7 @@ class CRUDCliente:
                         Proyecto(
                             nombre=proyecto_data.nombre,
                             descripcion=proyecto_data.descripcion,
-                            direccion=proyecto_data.direccion,
+                            direccion=getattr(proyecto_data, "direccion", None),
                         )
                     )
 
@@ -152,7 +152,7 @@ class CRUDCliente:
                     Proyecto(
                         nombre=proyecto_data.nombre,
                         descripcion=proyecto_data.descripcion,
-                        direccion=proyecto_data.direccion,
+                        direccion=getattr(proyecto_data, "direccion", None),
                     )
                 )
 
@@ -268,8 +268,8 @@ class CRUDProyecto:
 
             nuevo_proyecto = Proyecto(
                 nombre=proyecto_data.nombre,
-                descripcion=proyecto_data.descripcion,
-                direccion=proyecto_data.direccion,
+                descripcion=getattr(proyecto_data, "descripcion", None),
+                direccion=getattr(proyecto_data, "direccion", None),
                 cliente=cliente,
             )
             self.db.add(nuevo_proyecto)
@@ -305,9 +305,12 @@ class CRUDProyecto:
                 )
             proyecto.cliente = cliente
 
-        for campo in ("nombre", "descripcion", "direccion"):
+        for campo in ("nombre", "descripcion"):
             if campo in datos and datos[campo] is not None:
                 setattr(proyecto, campo, datos[campo])
+
+        if "direccion" in datos:
+            setattr(proyecto, "direccion", datos["direccion"])
 
         try:
             self.db.commit()
