@@ -3,8 +3,9 @@ import { API_HOST, processResponse } from "./dataAccessUtils";
 const API_SERVICE = 'clientes';
 
 const getClienteUrl = (clienteId) => `${API_HOST}/${API_SERVICE}/${clienteId}`;
-const getClienteProjectsUrl = (clienteId) => `${getClienteUrl(clienteId)}/proyectos`;
-const getProyectoReassignUrl = (proyectoId) => `${API_HOST}/${API_SERVICE}/proyectos/${proyectoId}/reasignar`;
+const getProyectosUrl = () => `${API_HOST}/proyectos`;
+const getProyectoUrl = (proyectoId) => `${getProyectosUrl()}/${proyectoId}`;
+const getProyectoReassignUrl = (proyectoId) => `${getProyectoUrl(proyectoId)}/reasignar`;
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
@@ -23,6 +24,7 @@ const normalizeClientePayload = (cliente) => {
                 id: proyecto.id,
                 nombre: proyecto.nombre?.trim() ?? '',
                 descripcion: proyecto.descripcion?.trim() ?? '',
+                direccion: proyecto.direccion?.trim() ?? '',
             }))
         : [];
 
@@ -117,13 +119,13 @@ export const deleteCliente = async (id) => {
 
 export const createClienteProject = async ({ clienteId, proyecto }) => {
     try {
-        const response = await fetch(getClienteProjectsUrl(clienteId), {
+        const response = await fetch(getProyectosUrl(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 ...getAuthHeaders(),
             },
-            body: JSON.stringify(proyecto),
+            body: JSON.stringify({ ...proyecto, cliente_id: clienteId }),
         });
 
         return await processResponse(response);
@@ -135,13 +137,13 @@ export const createClienteProject = async ({ clienteId, proyecto }) => {
 
 export const updateClienteProject = async ({ clienteId, proyectoId, proyecto }) => {
     try {
-        const response = await fetch(`${getClienteProjectsUrl(clienteId)}/${proyectoId}`, {
+        const response = await fetch(getProyectoUrl(proyectoId), {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 ...getAuthHeaders(),
             },
-            body: JSON.stringify(proyecto),
+            body: JSON.stringify({ ...proyecto, cliente_id: clienteId }),
         });
 
         return await processResponse(response);
@@ -151,9 +153,9 @@ export const updateClienteProject = async ({ clienteId, proyectoId, proyecto }) 
     }
 };
 
-export const deleteClienteProject = async ({ clienteId, proyectoId }) => {
+export const deleteClienteProject = async ({ clienteId: _clienteId, proyectoId }) => {
     try {
-        const response = await fetch(`${getClienteProjectsUrl(clienteId)}/${proyectoId}`, {
+        const response = await fetch(getProyectoUrl(proyectoId), {
             method: 'DELETE',
             headers: {
                 ...getAuthHeaders(),
@@ -175,7 +177,7 @@ export const reassignClienteProject = async ({ proyectoId, clienteDestinoId }) =
                 'Content-Type': 'application/json',
                 ...getAuthHeaders(),
             },
-            body: JSON.stringify({ clienteId: clienteDestinoId }),
+            body: JSON.stringify({ cliente_id: clienteDestinoId }),
         });
 
         return await processResponse(response);
