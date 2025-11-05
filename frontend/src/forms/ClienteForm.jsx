@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import FormField from '../components/FormField';
 
-const emptyProject = { nombre: '', descripcion: '' };
+const emptyProject = { nombre: '', descripcion: '', direccion: '' };
 
 const buildInitialState = (clienteUpdate) => ({
     id: clienteUpdate?.id,
@@ -13,6 +13,7 @@ const buildInitialState = (clienteUpdate) => ({
             id: proyecto.id,
             nombre: proyecto.nombre ?? '',
             descripcion: proyecto.descripcion ?? '',
+            direccion: proyecto.direccion ?? '',
         }))
         : [],
 });
@@ -60,7 +61,10 @@ const ClienteForm = ({ cancelAction, clienteUpdate, onSave }) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         const sanitizedProjects = formData.proyectos.filter(
-            (proyecto) => proyecto.nombre.trim() || proyecto.descripcion.trim()
+            (proyecto) =>
+                proyecto.nombre.trim() ||
+                proyecto.descripcion.trim() ||
+                proyecto.direccion.trim()
         );
 
         if (onSave) {
@@ -141,6 +145,17 @@ const ClienteForm = ({ cancelAction, clienteUpdate, onSave }) => {
                                                     handleProjectChange(index, 'descripcion', event.target.value)
                                                 }
                                                 placeholder="Detalles o alcance del proyecto"
+                                            />
+                                        </label>
+                                        <label className="cliente-form__project-label">
+                                            Dirección
+                                            <input
+                                                type="text"
+                                                value={proyecto.direccion}
+                                                onChange={(event) =>
+                                                    handleProjectChange(index, 'direccion', event.target.value)
+                                                }
+                                                placeholder="Ej. Calle 123, Ciudad"
                                             />
                                         </label>
                                     </div>
