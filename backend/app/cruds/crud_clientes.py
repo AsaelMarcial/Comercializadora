@@ -1,8 +1,14 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException, status
-from app.models import Cliente, ClienteCotizacion
-from app.schemas import ClienteCreate, ClienteCotizacionCreate
+from app.models import Cliente, ClienteCotizacion, Proyecto
+from app.schemas import (
+    ClienteCreate,
+    ClienteUpdate,
+    ClienteCotizacionCreate,
+    ProyectoCreate,
+    ProyectoUpdate,
+)
 import logging
 
 # Configurar logging
@@ -12,26 +18,38 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 class CRUDCliente:
     def __init__(self, db: Session):
         self.db = db
 
     def crear_cliente(self, cliente_data: ClienteCreate) -> Cliente:
-        """
-        Crear un nuevo cliente.
-        """
+        """Crear un nuevo cliente, incluyendo sus proyectos asociados."""
         try:
+            nombre_proyecto = cliente_data.proyecto
+            if not nombre_proyecto and cliente_data.proyectos:
+                nombre_proyecto = cliente_data.proyectos[0].nombre
+
             nuevo_cliente = Cliente(
                 nombre=cliente_data.nombre,
-                proyecto=cliente_data.proyecto,
+                proyecto=nombre_proyecto or "",
                 direccion=cliente_data.direccion,
-                descuento=cliente_data.descuento
+                descuento=cliente_data.descuento if cliente_data.descuento is not None else 0,
             )
+
+            if cliente_data.proyectos:
+                for proyecto_data in cliente_data.proyectos:
+                    nuevo_cliente.proyectos.append(
+                        Proyecto(
+                            nombre=proyecto_data.nombre,
+                            descripcion=proyecto_data.descripcion,
+                        )
+                    )
+
             self.db.add(nuevo_cliente)
             self.db.commit()
-            self.db.refresh(nuevo_cliente)
             logger.info(f"Cliente creado con ID {nuevo_cliente.id}")
-            return nuevo_cliente
+            return self.obtener_cliente(nuevo_cliente.id)
         except SQLAlchemyError as e:
             self.db.rollback()
             logger.error(f"Error al crear cliente: {e}")
@@ -41,16 +59,19 @@ class CRUDCliente:
             )
 
     def obtener_cliente(self, cliente_id: int) -> Cliente:
-        """
-        Obtener un cliente por ID.
-        """
+        """Obtener un cliente por ID, cargando sus proyectos asociados."""
         try:
-            cliente = self.db.query(Cliente).filter(Cliente.id == cliente_id).first()
+            cliente = (
+                self.db.query(Cliente)
+                .options(joinedload(Cliente.proyectos))
+                .filter(Cliente.id == cliente_id)
+                .first()
+            )
             if not cliente:
                 logger.warning(f"Cliente con ID {cliente_id} no encontrado")
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Cliente no encontrado"
+                    detail="Cliente no encontrado",
                 )
             return cliente
         except SQLAlchemyError as e:
@@ -61,11 +82,13 @@ class CRUDCliente:
             )
 
     def obtener_clientes(self):
-        """
-        Obtener todos los clientes.
-        """
+        """Obtener todos los clientes con sus proyectos relacionados."""
         try:
-            clientes = self.db.query(Cliente).all()
+            clientes = (
+                self.db.query(Cliente)
+                .options(joinedload(Cliente.proyectos))
+                .all()
+            )
             logger.info(f"Se obtuvieron {len(clientes)} clientes")
             return clientes
         except SQLAlchemyError as e:
@@ -76,47 +99,71 @@ class CRUDCliente:
             )
 
     def eliminar_cliente(self, cliente_id: int):
-        """
-        Elimina un cliente por su ID, incluyendo las relaciones asociadas.
-        """
-        cliente = self.db.query(Cliente).filter(Cliente.id == cliente_id).first()
+        """Elimina un cliente por su ID, incluyendo las relaciones asociadas."""
+        cliente = (
+            self.db.query(Cliente)
+            .options(joinedload(Cliente.proyectos))
+            .filter(Cliente.id == cliente_id)
+            .first()
+        )
         if not cliente:
             raise HTTPException(status_code=404, detail="Cliente no encontrado")
 
         try:
-            # Eliminar relaciones en clientes_cotizacion
-            self.db.query(ClienteCotizacion).filter(ClienteCotizacion.cliente_id == cliente_id).delete()
+            self.db.query(ClienteCotizacion).filter(
+                ClienteCotizacion.cliente_id == cliente_id
+            ).delete(synchronize_session=False)
 
-            # Eliminar el cliente
             self.db.delete(cliente)
             self.db.commit()
-        except Exception as e:
+        except SQLAlchemyError as e:
             self.db.rollback()
             raise HTTPException(
-                status_code=500,
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error al eliminar el cliente: {str(e)}"
             )
 
-    def actualizar_cliente(self, cliente_id: int, cliente_data: ClienteCreate) -> Cliente:
-        cliente = self.db.query(Cliente).filter(Cliente.id == cliente_id).first()
+    def actualizar_cliente(self, cliente_id: int, cliente_data: ClienteUpdate) -> Cliente:
+        cliente = (
+            self.db.query(Cliente)
+            .options(joinedload(Cliente.proyectos))
+            .filter(Cliente.id == cliente_id)
+            .first()
+        )
         if not cliente:
             raise HTTPException(status_code=404, detail="Cliente no encontrado")
 
-        for key, value in cliente_data.dict().items():
-            setattr(cliente, key, value)
+        datos_actualizados = cliente_data.dict(exclude_unset=True)
+        proyectos_nuevos = datos_actualizados.pop("proyectos", None)
+
+        for key, value in datos_actualizados.items():
+            if key == "descuento":
+                if value is not None:
+                    setattr(cliente, key, value)
+            elif key == "proyecto":
+                setattr(cliente, key, value or cliente.proyecto)
+            elif value is not None:
+                setattr(cliente, key, value)
+
+        if proyectos_nuevos:
+            for proyecto_data in proyectos_nuevos:
+                cliente.proyectos.append(
+                    Proyecto(
+                        nombre=proyecto_data.nombre,
+                        descripcion=proyecto_data.descripcion,
+                    )
+                )
 
         self.db.commit()
-        self.db.refresh(cliente)
-        return cliente
+        return self.obtener_cliente(cliente_id)
+
 
 class CRUDClienteCotizacion:
     def __init__(self, db: Session):
         self.db = db
 
     def asociar_cotizacion_cliente(self, cliente_cotizacion_data: ClienteCotizacionCreate) -> ClienteCotizacion:
-        """
-        Asociar una cotización a un cliente.
-        """
+        """Asociar una cotización a un cliente."""
         try:
             nueva_asociacion = ClienteCotizacion(
                 cliente_id=cliente_cotizacion_data.cliente_id,
@@ -126,7 +173,9 @@ class CRUDClienteCotizacion:
             self.db.add(nueva_asociacion)
             self.db.commit()
             self.db.refresh(nueva_asociacion)
-            logger.info(f"Cotización {nueva_asociacion.cotizacion_id} asociada al cliente {nueva_asociacion.cliente_id}")
+            logger.info(
+                f"Cotización {nueva_asociacion.cotizacion_id} asociada al cliente {nueva_asociacion.cliente_id}"
+            )
             return nueva_asociacion
         except SQLAlchemyError as e:
             self.db.rollback()
@@ -137,12 +186,14 @@ class CRUDClienteCotizacion:
             )
 
     def obtener_cotizaciones_cliente(self, cliente_id: int):
-        """
-        Obtener todas las cotizaciones asociadas a un cliente.
-        """
+        """Obtener todas las cotizaciones asociadas a un cliente."""
         try:
-            cotizaciones = self.db.query(ClienteCotizacion).filter(ClienteCotizacion.cliente_id == cliente_id).all()
-            logger.info(f"Se obtuvieron {len(cotizaciones)} cotizaciones para el cliente {cliente_id}")
+            cotizaciones = self.db.query(ClienteCotizacion).filter(
+                ClienteCotizacion.cliente_id == cliente_id
+            ).all()
+            logger.info(
+                f"Se obtuvieron {len(cotizaciones)} cotizaciones para el cliente {cliente_id}"
+            )
             return cotizaciones
         except SQLAlchemyError as e:
             logger.error(f"Error al obtener cotizaciones del cliente {cliente_id}: {e}")
@@ -152,11 +203,11 @@ class CRUDClienteCotizacion:
             )
 
     def eliminar_asociacion(self, cliente_cotizacion_id: int):
-        """
-        Eliminar una asociación entre cliente y cotización.
-        """
+        """Eliminar una asociación entre cliente y cotización."""
         try:
-            asociacion = self.db.query(ClienteCotizacion).filter(ClienteCotizacion.id == cliente_cotizacion_id).first()
+            asociacion = self.db.query(ClienteCotizacion).filter(
+                ClienteCotizacion.id == cliente_cotizacion_id
+            ).first()
             if not asociacion:
                 logger.warning(f"Asociación con ID {cliente_cotizacion_id} no encontrada")
                 raise HTTPException(
@@ -177,3 +228,139 @@ class CRUDClienteCotizacion:
             )
 
 
+class CRUDProyecto:
+    def __init__(self, db: Session):
+        self.db = db
+
+    def listar_por_cliente(self, cliente_id: int):
+        try:
+            return (
+                self.db.query(Proyecto)
+                .options(joinedload(Proyecto.cliente))
+                .filter(Proyecto.cliente_id == cliente_id)
+                .all()
+            )
+        except SQLAlchemyError as e:
+            logger.error(f"Error al listar proyectos del cliente {cliente_id}: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al obtener proyectos: {str(e)}",
+            )
+
+    def crear_proyecto(self, proyecto_data: ProyectoCreate) -> Proyecto:
+        if not proyecto_data.cliente_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El cliente asociado es obligatorio",
+            )
+
+        try:
+            cliente = self.db.query(Cliente).filter(
+                Cliente.id == proyecto_data.cliente_id
+            ).first()
+            if not cliente:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Cliente no encontrado",
+                )
+
+            nuevo_proyecto = Proyecto(
+                nombre=proyecto_data.nombre,
+                descripcion=proyecto_data.descripcion,
+                cliente=cliente,
+            )
+            self.db.add(nuevo_proyecto)
+            self.db.commit()
+            self.db.refresh(nuevo_proyecto)
+            return nuevo_proyecto
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Error al crear proyecto: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al crear proyecto: {str(e)}",
+            )
+
+    def actualizar_proyecto(self, proyecto_id: int, proyecto_data: ProyectoUpdate) -> Proyecto:
+        proyecto = self.db.query(Proyecto).filter(Proyecto.id == proyecto_id).first()
+        if not proyecto:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Proyecto no encontrado",
+            )
+
+        datos = proyecto_data.dict(exclude_unset=True)
+
+        if "cliente_id" in datos and datos["cliente_id"] is not None:
+            cliente = self.db.query(Cliente).filter(
+                Cliente.id == datos["cliente_id"]
+            ).first()
+            if not cliente:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Cliente no encontrado",
+                )
+            proyecto.cliente = cliente
+
+        for campo in ("nombre", "descripcion"):
+            if campo in datos and datos[campo] is not None:
+                setattr(proyecto, campo, datos[campo])
+
+        try:
+            self.db.commit()
+            self.db.refresh(proyecto)
+            return proyecto
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Error al actualizar proyecto {proyecto_id}: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al actualizar proyecto: {str(e)}",
+            )
+
+    def reasignar_proyecto(self, proyecto_id: int, nuevo_cliente_id: int) -> Proyecto:
+        proyecto = self.db.query(Proyecto).filter(Proyecto.id == proyecto_id).first()
+        if not proyecto:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Proyecto no encontrado",
+            )
+
+        cliente = self.db.query(Cliente).filter(Cliente.id == nuevo_cliente_id).first()
+        if not cliente:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Cliente no encontrado",
+            )
+
+        try:
+            proyecto.cliente = cliente
+            self.db.commit()
+            self.db.refresh(proyecto)
+            return proyecto
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Error al reasignar proyecto {proyecto_id}: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al reasignar proyecto: {str(e)}",
+            )
+
+    def eliminar_proyecto(self, proyecto_id: int) -> None:
+        proyecto = self.db.query(Proyecto).filter(Proyecto.id == proyecto_id).first()
+        if not proyecto:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Proyecto no encontrado",
+            )
+
+        try:
+            self.db.delete(proyecto)
+            self.db.commit()
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Error al eliminar proyecto {proyecto_id}: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al eliminar proyecto: {str(e)}",
+            )

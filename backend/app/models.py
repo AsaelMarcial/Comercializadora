@@ -177,6 +177,11 @@ class Cliente(Base):
     direccion = Column(String(255))
     descuento = Column(DECIMAL(5, 2), nullable=False)  # Porcentaje de ganancia
     cotizaciones = relationship("ClienteCotizacion", back_populates="cliente")
+    proyectos = relationship(
+        "Proyecto",
+        back_populates="cliente",
+        cascade="all, delete-orphan",
+    )
 
 class ClienteCotizacion(Base):
     __tablename__ = "clientes_cotizacion"
@@ -188,3 +193,14 @@ class ClienteCotizacion(Base):
 
     cliente = relationship("Cliente", back_populates="cotizaciones")
     cotizacion = relationship("Cotizacion", back_populates="cliente_asociacion")
+
+
+class Proyecto(Base):
+    __tablename__ = "proyectos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(255), nullable=False)
+    descripcion = Column(String(500))
+    cliente_id = Column(Integer, ForeignKey("clientes.id", ondelete="SET NULL"))
+
+    cliente = relationship("Cliente", back_populates="proyectos")

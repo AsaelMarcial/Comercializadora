@@ -337,11 +337,34 @@ class CotizacionResponse(BaseModel):
 
 
 # Schema base para Cliente
+class ProyectoBase(BaseModel):
+    nombre: constr(max_length=255)
+    descripcion: Optional[constr(max_length=500)] = None
+
+
+class ProyectoCreate(ProyectoBase):
+    cliente_id: Optional[int] = None
+
+
+class ProyectoUpdate(BaseModel):
+    nombre: Optional[constr(max_length=255)] = None
+    descripcion: Optional[constr(max_length=500)] = None
+    cliente_id: Optional[int] = None
+
+
+class ProyectoResponse(ProyectoBase):
+    id: int
+    cliente_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
 class ClienteBase(BaseModel):
     nombre: constr(max_length=255)
-    proyecto: Optional[str] = None
-    direccion: Optional[str] = None
-    descuento: Optional[float] = None  # Porcentaje de descuento como flotante positivo
+    proyecto: Optional[constr(max_length=255)] = None
+    direccion: Optional[constr(max_length=255)] = None
+    descuento: Optional[condecimal(max_digits=5, decimal_places=2)] = None
 
     class Config:
         schema_extra = {
@@ -349,17 +372,26 @@ class ClienteBase(BaseModel):
                 "nombre": "Cliente ABC",
                 "proyecto": "Proyecto XYZ",
                 "direccion": "Calle 123, Ciudad, País",
-                "descuento": 10.5
+                "descuento": "10.50",
             }
         }
 
 
 class ClienteCreate(ClienteBase):
-    pass
+    proyectos: Optional[List[ProyectoCreate]] = None
+
+
+class ClienteUpdate(BaseModel):
+    nombre: Optional[constr(max_length=255)] = None
+    proyecto: Optional[constr(max_length=255)] = None
+    direccion: Optional[constr(max_length=255)] = None
+    descuento: Optional[condecimal(max_digits=5, decimal_places=2)] = None
+    proyectos: Optional[List[ProyectoCreate]] = None
 
 
 class ClienteResponse(ClienteBase):
     id: int
+    proyectos: List[ProyectoResponse] = []
 
     class Config:
         orm_mode = True
