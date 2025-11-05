@@ -186,6 +186,7 @@ const Clientes = () => {
             const projectTexts = (client.proyectos ?? []).flatMap((proyecto) => [
                 proyecto?.nombre,
                 proyecto?.descripcion,
+                proyecto?.direccion,
             ]);
 
             const matchesSearch =
@@ -460,6 +461,11 @@ const Clientes = () => {
                                                                         {proyecto.descripcion && (
                                                                             <span className="clients__project-description">
                                                                                 {proyecto.descripcion}
+                                                                            </span>
+                                                                        )}
+                                                                        {proyecto.direccion && (
+                                                                            <span className="clients__project-address">
+                                                                                {proyecto.direccion}
                                                                             </span>
                                                                         )}
                                                                     </div>
