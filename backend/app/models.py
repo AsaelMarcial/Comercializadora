@@ -25,17 +25,6 @@ class Proveedor(Base):
     email = Column(String(100))
     contacto = Column(String(100))
 
-# Modelo de Proyectos
-class Proyecto(Base):
-    __tablename__ = "proyectos"
-
-    id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(255), nullable=False)
-    direccion = Column(String(255))
-
-    cotizaciones = relationship("Cotizacion", back_populates="proyecto")
-
-
 # Modelo de Productos
 class Producto(Base):
     __tablename__ = "productos"
@@ -215,7 +204,9 @@ class Proyecto(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(255), nullable=False)
+    direccion = Column(String(255))
     descripcion = Column(String(500))
     cliente_id = Column(Integer, ForeignKey("clientes.id", ondelete="SET NULL"))
 
     cliente = relationship("Cliente", back_populates="proyectos")
+    cotizaciones = relationship("Cotizacion", back_populates="proyecto")
