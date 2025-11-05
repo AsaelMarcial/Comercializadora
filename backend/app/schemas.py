@@ -29,22 +29,6 @@ class Proveedor(ProveedorBase):
     class Config:
         orm_mode = True
 
-# Esquema para Proyecto
-class ProyectoBase(BaseModel):
-    nombre: constr(max_length=255)
-    direccion: Optional[constr(max_length=255)] = None
-
-
-class ProyectoCreate(ProyectoBase):
-    pass
-
-
-class ProyectoResponse(ProyectoBase):
-    id: int
-
-    class Config:
-        orm_mode = True
-
 # Esquema para Producto
 class ProductoBase(BaseModel):
     codigo: constr(max_length=30)
@@ -358,10 +342,11 @@ class CotizacionResponse(BaseModel):
         orm_mode = True
 
 
-# Schema base para Cliente
+# Esquema para Proyecto
 class ProyectoBase(BaseModel):
     nombre: constr(max_length=255)
     descripcion: Optional[constr(max_length=500)] = None
+    direccion: Optional[constr(max_length=255)] = None
 
 
 class ProyectoCreate(ProyectoBase):
@@ -371,6 +356,7 @@ class ProyectoCreate(ProyectoBase):
 class ProyectoUpdate(BaseModel):
     nombre: Optional[constr(max_length=255)] = None
     descripcion: Optional[constr(max_length=500)] = None
+    direccion: Optional[constr(max_length=255)] = None
     cliente_id: Optional[int] = None
 
 
