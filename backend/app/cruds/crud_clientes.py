@@ -43,6 +43,7 @@ class CRUDCliente:
                         Proyecto(
                             nombre=proyecto_data.nombre,
                             descripcion=proyecto_data.descripcion,
+                            direccion=proyecto_data.direccion,
                         )
                     )
 
@@ -151,6 +152,7 @@ class CRUDCliente:
                     Proyecto(
                         nombre=proyecto_data.nombre,
                         descripcion=proyecto_data.descripcion,
+                        direccion=proyecto_data.direccion,
                     )
                 )
 
@@ -267,6 +269,7 @@ class CRUDProyecto:
             nuevo_proyecto = Proyecto(
                 nombre=proyecto_data.nombre,
                 descripcion=proyecto_data.descripcion,
+                direccion=proyecto_data.direccion,
                 cliente=cliente,
             )
             self.db.add(nuevo_proyecto)
@@ -302,7 +305,7 @@ class CRUDProyecto:
                 )
             proyecto.cliente = cliente
 
-        for campo in ("nombre", "descripcion"):
+        for campo in ("nombre", "descripcion", "direccion"):
             if campo in datos and datos[campo] is not None:
                 setattr(proyecto, campo, datos[campo])
 
