@@ -25,6 +25,17 @@ class Proveedor(Base):
     email = Column(String(100))
     contacto = Column(String(100))
 
+# Modelo de Proyectos
+class Proyecto(Base):
+    __tablename__ = "proyectos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(255), nullable=False)
+    direccion = Column(String(255))
+
+    cotizaciones = relationship("Cotizacion", back_populates="proyecto")
+
+
 # Modelo de Productos
 class Producto(Base):
     __tablename__ = "productos"
@@ -147,8 +158,12 @@ class Cotizacion(Base):
     fecha = Column(TIMESTAMP, default=func.now())
     total = Column(DECIMAL(20, 2), nullable=False)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=True)
+    proyecto_nombre = Column(String(255))
+    proyecto_direccion = Column(String(255))
 
     usuario = relationship("Usuario")
+    proyecto = relationship("Proyecto", back_populates="cotizaciones")
     detalles = relationship("CotizacionDetalle", back_populates="cotizacion")
     cliente_asociacion = relationship("ClienteCotizacion", back_populates="cotizacion")
 

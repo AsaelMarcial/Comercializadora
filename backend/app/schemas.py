@@ -29,6 +29,22 @@ class Proveedor(ProveedorBase):
     class Config:
         orm_mode = True
 
+# Esquema para Proyecto
+class ProyectoBase(BaseModel):
+    nombre: constr(max_length=255)
+    direccion: Optional[constr(max_length=255)] = None
+
+
+class ProyectoCreate(ProyectoBase):
+    pass
+
+
+class ProyectoResponse(ProyectoBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
 # Esquema para Producto
 class ProductoBase(BaseModel):
     codigo: constr(max_length=30)
@@ -289,6 +305,7 @@ class CotizacionCreate(BaseModel):
     costo_envio: Optional[condecimal(max_digits=10, decimal_places=2)] = 0.00
     cliente_id: int
     variante_envio: str
+    proyecto_id: Optional[int] = None
 
     class Config:
         schema_extra = {
@@ -300,7 +317,8 @@ class CotizacionCreate(BaseModel):
                     {"producto_id": 2, "cantidad": 2, "precio_unitario": 315.15, "tipo_variante": "m2"}
                 ],
                 "costo_envio": 50.00,
-                "cliente_id" : 1
+                "cliente_id" : 1,
+                "proyecto_id": 3
             }
         }
 
@@ -330,6 +348,10 @@ class CotizacionResponse(BaseModel):
     fecha: datetime
     total: condecimal(max_digits=10, decimal_places=2)
     usuario_id: int
+    proyecto_id: Optional[int] = None
+    proyecto_nombre: Optional[str] = None
+    proyecto_direccion: Optional[str] = None
+    proyecto: Optional[ProyectoResponse] = None
     detalles: List[CotizacionDetalleResponse]
 
     class Config:

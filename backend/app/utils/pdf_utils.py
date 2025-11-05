@@ -39,7 +39,7 @@ def generate_pdf(cotizacion_data):
     # Validar datos requeridos
     logger.info(f"Datos recibidos en generate_pdf: {cotizacion_data}")
 
-    required_keys = ["id", "fecha", "cliente_nombre", "cliente_proyecto", "cliente_direccion", "productos", "total"]
+    required_keys = ["id", "fecha", "cliente_nombre", "productos", "total"]
     missing_keys = [key for key in required_keys if key not in cotizacion_data]
     if missing_keys:
         logger.error(f"Faltan los campos requeridos: {', '.join(missing_keys)}")
@@ -67,10 +67,19 @@ def generate_pdf(cotizacion_data):
 
     try:
         # Asegurar que los datos del cliente están completos
+        project_name = (
+            cotizacion_data.get("proyecto_nombre")
+            or cotizacion_data.get("cliente_proyecto")
+        )
+        project_address = (
+            cotizacion_data.get("proyecto_direccion")
+            or cotizacion_data.get("cliente_direccion")
+        )
+
         cliente_render = {
             "nombre": cotizacion_data.get("cliente_nombre", "N/A"),
-            "proyecto": cotizacion_data.get("cliente_proyecto", "N/A"),
-            "direccion": cotizacion_data.get("cliente_direccion", "N/A")
+            "proyecto": project_name or "N/A",
+            "direccion": project_address or "N/A",
         }
 
         logger.info(f"Datos que se renderizan en el PDF: {cliente_render}")
@@ -81,8 +90,8 @@ def generate_pdf(cotizacion_data):
                 "fecha": cotizacion_data["fecha"],
             },
             nombre=cotizacion_data.get("cliente_nombre", "N/A"),
-            proyecto=cotizacion_data.get("cliente_proyecto", "N/A"),
-            direccion=cotizacion_data.get("cliente_direccion", "N/A"),
+            proyecto=project_name,
+            direccion=project_address,
             productos=cotizacion_data["productos"],  # Lista de productos
             total=cotizacion_data["total"],
             costo_envio=float(cotizacion_data.get("costo_envio", 0)),  # Asegura que costo_envio sea un número

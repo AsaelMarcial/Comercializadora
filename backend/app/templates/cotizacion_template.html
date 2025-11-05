@@ -199,8 +199,8 @@
         <div class="info">
             <div class="general-info">
                 <p><strong>CLIENTE:</strong> {{ nombre }}</p>
-                <p><strong>PROYECTO:</strong> {{ proyecto }}</p>
-                <p><strong>DIRECCIÓN:</strong> {{ direccion }}</p>
+                <p><strong>PROYECTO:</strong> {{ proyecto or 'Sin proyecto seleccionado' }}</p>
+                <p><strong>DIRECCIÓN:</strong> {{ direccion or 'Dirección no especificada' }}</p>
             </div>
             <div class="cotizacion-info">
                 <p><strong>COTIZACIÓN:</strong> {{ cotizacion.id }}</p>

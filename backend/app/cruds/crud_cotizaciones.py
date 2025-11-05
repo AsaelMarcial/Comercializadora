@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException, status
-from app.models import Cotizacion, CotizacionDetalle, Producto, Cliente
+from app.models import Cotizacion, CotizacionDetalle, Producto, Cliente, Proyecto
 from app.schemas import CotizacionCreate, ClienteCotizacionCreate
 from app.cruds.crud_clientes import CRUDClienteCotizacion
 import logging
@@ -32,11 +32,36 @@ class CRUDCotizacion:
                     detail=f"Cliente con ID {cotizacion_data.cliente_id} no encontrado."
                 )
 
+            # Validar proyecto asociado si se proporciona
+            proyecto = None
+            proyecto_nombre = None
+            proyecto_direccion = None
+
+            if cotizacion_data.proyecto_id is not None:
+                proyecto = (
+                    self.db.query(Proyecto)
+                    .filter(Proyecto.id == cotizacion_data.proyecto_id)
+                    .first()
+                )
+                if not proyecto:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Proyecto con ID {cotizacion_data.proyecto_id} no encontrado."
+                    )
+                proyecto_nombre = proyecto.nombre
+                proyecto_direccion = proyecto.direccion
+            else:
+                proyecto_nombre = cliente.proyecto or None
+                proyecto_direccion = cliente.direccion or None
+
             # Crear la cotización con el nombre del cliente
             nueva_cotizacion = Cotizacion(
                 cliente=cliente.nombre,
                 total=cotizacion_data.total,
-                usuario_id=usuario_id
+                usuario_id=usuario_id,
+                proyecto_id=proyecto.id if proyecto else None,
+                proyecto_nombre=proyecto_nombre,
+                proyecto_direccion=proyecto_direccion,
             )
             self.db.add(nueva_cotizacion)
             self.db.flush()  # No hacemos commit aquí para evitar inconsistencias
@@ -79,19 +104,23 @@ class CRUDCotizacion:
             # Commit después de agregar todos los datos
             self.db.commit()
             self.db.refresh(nueva_cotizacion)
+            if nueva_cotizacion.proyecto_id:
+                self.db.refresh(nueva_cotizacion, attribute_names=["proyecto"])
 
-            # Incluir información completa del cliente en cotizacion_data para el PDF
+            # Incluir información completa del cliente y del proyecto seleccionado para el PDF
             cliente_nombre = cliente.nombre
-            cliente_proyecto = cliente.proyecto
-            cliente_direccion = cliente.direccion
+            proyecto_nombre = nueva_cotizacion.proyecto_nombre or "Sin proyecto seleccionado"
+            proyecto_direccion = nueva_cotizacion.proyecto_direccion or "Dirección no especificada"
 
             # Crear el diccionario para el PDF
             cotizacion_data_pdf = {
                 "id": nueva_cotizacion.id,
                 "fecha": nueva_cotizacion.fecha.strftime("%d/%m/%Y"),
                 "cliente_nombre": cliente_nombre,
-                "cliente_proyecto": cliente_proyecto,
-                "cliente_direccion": cliente_direccion,
+                "cliente_proyecto": proyecto_nombre,
+                "cliente_direccion": proyecto_direccion,
+                "proyecto_nombre": proyecto_nombre,
+                "proyecto_direccion": proyecto_direccion,
                 "productos": [
                     {
                         "producto_id": detalle.producto_id,
@@ -139,7 +168,10 @@ class CRUDCotizacion:
         try:
             cotizacion = (
                 self.db.query(Cotizacion)
-                .options(joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto))
+                .options(
+                    joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto),
+                    joinedload(Cotizacion.proyecto),
+                )
                 .filter(Cotizacion.id == cotizacion_id)
                 .first()
             )
@@ -159,7 +191,14 @@ class CRUDCotizacion:
 
     def obtener_cotizaciones(self):
         try:
-            cotizaciones = self.db.query(Cotizacion).all()
+            cotizaciones = (
+                self.db.query(Cotizacion)
+                .options(
+                    joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto),
+                    joinedload(Cotizacion.proyecto),
+                )
+                .all()
+            )
             logger.info(f"Se obtuvieron {len(cotizaciones)} cotizaciones")
             return cotizaciones
         except Exception as e:
