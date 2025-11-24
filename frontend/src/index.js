@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -27,7 +26,6 @@ root.render(
 				pauseOnHover
 				theme="light"
 			/>
-			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	</React.StrictMode>
 );
