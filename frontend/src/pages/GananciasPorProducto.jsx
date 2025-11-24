@@ -49,6 +49,7 @@ const GananciasPorProducto = () => {
                 ganancia: producto.ganancia || 0,
                 precioSeleccionado: precioInicial,
                 tipoPrecio: tipoPrecioInicial,
+                tipoPrecioPrevio: producto.tipoPrecioPrevio || tipoPrecioInicial,
                 requiereCajaCompleta,
                 cantidad: cantidadAjustada,
             };
@@ -209,6 +210,19 @@ const GananciasPorProducto = () => {
 
     const productosConCantidadInsuficiente = 0;
 
+    const obtenerPrecioPorTipo = (baseProducto, tipoPrecio) => {
+        switch (tipoPrecio) {
+            case 'caja':
+                return baseProducto?.precio_caja_sin_iva || 0;
+            case 'pieza':
+                return baseProducto?.precio_pieza_sin_iva || 0;
+            case 'm2':
+                return baseProducto?.precio_m2_sin_iva || 0;
+            default:
+                return 0;
+        }
+    };
+
     const promedioGanancia = useMemo(() => {
         if (!productosConGanancia.length) return 0;
         const suma = productosConGanancia.reduce((total, producto) => total + (producto.ganancia || 0), 0);
@@ -258,24 +272,14 @@ const GananciasPorProducto = () => {
         setProductosConGanancia((prev) =>
             prev.map((producto) => {
                 if (producto.producto?.id === id) {
-                    let nuevoPrecio = 0;
-                    switch (nuevoTipoPrecio) {
-                        case 'caja':
-                            nuevoPrecio = producto.producto?.precio_caja_sin_iva || 0;
-                            break;
-                        case 'pieza':
-                            nuevoPrecio = producto.producto?.precio_pieza_sin_iva || 0;
-                            break;
-                        case 'm2':
-                            nuevoPrecio = producto.producto?.precio_m2_sin_iva || 0;
-                            break;
-                        default:
-                            nuevoPrecio = producto.producto?.precio_pieza_sin_iva || 0;
-                    }
+                    const nuevoPrecio = obtenerPrecioPorTipo(producto.producto, nuevoTipoPrecio);
                     return {
                         ...producto,
                         precioSeleccionado: nuevoPrecio,
                         tipoPrecio: nuevoTipoPrecio,
+                        tipoPrecioPrevio: producto.requiereCajaCompleta
+                            ? producto.tipoPrecioPrevio
+                            : nuevoTipoPrecio,
                         cantidad: obtenerCantidadAjustada(producto.cantidad),
                     };
                 }
@@ -289,11 +293,28 @@ const GananciasPorProducto = () => {
             prev.map((producto) => {
                 if (producto.producto?.id === id) {
                     const precioCaja = producto.producto?.precio_caja_sin_iva || 0;
+                    if (requiereCajaCompleta) {
+                        return {
+                            ...producto,
+                            requiereCajaCompleta,
+                            tipoPrecioPrevio: producto.tipoPrecio,
+                            precioSeleccionado: precioCaja,
+                            tipoPrecio: 'caja',
+                            cantidad: obtenerCantidadAjustada(producto.cantidad),
+                        };
+                    }
+
+                    const tipoPrecioRestaurado = producto.tipoPrecioPrevio || producto.tipoPrecio;
+                    const precioRestaurado = obtenerPrecioPorTipo(
+                        producto.producto,
+                        tipoPrecioRestaurado
+                    );
+
                     return {
                         ...producto,
                         requiereCajaCompleta,
-                        precioSeleccionado: requiereCajaCompleta ? precioCaja : producto.precioSeleccionado,
-                        tipoPrecio: requiereCajaCompleta ? 'caja' : producto.tipoPrecio,
+                        precioSeleccionado: precioRestaurado,
+                        tipoPrecio: tipoPrecioRestaurado,
                         cantidad: obtenerCantidadAjustada(producto.cantidad),
                     };
                 }
