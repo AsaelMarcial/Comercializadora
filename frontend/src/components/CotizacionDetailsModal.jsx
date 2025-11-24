@@ -201,7 +201,7 @@ const CotizacionDetailsModal = ({
                             className="btn accent"
                             onClick={() => onDownloadRemision(cotizacion.id)}
                         >
-                            Descargar nota de remisión
+                            Descargar PDF
                         </button>
                     </div>
                 </div>
