@@ -45,7 +45,8 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
 
     const updateMutation = useMutation(updateProductMutation, {
         ...UPDATE_MUTATION_OPTIONS,
-        onSuccess: () => {
+        onSuccess: (...args) => {
+            UPDATE_MUTATION_OPTIONS.onSuccess?.(...args);
             queryClient.invalidateQueries('products');
             cancelAction();
         },
