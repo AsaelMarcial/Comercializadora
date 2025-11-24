@@ -236,10 +236,8 @@
     background: linear-gradient(135deg, #1d4ed8, #1e40af);
 }
 
-.btn.primary:focus-visible,
-.icon-button:focus-visible,
-.btn.secondary:focus-visible,
-.btn.ghost:focus-visible {
+.btn:focus-visible,
+.icon-button:focus-visible {
     outline: 3px solid rgba(37, 99, 235, 0.35);
     outline-offset: 2px;
 }
@@ -255,14 +253,34 @@
 }
 
 .btn.ghost {
-    background: transparent;
-    color: #1f2937;
-    border: 1px solid transparent;
+    background: #f9fafb;
+    color: #111827;
+    border: 1px solid #e5e7eb;
 }
 
 .btn.ghost:hover {
-    background: #f3f4f6;
-    border-color: #e5e7eb;
+    background: #e5e7eb;
+    border-color: #d1d5db;
+}
+
+.btn.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    box-shadow: 0 10px 20px rgba(239, 68, 68, 0.25);
+}
+
+.btn.danger:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.btn.accent {
+    background: linear-gradient(135deg, #f59e0b, #2563eb);
+    color: #ffffff;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22);
+}
+
+.btn.accent:hover {
+    background: linear-gradient(135deg, #d97706, #1d4ed8);
 }
 
 @media (max-width: 768px) {

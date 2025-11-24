@@ -183,14 +183,14 @@ const CotizacionDetailsModal = ({
                         </button>
                         <button
                             type="button"
-                            className="btn secondary"
+                            className="btn danger"
                             onClick={() => onCancelCotizacion(cotizacion.id)}
                         >
                             Cancelar Cotización
                         </button>
                         <button
                             type="button"
-                            className="btn secondary"
+                            className="btn accent"
                             onClick={() => onDownloadPDF(cotizacion.id)}
                         >
                             Descargar nota de remisión
