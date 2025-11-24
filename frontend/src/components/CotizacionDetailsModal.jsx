@@ -9,6 +9,7 @@ const CotizacionDetailsModal = ({
     onClose,
     onCancelCotizacion,
     onDownloadPDF,
+    onEditCotizacion,
 }) => {
     const [productosDetalles, setProductosDetalles] = useState([]);
     const closeButtonRef = useRef(null);
@@ -174,6 +175,14 @@ const CotizacionDetailsModal = ({
                     <div className="actions-group">
                         <button
                             type="button"
+                            ref={primaryActionRef}
+                            className="btn primary"
+                            onClick={() => onEditCotizacion(cotizacion)}
+                        >
+                            Modificar
+                        </button>
+                        <button
+                            type="button"
                             className="btn secondary"
                             onClick={() => onCancelCotizacion(cotizacion.id)}
                         >
@@ -181,8 +190,7 @@ const CotizacionDetailsModal = ({
                         </button>
                         <button
                             type="button"
-                            ref={primaryActionRef}
-                            className="btn primary"
+                            className="btn secondary"
                             onClick={() => onDownloadPDF(cotizacion.id)}
                         >
                             Descargar PDF
@@ -225,6 +233,7 @@ CotizacionDetailsModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     onCancelCotizacion: PropTypes.func.isRequired,
     onDownloadPDF: PropTypes.func.isRequired,
+    onEditCotizacion: PropTypes.func.isRequired,
 };
 
 export default CotizacionDetailsModal;

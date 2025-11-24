@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 import NavigationTitle from '../components/NavigationTitle';
 import { getAllCotizaciones, cancelCotizacion, downloadCotizacionPDF } from '../data-access/cotizacionesDataAccess';
 import CotizacionDetailsModal from '../components/CotizacionDetailsModal';
 import { toast } from 'react-toastify';
 import '../css/cotizaciones.css';
+import { getProductById } from '../data-access/productsDataAccess';
 
 const Cotizaciones = () => {
+    const navigate = useNavigate();
     const { data: cotizaciones, isLoading } = useQuery('cotizaciones', getAllCotizaciones);
     const queryClient = useQueryClient();
     const [isShowingModal, setIsShowingModal] = useState(false);
@@ -143,6 +146,53 @@ const Cotizaciones = () => {
             await cancelMutation.mutateAsync(id);
         } catch (error) {
             console.error('Error al cancelar la cotización:', error);
+        }
+    };
+
+    const handleEditCotizacion = async (cotizacion) => {
+        if (!cotizacion?.detalles?.length) return;
+
+        try {
+            const order = await Promise.all(
+                cotizacion.detalles.map(async (detalle) => {
+                    try {
+                        const producto = await getProductById(detalle.producto_id);
+                        const tipoPrecio = detalle.tipo_variante || 'm2';
+
+                        return {
+                            ...producto,
+                            producto,
+                            id: producto?.id || detalle.producto_id,
+                            cantidad: (detalle.cantidad ?? 1).toString(),
+                            tipoPrecio,
+                            tipoPrecioPrevio: tipoPrecio,
+                            precioSeleccionado:
+                                detalle.precio_unitario ??
+                                producto?.[`precio_${tipoPrecio}_sin_iva`] ??
+                                producto?.precio_m2_sin_iva ??
+                                0,
+                            precio_m2_sin_iva: producto?.precio_m2_sin_iva,
+                            precio_caja_sin_iva: producto?.precio_caja_sin_iva,
+                            precio_pieza_sin_iva: producto?.precio_pieza_sin_iva,
+                        };
+                    } catch (error) {
+                        console.error(
+                            `Error al recuperar el producto con ID ${detalle.producto_id} para edición:`,
+                            error
+                        );
+                        return null;
+                    }
+                })
+            );
+
+            const validOrder = order.filter(Boolean);
+
+            if (validOrder.length) {
+                navigate('/app/ventas/ganancias', { state: { order: validOrder } });
+            }
+        } catch (error) {
+            console.error('Error al preparar la cotización para edición:', error);
+            toast('No se pudo preparar la cotización para editar.', { type: 'error' });
         }
     };
 
@@ -366,6 +416,7 @@ const Cotizaciones = () => {
                     onClose={handleCloseDetails}
                     onCancelCotizacion={handleCancelCotizacion}
                     onDownloadPDF={handleDownloadQuote}
+                    onEditCotizacion={handleEditCotizacion}
                 />
             )}
         </>
