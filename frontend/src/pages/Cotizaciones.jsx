@@ -363,14 +363,6 @@ const Cotizaciones = () => {
                                                         </button>
                                                         <button
                                                             type="button"
-                                                            className="quotes__action quotes__action--download"
-                                                            onClick={() => handleDownloadQuote(cotizacion.id)}
-                                                            aria-label={`Descargar PDF de la cotización ${cotizacion.id}`}
-                                                        >
-                                                            <i className="fa-solid fa-file-arrow-down" aria-hidden="true"></i>
-                                                        </button>
-                                                        <button
-                                                            type="button"
                                                             className="quotes__action quotes__action--danger"
                                                             onClick={() => handleCancelCotizacion(cotizacion.id)}
                                                             aria-label={`Cancelar cotización ${cotizacion.id}`}
