@@ -191,6 +191,31 @@ def delete_cotizacion(
             detail=f"Error al eliminar la cotización: {str(e)}"
         )
 
+
+@router.put(
+    "/cotizaciones/{cotizacion_id}/cancel",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["Cotizaciones"],
+    summary="Cancelar una cotización",
+)
+def cancel_cotizacion(
+    cotizacion_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    """Cancela (elimina) una cotización existente."""
+    crud_cotizacion = CRUDCotizacion(db)
+    try:
+        crud_cotizacion.eliminar_cotizacion(cotizacion_id)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Error al cancelar cotización con ID {cotizacion_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al cancelar la cotización: {str(e)}"
+        )
+
 @router.get(
     "/cotizaciones/{cotizacion_id}/pdf",
     tags=["Cotizaciones"],
