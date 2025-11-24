@@ -6,6 +6,7 @@ const emptyProject = { nombre: '', descripcion: '', direccion: '' };
 const buildInitialState = (clienteUpdate) => ({
     id: clienteUpdate?.id,
     nombre: clienteUpdate?.nombre ?? '',
+    proyecto: clienteUpdate?.proyecto ? String(clienteUpdate.proyecto) : '',
     direccion: clienteUpdate?.direccion ?? '',
     descuento: clienteUpdate?.descuento ?? '',
     proyectos: Array.isArray(clienteUpdate?.proyectos)
@@ -67,9 +68,13 @@ const ClienteForm = ({ cancelAction, clienteUpdate, onSave }) => {
                 proyecto.direccion.trim()
         );
 
+        const proyecto =
+            formData.proyecto || (sanitizedProjects[0]?.id ? String(sanitizedProjects[0].id) : '');
+
         if (onSave) {
             onSave({
                 ...formData,
+                proyecto,
                 proyectos: sanitizedProjects,
             });
         }

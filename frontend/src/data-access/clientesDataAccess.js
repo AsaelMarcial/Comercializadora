@@ -28,10 +28,13 @@ const normalizeClientePayload = (cliente) => {
             }))
         : [];
 
-    const { proyecto: _deprecatedProyecto, ...rest } = cliente;
+    const proyecto = cliente.proyecto ?? (proyectos[0]?.id ? String(proyectos[0].id) : '');
+
+    const { proyectos: _ignoredProjects, ...rest } = cliente;
 
     return {
         ...rest,
+        proyecto,
         proyectos,
     };
 };

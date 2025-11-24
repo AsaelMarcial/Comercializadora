@@ -91,10 +91,29 @@ const Clientes = () => {
         },
     });
 
+    const linkClientToProject = useCallback(
+        async ({ clienteId, proyectoId }) => {
+            if (!clienteId || !proyectoId) return;
+
+            try {
+                await updateCliente({ id: clienteId, proyecto: String(proyectoId) });
+                invalidateClientes();
+            } catch (error) {
+                console.error('Error actualizando cliente con proyecto creado:', error);
+                toast('Se creó el proyecto pero no se pudo asociar al cliente.', { type: 'warning' });
+            }
+        },
+        [invalidateClientes]
+    );
+
     const createProjectMutation = useMutation(createClienteProject, {
-        onSuccess: () => {
+        onSuccess: async (createdProject, variables) => {
             invalidateClientes();
             toast('Proyecto creado correctamente', { type: 'success' });
+            await linkClientToProject({
+                clienteId: variables?.clienteId,
+                proyectoId: createdProject?.id,
+            });
             closeProjectModal();
         },
         onError: (error) => {
@@ -104,9 +123,13 @@ const Clientes = () => {
     });
 
     const updateProjectMutation = useMutation(updateClienteProject, {
-        onSuccess: () => {
+        onSuccess: async (_response, variables) => {
             invalidateClientes();
             toast('Proyecto actualizado correctamente', { type: 'success' });
+            await linkClientToProject({
+                clienteId: variables?.clienteId,
+                proyectoId: variables?.proyectoId,
+            });
             closeProjectModal();
         },
         onError: (error) => {
@@ -206,10 +229,16 @@ const Clientes = () => {
     }, [sortedClients, searchTerm, projectFilter]);
 
     const handleSaveCliente = (cliente) => {
+        const proyectoId = cliente.proyecto || (cliente.proyectos?.[0]?.id ? String(cliente.proyectos[0].id) : '');
+        const payload = {
+            ...cliente,
+            proyecto: proyectoId,
+        };
+
         if (cliente.id) {
-            updateMutation.mutate(cliente);
+            updateMutation.mutate(payload);
         } else {
-            createMutation.mutate(cliente);
+            createMutation.mutate(payload);
         }
     };
 
