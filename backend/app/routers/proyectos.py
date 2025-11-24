@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
-from app.cruds.crud_clientes import CRUDProyecto
+from app.cruds.crud_proyectos import CRUDProyecto
 from app.database import get_db
 from app.schemas import ProyectoCreate, ProyectoUpdate, ProyectoResponse
 
