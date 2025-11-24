@@ -2,7 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import NavigationTitle from '../components/NavigationTitle';
-import { getAllCotizaciones, cancelCotizacion, downloadCotizacionPDF } from '../data-access/cotizacionesDataAccess';
+import {
+    getAllCotizaciones,
+    cancelCotizacion,
+    downloadCotizacionPDF,
+    downloadNotaRemisionPDF,
+} from '../data-access/cotizacionesDataAccess';
 import CotizacionDetailsModal from '../components/CotizacionDetailsModal';
 import { toast } from 'react-toastify';
 import '../css/cotizaciones.css';
@@ -135,6 +140,16 @@ const Cotizaciones = () => {
         } catch (error) {
             console.error('Error al descargar el PDF:', error);
             toast('No se pudo descargar la cotización.', { type: 'error' });
+        }
+    };
+
+    const handleDownloadRemision = async (id) => {
+        try {
+            await downloadNotaRemisionPDF(id);
+            toast('Descarga de nota iniciada', { type: 'success' });
+        } catch (error) {
+            console.error('Error al descargar la nota de remisión:', error);
+            toast('No se pudo descargar la nota de remisión.', { type: 'error' });
         }
     };
 
@@ -407,7 +422,8 @@ const Cotizaciones = () => {
                     isShowing={isShowingModal}
                     onClose={handleCloseDetails}
                     onCancelCotizacion={handleCancelCotizacion}
-                    onDownloadPDF={handleDownloadQuote}
+                    onDownloadCotizacion={handleDownloadQuote}
+                    onDownloadRemision={handleDownloadRemision}
                     onEditCotizacion={handleEditCotizacion}
                 />
             )}
