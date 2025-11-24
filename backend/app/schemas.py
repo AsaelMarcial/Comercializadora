@@ -29,6 +29,44 @@ class Proveedor(ProveedorBase):
     class Config:
         orm_mode = True
 
+
+class SucursalBase(BaseModel):
+    nombre: constr(max_length=255)
+    direccion: Optional[constr(max_length=255)] = None
+    telefono: Optional[constr(max_length=20)] = None
+    contacto: Optional[constr(max_length=100)] = None
+    horario: Optional[constr(max_length=255)] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "nombre": "Sucursal Centro",
+                "direccion": "Av. Principal 123, Ciudad",
+                "telefono": "555-1234",
+                "contacto": "María López",
+                "horario": "Lunes a viernes de 9:00 a 18:00"
+            }
+        }
+
+
+class SucursalCreate(SucursalBase):
+    pass
+
+
+class SucursalUpdate(BaseModel):
+    nombre: Optional[constr(max_length=255)] = None
+    direccion: Optional[constr(max_length=255)] = None
+    telefono: Optional[constr(max_length=20)] = None
+    contacto: Optional[constr(max_length=100)] = None
+    horario: Optional[constr(max_length=255)] = None
+
+
+class Sucursal(SucursalBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
 # Esquema para Producto
 class ProductoBase(BaseModel):
     codigo: constr(max_length=30)

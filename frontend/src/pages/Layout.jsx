@@ -39,6 +39,7 @@ export const Layout = () => {
           <SidebarButton to="/app/proyectos" iconClasses="fa-solid fa-diagram-project" label="Proyectos" />
           <SidebarButton to="/app/clientes" iconClasses="fa-solid fa-address-book" label="Clientes" />
           <SidebarButton to="/app/proveedores" iconClasses="fa-solid fa-people-carry" label="Proveedores" />
+          <SidebarButton to="/app/sucursales" iconClasses="fa-solid fa-building" label="Sucursales" />
           <SidebarButton to="/app/ventas" iconClasses="fa-solid fa-store" label="Ventas" />
           <SidebarButton to="/app/ventas/cotizaciones" iconClasses="fa-solid fa-file-invoice-dollar" label="Cotizaciones" />
           {/* <SidebarButton to="/app/incomes" iconClasses="fa-solid fa-money-bill-trend-up" label="Ingresos" /> */}
