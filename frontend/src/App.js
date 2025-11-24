@@ -19,6 +19,7 @@ import Cotizaciones from "./pages/Cotizaciones";
 import Clientes from "./pages/Clientes";
 import Proyectos from './pages/Proyectos';
 import Sucursales from './pages/Sucursales';
+import Estadisticas from './pages/Estadisticas';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route path="clientes" element={<Clientes />} /> {/* Nueva ruta para clientes */}
             <Route path="proyectos" element={<Proyectos />} />
             <Route path="sucursales" element={<Sucursales />} />
+            <Route path="estadisticas" element={<Estadisticas />} />
             <Route path="users" element={<Users />} />
             <Route path="help" element={<Help />} />
           </Route>
