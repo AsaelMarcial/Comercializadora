@@ -215,7 +215,15 @@ const GananciasPorProducto = () => {
         return suma / productosConGanancia.length;
     }, [productosConGanancia]);
 
-    const productosTotales = productosConGanancia.length;
+    const productosTotales = useMemo(() => {
+        const uniqueProductIds = new Set(
+            productosConGanancia
+                .map((producto) => producto.producto?.id)
+                .filter((id) => id !== undefined && id !== null)
+        );
+
+        return uniqueProductIds.size || productosConGanancia.length;
+    }, [productosConGanancia]);
 
     const actualizarGanancia = (id, nuevoValor) => {
         setProductosConGanancia((prev) =>
