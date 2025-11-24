@@ -25,6 +25,7 @@ const Proveedores = () => {
             queryClient.invalidateQueries('proveedores');
             toast('Proveedor guardado correctamente', { type: 'success' });
             setIsShowingFormModal(false);
+            setSelectedProveedor(null);
         },
         onError: (error) => {
             console.error('Error creando proveedor:', error);
@@ -37,6 +38,7 @@ const Proveedores = () => {
             queryClient.invalidateQueries('proveedores');
             toast('Proveedor actualizado correctamente', { type: 'success' });
             setIsShowingFormModal(false);
+            setSelectedProveedor(null);
         },
         onError: (error) => {
             console.error('Error actualizando proveedor:', error);
