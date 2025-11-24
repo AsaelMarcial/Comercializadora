@@ -1,13 +1,20 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.exc import SQLAlchemyError
-from fastapi import HTTPException, status
-from app.models import Cotizacion, CotizacionDetalle, Producto, Cliente, Proyecto
-from app.schemas import CotizacionCreate, ClienteCotizacionCreate
-from app.cruds.crud_clientes import CRUDClienteCotizacion
+from decimal import Decimal
+from typing import Optional
 import logging
-from app.utils.pdf_utils import generate_pdf
-import io
 import os
+
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session, joinedload
+
+from app.models import Cotizacion, CotizacionDetalle, Producto, Cliente, Proyecto
+from app.schemas import (
+    ClienteCotizacionCreate,
+    CotizacionCreate,
+    CotizacionDetalleCreate,
+    CotizacionUpdate,
+)
+from app.cruds.crud_clientes import CRUDClienteCotizacion
+from app.utils.pdf_utils import generate_pdf
 
 # Configurar logging
 logging.basicConfig(
@@ -17,6 +24,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 PDF_STORAGE_PATH = os.path.join(os.path.dirname(__file__), "../pdf_storage")
+os.makedirs(PDF_STORAGE_PATH, exist_ok=True)
+
 
 class CRUDCotizacion:
     def __init__(self, db: Session):
@@ -101,69 +110,25 @@ class CRUDCotizacion:
             cliente_cotizacion_data = ClienteCotizacionCreate(
                 cotizacion_id=nueva_cotizacion.id,
                 cliente_id=cliente.id,
-                estado="pendiente"
+                estado="pendiente",
             )
             crud_cliente_cotizacion.asociar_cotizacion_cliente(cliente_cotizacion_data)
 
             # Commit después de agregar todos los datos
             self.db.commit()
-            self.db.refresh(nueva_cotizacion)
-            if nueva_cotizacion.proyecto_id:
-                self.db.refresh(nueva_cotizacion, attribute_names=["proyecto"])
 
-            # Incluir información completa del cliente y del proyecto seleccionado para el PDF
-            cliente_nombre = cliente.nombre
-            proyecto_nombre = nueva_cotizacion.proyecto_nombre or "Sin proyecto seleccionado"
-            proyecto_direccion = (
-                nueva_cotizacion.proyecto_direccion
-                if nueva_cotizacion.proyecto_direccion
-                else "Dirección no especificada"
+            cotizacion_completa = self.obtener_cotizacion(nueva_cotizacion.id)
+            self._generar_y_guardar_pdf(
+                cotizacion_completa,
+                cotizacion_data.costo_envio,
+                cotizacion_data.variante_envio,
             )
 
-            # Crear el diccionario para el PDF
-            cotizacion_data_pdf = {
-                "id": nueva_cotizacion.id,
-                "fecha": nueva_cotizacion.fecha.strftime("%d/%m/%Y"),
-                "cliente_nombre": cliente_nombre,
-                "cliente_proyecto": proyecto_nombre,
-                "cliente_direccion": proyecto_direccion,
-                "proyecto_nombre": proyecto_nombre,
-                "proyecto_direccion": proyecto_direccion,
-                "productos": [
-                    {
-                        "producto_id": detalle.producto_id,
-                        "nombre": detalle.producto.nombre if detalle.producto else "Sin nombre",
-                        "color" : detalle.producto.color,
-                        "formato" : detalle.producto.formato,
-                        "cantidad": float(detalle.cantidad),
-                        "precio_unitario": float(detalle.precio_unitario),
-                        "total": float(detalle.total),
-                        "tipo_variante": detalle.tipo_variante
-                    }
-                    for detalle in nueva_cotizacion.detalles
-                ],
-                "total": float(nueva_cotizacion.total),
-                "costo_envio": float(cotizacion_data.costo_envio),
-                "variante_envio": cotizacion_data.variante_envio,
-            }
-            # Generar PDF con la información completa del cliente
-            try:
-                logger.info(f"Datos enviados a generate_pdf: {cotizacion_data_pdf}")
-                pdf = generate_pdf(cotizacion_data_pdf)
-                pdf_path = os.path.join(PDF_STORAGE_PATH, f"Cotizacion_{nueva_cotizacion.id}.pdf")
-                with open(pdf_path, "wb") as pdf_file:
-                    pdf_file.write(pdf)
-
-                logger.info(f"PDF generado y guardado en: {pdf_path}")
-            except Exception as e:
-                logger.error(f"Error al generar el PDF para la cotización {nueva_cotizacion.id}: {e}")
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=f"Error al generar el PDF: {str(e)}"
-                )
-
-            logger.info(f"Cotización creada con ID {nueva_cotizacion.id} por el usuario {usuario_id}")
-            return nueva_cotizacion
+            logger.info(f"Cotización creada con ID {cotizacion_completa.id} por el usuario {usuario_id}")
+            return cotizacion_completa
+        except HTTPException:
+            self.db.rollback()
+            raise
         except Exception as e:
             self.db.rollback()
             logger.error(f"Error en crear_cotizacion para el usuario {usuario_id}: {e}")
@@ -239,4 +204,187 @@ class CRUDCotizacion:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error al eliminar la cotización: {str(e)}"
+            )
+
+    def actualizar_cabecera_cotizacion(self, cotizacion: Cotizacion, cotizacion_data: CotizacionUpdate) -> bool:
+        cabecera_modificada = False
+        cliente = None
+
+        if cotizacion_data.cliente_id is not None:
+            cliente = self.db.query(Cliente).filter(Cliente.id == cotizacion_data.cliente_id).first()
+            if not cliente:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Cliente con ID {cotizacion_data.cliente_id} no encontrado."
+                )
+            cotizacion.cliente = cliente.nombre
+            cabecera_modificada = True
+
+        if cotizacion_data.proyecto_id is not None:
+            if cotizacion_data.proyecto_id:
+                proyecto = (
+                    self.db.query(Proyecto)
+                    .filter(Proyecto.id == cotizacion_data.proyecto_id)
+                    .first()
+                )
+                if not proyecto:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Proyecto con ID {cotizacion_data.proyecto_id} no encontrado."
+                    )
+                cotizacion.proyecto_id = proyecto.id
+                cotizacion.proyecto_nombre = proyecto.nombre or ""
+                cotizacion.proyecto_direccion = proyecto.direccion or ""
+            else:
+                cotizacion.proyecto_id = None
+                cotizacion.proyecto_nombre = None
+                cotizacion.proyecto_direccion = None
+            cabecera_modificada = True
+        elif cliente:
+            # Si se cambia de cliente y no se especifica un proyecto, se usa la información del cliente
+            cotizacion.proyecto_id = None
+            cotizacion.proyecto_nombre = cliente.proyecto or ""
+            cotizacion.proyecto_direccion = cliente.direccion or ""
+            cabecera_modificada = True
+
+        if cotizacion_data.total is not None:
+            cotizacion.total = cotizacion_data.total
+            cabecera_modificada = True
+
+        return cabecera_modificada
+
+    def actualizar_detalles_cotizacion(
+        self, cotizacion: Cotizacion, detalles_data: list[CotizacionDetalleCreate]
+    ) -> Decimal:
+        if not detalles_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La cotización debe incluir al menos un producto."
+            )
+
+        self.db.query(CotizacionDetalle).filter(
+            CotizacionDetalle.cotizacion_id == cotizacion.id
+        ).delete()
+
+        total = Decimal("0")
+        for detalle in detalles_data:
+            producto = self.db.query(Producto).filter(Producto.id == detalle.producto_id).first()
+            if not producto:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Producto con ID {detalle.producto_id} no encontrado."
+                )
+
+            detalle_total = Decimal(detalle.cantidad) * Decimal(detalle.precio_unitario)
+            nuevo_detalle = CotizacionDetalle(
+                cotizacion_id=cotizacion.id,
+                producto_id=detalle.producto_id,
+                cantidad=detalle.cantidad,
+                precio_unitario=detalle.precio_unitario,
+                total=detalle_total,
+                tipo_variante=detalle.tipo_variante,
+            )
+            self.db.add(nuevo_detalle)
+            total += detalle_total
+
+        return total
+
+    def _generar_y_guardar_pdf(
+        self,
+        cotizacion: Cotizacion,
+        costo_envio: Optional[Decimal],
+        variante_envio: Optional[str],
+    ) -> None:
+        cotizacion_data_pdf = {
+            "id": cotizacion.id,
+            "fecha": cotizacion.fecha.strftime("%d/%m/%Y"),
+            "cliente_nombre": cotizacion.cliente,
+            "cliente_proyecto": cotizacion.proyecto_nombre or "Sin proyecto seleccionado",
+            "cliente_direccion": cotizacion.proyecto_direccion or "Dirección no especificada",
+            "proyecto_nombre": cotizacion.proyecto_nombre or "Sin proyecto seleccionado",
+            "proyecto_direccion": cotizacion.proyecto_direccion or "Dirección no especificada",
+            "productos": [
+                {
+                    "producto_id": detalle.producto_id,
+                    "nombre": detalle.producto.nombre if detalle.producto else "Sin nombre",
+                    "color": detalle.producto.color if detalle.producto else None,
+                    "formato": detalle.producto.formato if detalle.producto else None,
+                    "cantidad": float(detalle.cantidad),
+                    "precio_unitario": float(detalle.precio_unitario),
+                    "total": float(detalle.total),
+                    "tipo_variante": detalle.tipo_variante,
+                }
+                for detalle in cotizacion.detalles
+            ],
+            "total": float(cotizacion.total),
+            "costo_envio": float(costo_envio) if costo_envio is not None else 0.0,
+            "variante_envio": variante_envio or "N/A",
+        }
+
+        try:
+            pdf = generate_pdf(cotizacion_data_pdf)
+            pdf_path = os.path.join(PDF_STORAGE_PATH, f"Cotizacion_{cotizacion.id}.pdf")
+            with open(pdf_path, "wb") as pdf_file:
+                pdf_file.write(pdf)
+            logger.info(f"PDF guardado en: {pdf_path}")
+        except Exception as e:
+            logger.error(
+                f"Error al generar el PDF para la cotización {cotizacion.id}: {e}"
+            )
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al generar el PDF: {str(e)}",
+            )
+
+    def actualizar_cotizacion(self, cotizacion_id: int, cotizacion_data: CotizacionUpdate) -> Cotizacion:
+        try:
+            cotizacion = (
+                self.db.query(Cotizacion)
+                .options(
+                    joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto),
+                    joinedload(Cotizacion.proyecto),
+                )
+                .filter(Cotizacion.id == cotizacion_id)
+                .first()
+            )
+
+            if not cotizacion:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Cotización no encontrada",
+                )
+
+            cabecera_modificada = self.actualizar_cabecera_cotizacion(cotizacion, cotizacion_data)
+            detalles_modificados = False
+
+            if cotizacion_data.detalles is not None:
+                total_detalles = self.actualizar_detalles_cotizacion(cotizacion, cotizacion_data.detalles)
+                detalles_modificados = True
+                if cotizacion_data.total is None:
+                    cotizacion.total = total_detalles
+
+            regenerar_pdf = (
+                cabecera_modificada or detalles_modificados or cotizacion_data.total is not None
+            )
+
+            self.db.commit()
+            cotizacion_actualizada = self.obtener_cotizacion(cotizacion_id)
+
+            if regenerar_pdf or cotizacion_data.costo_envio is not None or cotizacion_data.variante_envio is not None:
+                self._generar_y_guardar_pdf(
+                    cotizacion_actualizada,
+                    cotizacion_data.costo_envio,
+                    cotizacion_data.variante_envio,
+                )
+
+            return cotizacion_actualizada
+        except HTTPException:
+            self.db.rollback()
+            raise
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Error al actualizar la cotización con ID {cotizacion_id}: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al actualizar la cotización: {str(e)}",
             )

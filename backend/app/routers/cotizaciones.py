@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import io
 import os
 from app.cruds.crud_cotizaciones import CRUDCotizacion
-from app.schemas import CotizacionCreate, CotizacionResponse
+from app.schemas import CotizacionCreate, CotizacionResponse, CotizacionUpdate
 from app.database import get_db
 from app.auth import get_current_user
 from app.utils.pdf_utils import generate_pdf
@@ -57,6 +57,64 @@ def create_cotizacion(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al crear la cotización: {str(e)}"
+        )
+
+
+@router.put(
+    "/cotizaciones/{cotizacion_id}",
+    response_model=CotizacionResponse,
+    tags=["Cotizaciones"],
+    summary="Actualizar una cotización"
+)
+def update_cotizacion(
+    cotizacion_id: int,
+    cotizacion_data: CotizacionUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Actualiza los datos de una cotización, incluyendo cabecera y detalles.
+    Regenera el PDF cuando cambian los productos o los totales.
+    """
+    crud_cotizacion.db = db
+    try:
+        return crud_cotizacion.actualizar_cotizacion(cotizacion_id, cotizacion_data)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Error al actualizar la cotización con ID {cotizacion_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al actualizar la cotización: {str(e)}"
+        )
+
+
+@router.patch(
+    "/cotizaciones/{cotizacion_id}",
+    response_model=CotizacionResponse,
+    tags=["Cotizaciones"],
+    summary="Actualizar parcialmente una cotización"
+)
+def partial_update_cotizacion(
+    cotizacion_id: int,
+    cotizacion_data: CotizacionUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Permite actualizar parcialmente una cotización existente.
+    Regenera el PDF en caso de cambios relevantes.
+    """
+    crud_cotizacion.db = db
+    try:
+        return crud_cotizacion.actualizar_cotizacion(cotizacion_id, cotizacion_data)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Error al actualizar parcialmente la cotización con ID {cotizacion_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al actualizar la cotización: {str(e)}"
         )
 
 
