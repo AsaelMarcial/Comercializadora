@@ -4,6 +4,7 @@ import { useMutation } from 'react-query';
 import { toast } from 'react-toastify';
 import NavigationTitle from '../components/NavigationTitle';
 import { createCotizacion } from '../data-access/cotizacionesDataAccess';
+import { readSucursalesByCliente } from '../data-access/sucursalesDataAccess';
 import '../css/confirmacionCotizacion.css';
 
 const currencyFormatter = new Intl.NumberFormat('es-MX', {
@@ -20,6 +21,26 @@ const shippingOptions = [
     { value: 'Recoger personalmente', label: 'Recoger personalmente' },
 ];
 
+const normalizeSucursales = (sucursales) => {
+    if (!Array.isArray(sucursales)) return [];
+
+    return sucursales
+        .filter(Boolean)
+        .map((sucursal) => {
+            if (typeof sucursal === 'string') {
+                return { id: null, nombre: sucursal };
+            }
+
+            const nombre = sucursal.nombre ?? sucursal.label ?? sucursal.direccion ?? '';
+
+            return {
+                id: sucursal.id ?? sucursal.sucursal_id ?? null,
+                nombre,
+            };
+        })
+        .filter((sucursal) => sucursal.nombre);
+};
+
 const ConfirmacionCotizacion = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -34,8 +55,7 @@ const ConfirmacionCotizacion = () => {
     );
     const cliente = locationState?.cliente;
     const proyectoSeleccionado = locationState?.proyectoSeleccionado || null;
-
-    const sucursalesDisponibles = locationState?.sucursales || cliente?.sucursales || [];
+    const initialSucursales = normalizeSucursales(locationState?.sucursales || cliente?.sucursales || []);
 
     const [shippingCosts, setShippingCosts] = useState({
         'Servicio completo': '0',
@@ -43,8 +63,10 @@ const ConfirmacionCotizacion = () => {
         'Recoger personalmente': '0',
     });
     const [varianteEnvio, setVarianteEnvio] = useState(shippingOptions[0].value);
-    const [sucursalRecogida, setSucursalRecogida] = useState('');
-    const [usarSucursalManual, setUsarSucursalManual] = useState(sucursalesDisponibles.length === 0);
+    const [sucursalesDisponibles, setSucursalesDisponibles] = useState(initialSucursales);
+    const [sucursalRecogidaId, setSucursalRecogidaId] = useState(null);
+    const [sucursalRecogidaNombre, setSucursalRecogidaNombre] = useState('');
+    const [usarSucursalManual, setUsarSucursalManual] = useState(initialSucursales.length === 0);
 
     const mutation = useMutation(createCotizacion, {
         onSuccess: () => {
@@ -58,15 +80,50 @@ const ConfirmacionCotizacion = () => {
     });
 
     useEffect(() => {
+        const fetchSucursales = async () => {
+            if (!cliente?.id) return;
+
+            try {
+                const sucursales = await readSucursalesByCliente(cliente.id);
+                const sucursalesList = normalizeSucursales(Array.isArray(sucursales?.data) ? sucursales.data : sucursales);
+
+                setSucursalesDisponibles(sucursalesList);
+
+                if (sucursalesList.length > 0 && !sucursalRecogidaNombre) {
+                    setUsarSucursalManual(false);
+                    setSucursalRecogidaId(sucursalesList[0].id ?? null);
+                    setSucursalRecogidaNombre(sucursalesList[0].nombre ?? '');
+                }
+
+                if (sucursalesList.length === 0) {
+                    setUsarSucursalManual(true);
+                }
+            } catch (error) {
+                console.error('Error al obtener sucursales del cliente:', error);
+            }
+        };
+
+        fetchSucursales();
+    }, [cliente?.id]);
+
+    useEffect(() => {
+        if (sucursalesDisponibles.length === 0) {
+            setUsarSucursalManual(true);
+            setSucursalRecogidaId(null);
+            return;
+        }
+
         if (
             varianteEnvio === 'Recoger personalmente' &&
-            !usarSucursalManual &&
             sucursalesDisponibles.length > 0 &&
-            !sucursalRecogida
+            !sucursalRecogidaNombre
         ) {
-            setSucursalRecogida(sucursalesDisponibles[0]);
+            const primeraSucursal = sucursalesDisponibles[0];
+            setUsarSucursalManual(false);
+            setSucursalRecogidaId(primeraSucursal.id ?? null);
+            setSucursalRecogidaNombre(primeraSucursal.nombre ?? '');
         }
-    }, [sucursalesDisponibles, sucursalRecogida, usarSucursalManual, varianteEnvio]);
+    }, [sucursalesDisponibles, sucursalRecogidaNombre, varianteEnvio]);
 
     const totalProductos = useMemo(
         () =>
@@ -82,6 +139,7 @@ const ConfirmacionCotizacion = () => {
     const totalConEnvio = useMemo(() => totalSinIva + envio, [envio, totalSinIva]);
     const iva = useMemo(() => totalConEnvio * 0.16, [totalConEnvio]);
     const granTotalConIva = useMemo(() => totalConEnvio + iva, [iva, totalConEnvio]);
+    const selectedSucursalValue = sucursalRecogidaId != null ? String(sucursalRecogidaId) : sucursalRecogidaNombre;
 
     const handleCostoEnvioChange = (event) => {
         const { value } = event.target;
@@ -95,13 +153,26 @@ const ConfirmacionCotizacion = () => {
     };
 
     const handleSucursalChange = (event) => {
-        setSucursalRecogida(event.target.value);
+        const { value } = event.target;
+
+        if (usarSucursalManual) {
+            setSucursalRecogidaId(null);
+            setSucursalRecogidaNombre(value);
+            return;
+        }
+
+        const selectedSucursal = sucursalesDisponibles.find(
+            (sucursal) => String(sucursal.id ?? sucursal.nombre ?? '') === value
+        );
+
+        setSucursalRecogidaId(selectedSucursal?.id ?? null);
+        setSucursalRecogidaNombre(selectedSucursal?.nombre ?? '');
     };
 
     const handleGuardarCotizacion = (event) => {
         event.preventDefault();
 
-        if (varianteEnvio === 'Recoger personalmente' && !sucursalRecogida.trim()) {
+        if (varianteEnvio === 'Recoger personalmente' && !sucursalRecogidaNombre.trim()) {
             toast.error('Selecciona o escribe la sucursal de recolección.');
             return;
         }
@@ -129,7 +200,9 @@ const ConfirmacionCotizacion = () => {
             total: parseFloat(granTotalConIva.toFixed(2)),
             variante_envio: varianteEnvio,
             costos_envio: shippingCosts,
-            sucursal_recoleccion: varianteEnvio === 'Recoger personalmente' ? sucursalRecogida.trim() : null,
+            sucursal_id: varianteEnvio === 'Recoger personalmente' ? sucursalRecogidaId : null,
+            sucursal_recoleccion:
+                varianteEnvio === 'Recoger personalmente' ? sucursalRecogidaNombre.trim() : null,
         };
 
         if (proyectoId) {
@@ -314,13 +387,17 @@ const ConfirmacionCotizacion = () => {
                                 {!usarSucursalManual && sucursalesDisponibles.length > 0 ? (
                                     <select
                                         id="pickup-branch"
-                                        value={sucursalRecogida}
+                                        value={selectedSucursalValue}
                                         onChange={handleSucursalChange}
                                         required
+                                        disabled={varianteEnvio !== 'Recoger personalmente'}
                                     >
                                         {sucursalesDisponibles.map((sucursal) => (
-                                            <option key={sucursal} value={sucursal}>
-                                                {sucursal}
+                                            <option
+                                                key={sucursal.id ?? sucursal.nombre}
+                                                value={String(sucursal.id ?? sucursal.nombre)}
+                                            >
+                                                {sucursal.nombre}
                                             </option>
                                         ))}
                                     </select>
@@ -328,10 +405,11 @@ const ConfirmacionCotizacion = () => {
                                     <input
                                         id="pickup-branch"
                                         type="text"
-                                        value={sucursalRecogida}
+                                        value={sucursalRecogidaNombre}
                                         onChange={handleSucursalChange}
                                         required
                                         placeholder="Ej. Sucursal Centro, CDMX"
+                                        disabled={varianteEnvio !== 'Recoger personalmente'}
                                     />
                                 )}
                             </div>
@@ -377,10 +455,10 @@ const ConfirmacionCotizacion = () => {
                                     <th scope="row">Servicio de envío</th>
                                     <td>
                                         {varianteEnvio}
-                                        {varianteEnvio === 'Recoger personalmente' && sucursalRecogida && (
+                                        {varianteEnvio === 'Recoger personalmente' && sucursalRecogidaNombre && (
                                             <>
                                                 <br />
-                                                <small className="quote-confirmation__hint">{sucursalRecogida}</small>
+                                                <small className="quote-confirmation__hint">{sucursalRecogidaNombre}</small>
                                             </>
                                         )}
                                     </td>
