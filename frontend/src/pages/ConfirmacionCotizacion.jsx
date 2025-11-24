@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { toast } from 'react-toastify';
@@ -15,8 +15,9 @@ const currencyFormatter = new Intl.NumberFormat('es-MX', {
 const formatCurrency = (value) => currencyFormatter.format(Number.isFinite(value) ? value : 0);
 
 const shippingOptions = [
-    { value: 'Servicio de Paquetería', label: 'Servicio de Paquetería' },
-    { value: 'Servicio de Unidades Completas', label: 'Servicio de Unidades Completas' },
+    { value: 'Servicio completo', label: 'Servicio completo' },
+    { value: 'Paquetería', label: 'Paquetería' },
+    { value: 'Recoger personalmente', label: 'Recoger personalmente' },
 ];
 
 const ConfirmacionCotizacion = () => {
@@ -34,8 +35,16 @@ const ConfirmacionCotizacion = () => {
     const cliente = locationState?.cliente;
     const proyectoSeleccionado = locationState?.proyectoSeleccionado || null;
 
-    const [costoEnvio, setCostoEnvio] = useState('0');
+    const sucursalesDisponibles = locationState?.sucursales || cliente?.sucursales || [];
+
+    const [shippingCosts, setShippingCosts] = useState({
+        'Servicio completo': '0',
+        Paquetería: '0',
+        'Recoger personalmente': '0',
+    });
     const [varianteEnvio, setVarianteEnvio] = useState(shippingOptions[0].value);
+    const [sucursalRecogida, setSucursalRecogida] = useState('');
+    const [usarSucursalManual, setUsarSucursalManual] = useState(sucursalesDisponibles.length === 0);
 
     const mutation = useMutation(createCotizacion, {
         onSuccess: () => {
@@ -48,13 +57,28 @@ const ConfirmacionCotizacion = () => {
         },
     });
 
+    useEffect(() => {
+        if (
+            varianteEnvio === 'Recoger personalmente' &&
+            !usarSucursalManual &&
+            sucursalesDisponibles.length > 0 &&
+            !sucursalRecogida
+        ) {
+            setSucursalRecogida(sucursalesDisponibles[0]);
+        }
+    }, [sucursalesDisponibles, sucursalRecogida, usarSucursalManual, varianteEnvio]);
+
     const totalProductos = useMemo(
         () =>
             productos.reduce((total, producto) => total + (parseFloat(producto.cantidad) || 0), 0),
         [productos]
     );
 
-    const envio = useMemo(() => Math.max(0, parseFloat(costoEnvio) || 0), [costoEnvio]);
+    const costoEnvioSeleccionado = shippingCosts[varianteEnvio] ?? '0';
+    const envio = useMemo(
+        () => Math.max(0, parseFloat(costoEnvioSeleccionado) || 0),
+        [costoEnvioSeleccionado]
+    );
     const totalConEnvio = useMemo(() => totalSinIva + envio, [envio, totalSinIva]);
     const iva = useMemo(() => totalConEnvio * 0.16, [totalConEnvio]);
     const granTotalConIva = useMemo(() => totalConEnvio + iva, [iva, totalConEnvio]);
@@ -64,11 +88,23 @@ const ConfirmacionCotizacion = () => {
         if (Number(value) < 0) {
             return;
         }
-        setCostoEnvio(value);
+        setShippingCosts((prev) => ({
+            ...prev,
+            [varianteEnvio]: value,
+        }));
+    };
+
+    const handleSucursalChange = (event) => {
+        setSucursalRecogida(event.target.value);
     };
 
     const handleGuardarCotizacion = (event) => {
         event.preventDefault();
+
+        if (varianteEnvio === 'Recoger personalmente' && !sucursalRecogida.trim()) {
+            toast.error('Selecciona o escribe la sucursal de recolección.');
+            return;
+        }
 
         const proyectoId =
             proyectoSeleccionado?.proyectoId || proyectoSeleccionado?.id || cliente?.proyecto_id || null;
@@ -92,6 +128,8 @@ const ConfirmacionCotizacion = () => {
             }),
             total: parseFloat(granTotalConIva.toFixed(2)),
             variante_envio: varianteEnvio,
+            costos_envio: shippingCosts,
+            sucursal_recoleccion: varianteEnvio === 'Recoger personalmente' ? sucursalRecogida.trim() : null,
         };
 
         if (proyectoId) {
@@ -228,7 +266,7 @@ const ConfirmacionCotizacion = () => {
                         <div className="quote-confirmation__field">
                             <label htmlFor="shipping-cost">Costo de envío</label>
                             <p className="quote-confirmation__hint">
-                                Introduce el costo del traslado. Se aplicará en automático al total.
+                                Introduce el costo del traslado por modalidad. Se aplicará en automático al total.
                             </p>
                             <div className="quote-confirmation__input-group">
                                 <span>$</span>
@@ -237,12 +275,67 @@ const ConfirmacionCotizacion = () => {
                                     type="number"
                                     min="0"
                                     step="0.01"
-                                    value={costoEnvio}
+                                    value={shippingCosts[varianteEnvio] ?? ''}
                                     onChange={handleCostoEnvioChange}
                                     inputMode="decimal"
                                 />
                             </div>
                         </div>
+
+                        {varianteEnvio === 'Recoger personalmente' && (
+                            <div className="quote-confirmation__field">
+                                <label htmlFor="pickup-branch">Sucursal de recolección</label>
+                                <p className="quote-confirmation__hint">
+                                    Elige una sucursal registrada o escribe el punto de entrega.
+                                </p>
+                                {sucursalesDisponibles.length > 0 && (
+                                    <div className="quote-confirmation__radio-group">
+                                        <label className="quote-confirmation__radio">
+                                            <input
+                                                type="radio"
+                                                name="pickup-mode"
+                                                checked={!usarSucursalManual}
+                                                onChange={() => setUsarSucursalManual(false)}
+                                            />
+                                            Seleccionar sucursal guardada
+                                        </label>
+                                        <label className="quote-confirmation__radio">
+                                            <input
+                                                type="radio"
+                                                name="pickup-mode"
+                                                checked={usarSucursalManual}
+                                                onChange={() => setUsarSucursalManual(true)}
+                                            />
+                                            Escribir sucursal manualmente
+                                        </label>
+                                    </div>
+                                )}
+
+                                {!usarSucursalManual && sucursalesDisponibles.length > 0 ? (
+                                    <select
+                                        id="pickup-branch"
+                                        value={sucursalRecogida}
+                                        onChange={handleSucursalChange}
+                                        required
+                                    >
+                                        {sucursalesDisponibles.map((sucursal) => (
+                                            <option key={sucursal} value={sucursal}>
+                                                {sucursal}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <input
+                                        id="pickup-branch"
+                                        type="text"
+                                        value={sucursalRecogida}
+                                        onChange={handleSucursalChange}
+                                        required
+                                        placeholder="Ej. Sucursal Centro, CDMX"
+                                    />
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     <div className="quote-confirmation__table-wrapper">
@@ -282,10 +375,18 @@ const ConfirmacionCotizacion = () => {
                                 })}
                                 <tr className="quote-confirmation__shipping-row">
                                     <th scope="row">Servicio de envío</th>
-                                    <td>{varianteEnvio}</td>
-                                    <td className="is-numeric">1</td>
-                                    <td className="is-numeric">{formatCurrency(envio)}</td>
-                                    <td className="is-numeric">{formatCurrency(envio)}</td>
+                                    <td>
+                                        {varianteEnvio}
+                                        {varianteEnvio === 'Recoger personalmente' && sucursalRecogida && (
+                                            <>
+                                                <br />
+                                                <small className="quote-confirmation__hint">{sucursalRecogida}</small>
+                                            </>
+                                        )}
+                                    </td>
+                                    <td className="is-numeric">{envio > 0 ? 1 : '-'}</td>
+                                    <td className="is-numeric">{envio > 0 ? formatCurrency(envio) : 'Sin costo'}</td>
+                                    <td className="is-numeric">{envio > 0 ? formatCurrency(envio) : 'Sin costo'}</td>
                                 </tr>
                             </tbody>
                         </table>
