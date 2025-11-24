@@ -284,44 +284,88 @@ const ProductForm = ({ cancelAction, productUpdate, currentUserId, openImageModa
                             </div>
                             <i className="fa-solid fa-sack-dollar" aria-hidden="true"></i>
                         </div>
-                        <div className="product-form__section-grid">
-                            <div className="form-group form-group--inline">
-                                <label htmlFor="incluye_iva">¿El precio incluye IVA?</label>
-                                <div className="toggle-wrapper">
+                        <div className="product-form__section-grid product-form__section-grid--prices">
+                            <div className="product-form__field product-form__field--full">
+                                <label className="product-form__field-label">IVA aplicado en precios</label>
+                                <div className="product-form__iva-toggle" role="group" aria-label="Selección de IVA">
+                                    <button
+                                        type="button"
+                                        className={`chip ${product.incluye_iva ? 'chip--active' : ''}`}
+                                        onClick={() => setProduct((prev) => ({ ...prev, incluye_iva: true }))}
+                                    >
+                                        <i className="fa-solid fa-circle-check" aria-hidden="true"></i>
+                                        Precios con IVA
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`chip ${!product.incluye_iva ? 'chip--active' : ''}`}
+                                        onClick={() => setProduct((prev) => ({ ...prev, incluye_iva: false }))}
+                                    >
+                                        <i className="fa-solid fa-receipt" aria-hidden="true"></i>
+                                        Precios sin IVA
+                                    </button>
+                                </div>
+                                <p className="product-form__field-helper">
+                                    Define cómo interpretar los montos capturados para cálculos con impuesto.
+                                </p>
+                            </div>
+                            <div className="product-form__field">
+                                <label className="product-form__field-label" htmlFor="precio_caja">
+                                    Precio por Caja
+                                </label>
+                                <div className="input-group mb-0">
+                                    <span className="input-group-text">
+                                        <i className="fa-solid fa-dollar-sign" aria-hidden="true"></i>
+                                    </span>
                                     <input
-                                        type="checkbox"
-                                        id="incluye_iva"
-                                        name="incluye_iva"
-                                        checked={product.incluye_iva}
+                                        id="precio_caja"
+                                        name="precio_caja"
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Ingresa el precio por caja"
                                         onChange={handleInputChange}
+                                        value={product.precio_caja}
                                     />
-                                    <span className="toggle-label">{product.incluye_iva ? 'Sí' : 'No'}</span>
                                 </div>
                             </div>
-                            <FormField
-                                name="precio_caja"
-                                inputType="number"
-                                iconClasses="fa-solid fa-dollar-sign"
-                                placeholder="Precio por Caja"
-                                value={product.precio_caja}
-                                onChange={handleInputChange}
-                            />
-                            <FormField
-                                name="precio_pieza"
-                                inputType="number"
-                                iconClasses="fa-solid fa-dollar-sign"
-                                placeholder="Precio por Pieza"
-                                value={product.precio_pieza}
-                                onChange={handleInputChange}
-                            />
-                            <FormField
-                                name="precio_m2"
-                                inputType="number"
-                                iconClasses="fa-solid fa-dollar-sign"
-                                placeholder="Precio por M2"
-                                value={product.precio_m2}
-                                onChange={handleInputChange}
-                            />
+                            <div className="product-form__field">
+                                <label className="product-form__field-label" htmlFor="precio_pieza">
+                                    Precio por Pieza
+                                </label>
+                                <div className="input-group mb-0">
+                                    <span className="input-group-text">
+                                        <i className="fa-solid fa-dollar-sign" aria-hidden="true"></i>
+                                    </span>
+                                    <input
+                                        id="precio_pieza"
+                                        name="precio_pieza"
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Ingresa el precio por pieza"
+                                        onChange={handleInputChange}
+                                        value={product.precio_pieza}
+                                    />
+                                </div>
+                            </div>
+                            <div className="product-form__field">
+                                <label className="product-form__field-label" htmlFor="precio_m2">
+                                    Precio por M2
+                                </label>
+                                <div className="input-group mb-0">
+                                    <span className="input-group-text">
+                                        <i className="fa-solid fa-dollar-sign" aria-hidden="true"></i>
+                                    </span>
+                                    <input
+                                        id="precio_m2"
+                                        name="precio_m2"
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Ingresa el precio por m2"
+                                        onChange={handleInputChange}
+                                        value={product.precio_m2}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </section>
 
