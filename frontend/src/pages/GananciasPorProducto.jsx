@@ -11,6 +11,8 @@ import { loadOrder, saveOrder } from '../utils/orderStorage';
 const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
 const GAIN_SLIDER_MAX = 120;
 
+const obtenerCantidadAjustada = (cantidad) => parseFloat(cantidad) || 0;
+
 const GananciasPorProducto = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -19,6 +21,8 @@ const GananciasPorProducto = () => {
     const buildProductosConGanancia = (items) =>
         items.map((producto) => {
             const baseProducto = producto.producto || producto;
+            const requiereCajaCompleta =
+                producto.requiereCajaCompleta ?? producto.requiere_caja_completa ?? false;
             const tipoPrecioInicial =
                 producto.tipoPrecio ||
                 (baseProducto.precio_pieza_sin_iva
@@ -37,12 +41,17 @@ const GananciasPorProducto = () => {
                     ? baseProducto.precio_caja_sin_iva
                     : baseProducto.precio_m2_sin_iva || 0);
 
+            const cantidadAjustada = obtenerCantidadAjustada(producto.cantidad);
+
             return {
                 ...producto,
                 producto: baseProducto,
                 ganancia: producto.ganancia || 0,
                 precioSeleccionado: precioInicial,
                 tipoPrecio: tipoPrecioInicial,
+                tipoPrecioPrevio: producto.tipoPrecioPrevio || tipoPrecioInicial,
+                requiereCajaCompleta,
+                cantidad: cantidadAjustada,
             };
         });
 
@@ -199,13 +208,36 @@ const GananciasPorProducto = () => {
         [productosConGanancia]
     );
 
+    const productosConCantidadInsuficiente = 0;
+
+    const obtenerPrecioPorTipo = (baseProducto, tipoPrecio) => {
+        switch (tipoPrecio) {
+            case 'caja':
+                return baseProducto?.precio_caja_sin_iva || 0;
+            case 'pieza':
+                return baseProducto?.precio_pieza_sin_iva || 0;
+            case 'm2':
+                return baseProducto?.precio_m2_sin_iva || 0;
+            default:
+                return 0;
+        }
+    };
+
     const promedioGanancia = useMemo(() => {
         if (!productosConGanancia.length) return 0;
         const suma = productosConGanancia.reduce((total, producto) => total + (producto.ganancia || 0), 0);
         return suma / productosConGanancia.length;
     }, [productosConGanancia]);
 
-    const productosTotales = productosConGanancia.length;
+    const productosTotales = useMemo(() => {
+        const uniqueProductIds = new Set(
+            productosConGanancia
+                .map((producto) => producto.producto?.id)
+                .filter((id) => id !== undefined && id !== null)
+        );
+
+        return uniqueProductIds.size || productosConGanancia.length;
+    }, [productosConGanancia]);
 
     const actualizarGanancia = (id, nuevoValor) => {
         setProductosConGanancia((prev) =>
@@ -240,24 +272,50 @@ const GananciasPorProducto = () => {
         setProductosConGanancia((prev) =>
             prev.map((producto) => {
                 if (producto.producto?.id === id) {
-                    let nuevoPrecio = 0;
-                    switch (nuevoTipoPrecio) {
-                        case 'caja':
-                            nuevoPrecio = producto.producto?.precio_caja_sin_iva || 0;
-                            break;
-                        case 'pieza':
-                            nuevoPrecio = producto.producto?.precio_pieza_sin_iva || 0;
-                            break;
-                        case 'm2':
-                            nuevoPrecio = producto.producto?.precio_m2_sin_iva || 0;
-                            break;
-                        default:
-                            nuevoPrecio = producto.producto?.precio_pieza_sin_iva || 0;
-                    }
+                    const nuevoPrecio = obtenerPrecioPorTipo(producto.producto, nuevoTipoPrecio);
                     return {
                         ...producto,
                         precioSeleccionado: nuevoPrecio,
                         tipoPrecio: nuevoTipoPrecio,
+                        tipoPrecioPrevio: producto.requiereCajaCompleta
+                            ? producto.tipoPrecioPrevio
+                            : nuevoTipoPrecio,
+                        cantidad: obtenerCantidadAjustada(producto.cantidad),
+                    };
+                }
+                return producto;
+            })
+        );
+    };
+
+    const actualizarRequiereCajaCompleta = (id, requiereCajaCompleta) => {
+        setProductosConGanancia((prev) =>
+            prev.map((producto) => {
+                if (producto.producto?.id === id) {
+                    const precioCaja = producto.producto?.precio_caja_sin_iva || 0;
+                    if (requiereCajaCompleta) {
+                        return {
+                            ...producto,
+                            requiereCajaCompleta,
+                            tipoPrecioPrevio: producto.tipoPrecio,
+                            precioSeleccionado: precioCaja,
+                            tipoPrecio: 'caja',
+                            cantidad: obtenerCantidadAjustada(producto.cantidad),
+                        };
+                    }
+
+                    const tipoPrecioRestaurado = producto.tipoPrecioPrevio || producto.tipoPrecio;
+                    const precioRestaurado = obtenerPrecioPorTipo(
+                        producto.producto,
+                        tipoPrecioRestaurado
+                    );
+
+                    return {
+                        ...producto,
+                        requiereCajaCompleta,
+                        precioSeleccionado: precioRestaurado,
+                        tipoPrecio: tipoPrecioRestaurado,
+                        cantidad: obtenerCantidadAjustada(producto.cantidad),
                     };
                 }
                 return producto;
@@ -297,6 +355,11 @@ const GananciasPorProducto = () => {
             return;
         }
 
+        if (productosConCantidadInsuficiente) {
+            alert('Ajusta las cantidades para cumplir con la venta de caja completa.');
+            return;
+        }
+
         const navigationState = {
             productos: productosConGanancia,
             granTotal: granTotal,
@@ -319,7 +382,9 @@ const GananciasPorProducto = () => {
         [selectedCliente]
     );
 
-    const canContinue = Boolean(selectedCliente && !productosConPrecioInvalido);
+    const canContinue = Boolean(
+        selectedCliente && !productosConPrecioInvalido && !productosConCantidadInsuficiente
+    );
 
     return (
         <>
@@ -530,6 +595,30 @@ const GananciasPorProducto = () => {
                                                 </div>
                                             </header>
 
+                                            <div className="profit-product__field">
+                                                <label
+                                                    className="profit-product__checkbox"
+                                                    htmlFor={`requiere-caja-${producto.producto?.id}`}
+                                                >
+                                                    <input
+                                                        id={`requiere-caja-${producto.producto?.id}`}
+                                                        type="checkbox"
+                                                        checked={producto.requiereCajaCompleta || false}
+                                                        onChange={(event) =>
+                                                            actualizarRequiereCajaCompleta(
+                                                                producto.producto?.id,
+                                                                event.target.checked
+                                                            )
+                                                        }
+                                                    />
+                                                    <span>Requiere caja completa</span>
+                                                </label>
+                                                <p className="profit-product__helper">
+                                                    Al activarlo se usará siempre el precio de caja, pero la cantidad ingresada
+                                                    se conserva tal cual la capturaste.
+                                                </p>
+                                            </div>
+
                                             <dl className="profit-product__grid">
                                                 <div>
                                                     <dt>Precio base</dt>
@@ -667,6 +756,15 @@ const GananciasPorProducto = () => {
                                         {productosConPrecioInvalido === 1
                                             ? 'producto requiere definir un tipo de precio válido.'
                                             : 'productos requieren definir un tipo de precio válido.'}
+                                    </p>
+                                )}
+
+                                {Boolean(productosConCantidadInsuficiente) && (
+                                    <p className="profit__summary-warning">
+                                        {productosConCantidadInsuficiente}{' '}
+                                        {productosConCantidadInsuficiente === 1
+                                            ? 'producto debe cumplir con la cantidad mínima de una caja.'
+                                            : 'productos deben cumplir con la cantidad mínima de una caja.'}
                                     </p>
                                 )}
 
