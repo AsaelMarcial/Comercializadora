@@ -400,7 +400,7 @@ class ProyectoResponse(ProyectoBase):
 
 class ClienteBase(BaseModel):
     nombre: constr(max_length=255)
-    proyecto: Optional[constr(max_length=255)] = None
+    proyecto: Optional[constr(max_length=255)] = ""
     direccion: Optional[constr(max_length=255)] = None
     descuento: Optional[condecimal(max_digits=5, decimal_places=2)] = None
 
@@ -408,7 +408,7 @@ class ClienteBase(BaseModel):
         schema_extra = {
             "example": {
                 "nombre": "Cliente ABC",
-                "proyecto": "Proyecto XYZ",
+                "proyecto": "1",  # ID del proyecto principal en formato de texto
                 "direccion": "Calle 123, Ciudad, País",
                 "descuento": "10.50",
             }

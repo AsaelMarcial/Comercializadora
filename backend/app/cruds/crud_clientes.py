@@ -21,16 +21,20 @@ class CRUDCliente:
     def __init__(self, db: Session):
         self.db = db
 
+    def _obtener_proyecto_principal_id(self, cliente: Cliente):
+        if not cliente.proyectos:
+            return None
+        proyectos_ordenados = sorted(
+            cliente.proyectos, key=lambda proyecto: proyecto.id or 0
+        )
+        return proyectos_ordenados[0].id
+
     def crear_cliente(self, cliente_data: ClienteCreate) -> Cliente:
         """Crear un nuevo cliente, incluyendo sus proyectos asociados."""
         try:
-            nombre_proyecto = cliente_data.proyecto
-            if not nombre_proyecto and cliente_data.proyectos:
-                nombre_proyecto = cliente_data.proyectos[0].nombre
-
             nuevo_cliente = Cliente(
                 nombre=cliente_data.nombre,
-                proyecto=nombre_proyecto or "",
+                proyecto=cliente_data.proyecto or "",
                 direccion=cliente_data.direccion,
                 descuento=cliente_data.descuento if cliente_data.descuento is not None else 0,
             )
@@ -46,6 +50,14 @@ class CRUDCliente:
                     )
 
             self.db.add(nuevo_cliente)
+            self.db.flush()
+
+            proyecto_principal_id = self._obtener_proyecto_principal_id(nuevo_cliente)
+            if proyecto_principal_id is not None:
+                nuevo_cliente.proyecto = str(proyecto_principal_id)
+            elif nuevo_cliente.proyecto is None:
+                nuevo_cliente.proyecto = ""
+
             self.db.commit()
             logger.info(f"Cliente creado con ID {nuevo_cliente.id}")
             return self.obtener_cliente(nuevo_cliente.id)
@@ -153,6 +165,14 @@ class CRUDCliente:
                         direccion=getattr(proyecto_data, "direccion", None),
                     )
                 )
+
+        self.db.flush()
+
+        proyecto_principal_id = self._obtener_proyecto_principal_id(cliente)
+        if proyecto_principal_id is not None:
+            cliente.proyecto = str(proyecto_principal_id)
+        elif cliente.proyecto is None:
+            cliente.proyecto = ""
 
         self.db.commit()
         return self.obtener_cliente(cliente_id)
