@@ -41,21 +41,36 @@ const normalizeSucursales = (sucursales) => {
         .filter((sucursal) => sucursal.nombre);
 };
 
+const DRAFT_STORAGE_KEY = 'confirmacionCotizacionDraft';
+
 const ConfirmacionCotizacion = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const locationState = location.state;
+    const [draftData, setDraftData] = useState(null);
+    const [shouldUseDraft, setShouldUseDraft] = useState(false);
+
+    const effectiveState = useMemo(() => {
+        if (!locationState && shouldUseDraft && draftData?.productos?.length && draftData?.cliente) {
+            return draftData;
+        }
+
+        return locationState;
+    }, [draftData, locationState, shouldUseDraft]);
+
     const productos = useMemo(
-        () => locationState?.productos ?? [],
-        [locationState]
+        () => effectiveState?.productos ?? [],
+        [effectiveState]
     );
     const totalSinIva = useMemo(
-        () => parseFloat(locationState?.granTotal) || 0,
-        [locationState]
+        () => parseFloat(effectiveState?.granTotal) || 0,
+        [effectiveState]
     );
-    const cliente = locationState?.cliente;
-    const proyectoSeleccionado = locationState?.proyectoSeleccionado || null;
-    const initialSucursales = normalizeSucursales(locationState?.sucursales || cliente?.sucursales || []);
+    const cliente = effectiveState?.cliente;
+    const proyectoSeleccionado = effectiveState?.proyectoSeleccionado || null;
+    const initialSucursales = normalizeSucursales(
+        effectiveState?.sucursales || cliente?.sucursales || []
+    );
 
     const [shippingCosts, setShippingCosts] = useState({
         'Servicio completo': '0',
@@ -69,6 +84,7 @@ const ConfirmacionCotizacion = () => {
 
     const mutation = useMutation(createCotizacion, {
         onSuccess: () => {
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
             toast.success('Cotización guardada con éxito');
             navigate('/app/ventas/cotizaciones');
         },
@@ -77,6 +93,19 @@ const ConfirmacionCotizacion = () => {
             toast.error('Hubo un error al guardar la cotización.');
         },
     });
+
+    useEffect(() => {
+        const storedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+
+        if (storedDraft) {
+            try {
+                const parsedDraft = JSON.parse(storedDraft);
+                setDraftData(parsedDraft);
+            } catch (error) {
+                console.error('No se pudo parsear el borrador:', error);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const fetchSucursales = async () => {
@@ -111,6 +140,41 @@ const ConfirmacionCotizacion = () => {
             setSucursalRecogidaNombre(primeraSucursal.nombre ?? '');
         }
     }, [sucursalesDisponibles, sucursalRecogidaNombre, varianteEnvio]);
+
+    useEffect(() => {
+        if (!effectiveState || effectiveState === locationState) return;
+
+        setShippingCosts(effectiveState.shippingCosts ?? shippingCosts);
+        setVarianteEnvio(effectiveState.varianteEnvio ?? shippingOptions[0].value);
+        setSucursalRecogidaId(effectiveState.sucursalRecogidaId ?? null);
+        setSucursalRecogidaNombre(effectiveState.sucursalRecogidaNombre ?? '');
+    }, [effectiveState, locationState, shippingCosts]);
+
+    useEffect(() => {
+        if (!productos.length || !cliente) return;
+
+        const saveDraft = () => {
+            const payload = {
+                productos,
+                cliente,
+                granTotal: totalSinIva,
+                proyectoSeleccionado,
+                varianteEnvio,
+                shippingCosts,
+                sucursalRecogidaId,
+                sucursalRecogidaNombre,
+                sucursales: sucursalesDisponibles,
+                updatedAt: new Date().toISOString(),
+            };
+
+            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
+        };
+
+        const intervalId = setInterval(saveDraft, 5000);
+        saveDraft();
+
+        return () => clearInterval(intervalId);
+    }, [cliente, productos, proyectoSeleccionado, shippingCosts, sucursalRecogidaId, sucursalRecogidaNombre, sucursalesDisponibles, totalSinIva, varianteEnvio]);
 
     const totalProductos = useMemo(
         () =>
@@ -199,9 +263,47 @@ const ConfirmacionCotizacion = () => {
         mutation.mutate(cotizacion);
     };
 
+    const handleResumeDraft = () => {
+        if (draftData?.productos?.length && draftData?.cliente) {
+            setShouldUseDraft(true);
+        }
+    };
+
+    const handleDiscardDraft = () => {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+        setDraftData(null);
+        setShouldUseDraft(false);
+        navigate('/app/ventas/ganancias');
+    };
+
     const regresarAGanancias = () => {
         navigate('/app/ventas/ganancias');
     };
+
+    const showDraftActions = !locationState && draftData?.productos?.length && draftData?.cliente;
+
+    if ((!productos.length || !cliente) && showDraftActions) {
+        return (
+            <div className="quote-confirmation quote-confirmation--empty">
+                <NavigationTitle menu="Ventas" submenu="Confirmación de Cotización" />
+                <section className="quote-confirmation__empty-card">
+                    <h2>¿Quieres reanudar tu borrador?</h2>
+                    <p>
+                        Encontramos un borrador guardado con los datos de tu cotización. Puedes reanudarlo o
+                        descartarlo para configurar una nueva cotización.
+                    </p>
+                    <div className="quote-confirmation__actions">
+                        <button type="button" className="btn btn-secondary" onClick={handleDiscardDraft}>
+                            Descartar y volver
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={handleResumeDraft}>
+                            Reanudar borrador
+                        </button>
+                    </div>
+                </section>
+            </div>
+        );
+    }
 
     if (!productos.length || !cliente) {
         return (
