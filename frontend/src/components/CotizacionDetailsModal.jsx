@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import '../css/CotizacionDetailsModal.css';
 import { getProductById } from '../data-access/productsDataAccess';
@@ -11,6 +11,8 @@ const CotizacionDetailsModal = ({
     onDownloadPDF,
 }) => {
     const [productosDetalles, setProductosDetalles] = useState([]);
+    const closeButtonRef = useRef(null);
+    const primaryActionRef = useRef(null);
 
     useEffect(() => {
         const fetchProductosDetalles = async () => {
@@ -20,7 +22,10 @@ const CotizacionDetailsModal = ({
                         const producto = await getProductById(detalle.producto_id);
                         return { ...detalle, nombre: producto.nombre };
                     } catch (error) {
-                        console.error(`Error al obtener el producto con ID ${detalle.producto_id}:`, error);
+                        console.error(
+                            `Error al obtener el producto con ID ${detalle.producto_id}:`,
+                            error
+                        );
                         return { ...detalle, nombre: 'Nombre no disponible' };
                     }
                 })
@@ -33,82 +38,156 @@ const CotizacionDetailsModal = ({
         }
     }, [cotizacion]);
 
+    useEffect(() => {
+        if (!isShowing) return undefined;
+
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                onClose();
+            }
+        };
+
+        const focusTarget = closeButtonRef.current || primaryActionRef.current;
+        if (focusTarget) {
+            focusTarget.focus();
+        }
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isShowing, onClose]);
+
     if (!cotizacion || !isShowing) return null;
 
     const handleBackdropClick = (e) => {
-        if (e.target.className.includes('modal-backdrop')) {
+        if (e.target === e.currentTarget) {
             onClose();
         }
     };
 
+    const proyectoNombre =
+        cotizacion.proyecto_nombre || cotizacion.proyecto?.nombre || cotizacion.proyectoNombre;
+    const proyectoDireccion =
+        cotizacion.proyecto_direccion ||
+        cotizacion.proyecto?.direccion ||
+        cotizacion.proyectoDireccion;
+    const folio = cotizacion.folio || cotizacion.id;
+    const fechaEmision = new Date(cotizacion.fecha).toLocaleDateString();
+
     return (
         <div className="modal-backdrop" onClick={handleBackdropClick}>
-            <div className="cotizacion-modal">
-                <h3>Detalles de Cotización</h3>
+            <div
+                className="cotizacion-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="cotizacion-modal-title"
+                aria-describedby="cotizacion-modal-description"
+            >
+                <header className="modal-header">
+                    <div className="header-title">
+                        <p className="folio">Folio #{folio}</p>
+                        <h3 id="cotizacion-modal-title">Detalles de cotización</h3>
+                        <p id="cotizacion-modal-description" className="subtext">
+                            {cotizacion.cliente}
+                            {proyectoNombre ? ` · ${proyectoNombre}` : ''}
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        ref={closeButtonRef}
+                        className="icon-button"
+                        aria-label="Cerrar"
+                        onClick={onClose}
+                    >
+                        ×
+                    </button>
+                </header>
+
                 <div className="modal-body">
-                    <p><strong>Cliente:</strong> {cotizacion.cliente}</p>
-                    {(cotizacion.proyecto_nombre ||
-                        cotizacion.proyecto?.nombre ||
-                        cotizacion.proyectoNombre) && (
-                        <p>
-                            <strong>Proyecto:</strong>{' '}
-                            {cotizacion.proyecto_nombre ||
-                                cotizacion.proyecto?.nombre ||
-                                cotizacion.proyectoNombre}
-                        </p>
-                    )}
-                    {(cotizacion.proyecto_direccion ||
-                        cotizacion.proyecto?.direccion ||
-                        cotizacion.proyectoDireccion) && (
-                        <p>
-                            <strong>Dirección del proyecto:</strong>{' '}
-                            {cotizacion.proyecto_direccion ||
-                                cotizacion.proyecto?.direccion ||
-                                cotizacion.proyectoDireccion}
-                        </p>
-                    )}
-                    <p><strong>Fecha:</strong> {new Date(cotizacion.fecha).toLocaleDateString()}</p>
-                    <p><strong>Total:</strong> ${parseFloat(cotizacion.total).toFixed(2)}</p>
-                    <h4>Productos:</h4>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Variante</th>
-                                <th>Cantidad</th>
-                                <th>Precio Unitario</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {productosDetalles.map((detalle) => (
-                                <tr key={detalle.producto_id}>
-                                    <td>{detalle.nombre}</td>
-                                    <td>{detalle.tipo_variante}</td>
-                                    <td>{detalle.cantidad}</td>
-                                    <td>${parseFloat(detalle.precio_unitario).toFixed(2)}</td>
-                                    <td>${parseFloat(detalle.total).toFixed(2)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <section className="summary-grid">
+                        <article className="summary-card">
+                            <p className="label">Cliente</p>
+                            <p className="value">{cotizacion.cliente}</p>
+                        </article>
+                        <article className="summary-card">
+                            <p className="label">Proyecto</p>
+                            <p className="value">{proyectoNombre || 'No especificado'}</p>
+                            {proyectoDireccion && <p className="muted">{proyectoDireccion}</p>}
+                        </article>
+                        <article className="summary-card">
+                            <p className="label">Fecha de emisión</p>
+                            <p className="value">{fechaEmision}</p>
+                        </article>
+                        <article className="summary-card highlight">
+                            <p className="label">Total</p>
+                            <p className="value">${parseFloat(cotizacion.total).toFixed(2)}</p>
+                        </article>
+                    </section>
+
+                    <section className="table-card">
+                        <div className="table-card__header">
+                            <div>
+                                <p className="label">Productos</p>
+                                <h4>Resumen de artículos</h4>
+                            </div>
+                            <p className="muted">{productosDetalles.length} ítems</p>
+                        </div>
+                        <div className="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Variante</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {productosDetalles.map((detalle) => (
+                                        <tr key={`${detalle.producto_id}-${detalle.tipo_variante}`}>
+                                            <td>{detalle.nombre}</td>
+                                            <td>{detalle.tipo_variante}</td>
+                                            <td>{detalle.cantidad}</td>
+                                            <td>${parseFloat(detalle.precio_unitario).toFixed(2)}</td>
+                                            <td>${parseFloat(detalle.total).toFixed(2)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
                 </div>
-                <div className="modal-footer">
-                    <button
-                        className="btn btn-danger"
-                        onClick={() => onCancelCotizacion(cotizacion.id)}
-                    >
-                        Cancelar Cotización
-                    </button>
-                    <button
-                        className="btn btn-primary"
-                        onClick={() => onDownloadPDF(cotizacion.id)}
-                    >
-                        Descargar PDF
-                    </button>
-                    <button className="btn btn-secondary" onClick={onClose}>
-                        Cerrar
-                    </button>
+
+                <div className="modal-actions">
+                    <div className="actions-group">
+                        <button
+                            type="button"
+                            className="btn ghost"
+                            onClick={onClose}
+                        >
+                            Cerrar
+                        </button>
+                    </div>
+                    <div className="actions-group">
+                        <button
+                            type="button"
+                            className="btn secondary"
+                            onClick={() => onCancelCotizacion(cotizacion.id)}
+                        >
+                            Cancelar Cotización
+                        </button>
+                        <button
+                            type="button"
+                            ref={primaryActionRef}
+                            className="btn primary"
+                            onClick={() => onDownloadPDF(cotizacion.id)}
+                        >
+                            Descargar PDF
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -131,10 +210,16 @@ CotizacionDetailsModal.propTypes = {
                 producto_id: PropTypes.number.isRequired,
                 tipo_variante: PropTypes.string.isRequired,
                 cantidad: PropTypes.number.isRequired,
-                precio_unitario: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+                precio_unitario: PropTypes.oneOfType([
+                    PropTypes.string,
+                    PropTypes.number,
+                ]).isRequired,
                 total: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
             })
         ).isRequired,
+        folio: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        proyectoNombre: PropTypes.string,
+        proyectoDireccion: PropTypes.string,
     }).isRequired,
     isShowing: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
