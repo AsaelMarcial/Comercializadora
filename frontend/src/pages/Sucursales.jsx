@@ -271,7 +271,7 @@ const Sucursales = () => {
                 </section>
             </div>
 
-            <Modal isOpen={isShowingFormModal} closeModal={handleCancel}>
+            <Modal isShowing={isShowingFormModal} setIsShowing={setIsShowingFormModal} onClose={handleCancel}>
                 <SucursalForm
                     sucursalUpdate={selectedSucursal}
                     cancelAction={handleCancel}
