@@ -31,6 +31,25 @@ def crear_proyecto(
     return crud_proyecto.crear_proyecto(proyecto_data)
 
 
+@router.get("/proyectos/{proyecto_id}", response_model=ProyectoResponse)
+def obtener_proyecto(
+    proyecto_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    crud_proyecto = CRUDProyecto(db)
+    return crud_proyecto.obtener_por_id(proyecto_id)
+
+
+@router.get("/proyectos", response_model=List[ProyectoResponse])
+def listar_proyectos(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    crud_proyecto = CRUDProyecto(db)
+    return crud_proyecto.listar_todos()
+
+
 @router.put("/proyectos/{proyecto_id}", response_model=ProyectoResponse)
 def actualizar_proyecto(
     proyecto_id: int,
