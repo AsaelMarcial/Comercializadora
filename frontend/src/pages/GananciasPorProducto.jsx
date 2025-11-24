@@ -408,6 +408,12 @@ const GananciasPorProducto = () => {
         );
     };
 
+    const agregarOtroProducto = () => {
+        const orderActualizada = productosConGanancia || [];
+        saveOrder(orderActualizada);
+        navigate('/app/ventas', { state: { order: orderActualizada } });
+    };
+
     const continuarConCotizacion = () => {
         if (!selectedCliente) {
             alert('Debes seleccionar un cliente para continuar.');
@@ -882,8 +888,12 @@ const GananciasPorProducto = () => {
                                 )}
 
                                 <div className="profit__summary-actions">
-                                    <button type="button" className="profit__ghost-button" onClick={() => navigate('/app/ventas')}>
-                                        Volver
+                                    <button
+                                        type="button"
+                                        className="profit__ghost-button"
+                                        onClick={agregarOtroProducto}
+                                    >
+                                        Agregar otro producto
                                     </button>
                                     <button
                                         type="button"
@@ -894,6 +904,9 @@ const GananciasPorProducto = () => {
                                         Continuar a confirmación
                                     </button>
                                 </div>
+                                <p className="profit__summary-note">
+                                    Tus productos y márgenes actuales se conservarán al regresar.
+                                </p>
                             </div>
                         </section>
                     </>
