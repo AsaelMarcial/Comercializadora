@@ -32,6 +32,39 @@ class CRUDProyecto:
                 detail=f"Error al obtener proyectos: {str(e)}",
             )
 
+    def listar_todos(self):
+        try:
+            return self.db.query(Proyecto).options(joinedload(Proyecto.cliente)).all()
+        except SQLAlchemyError as e:
+            logger.error(f"Error al obtener todos los proyectos: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al obtener proyectos: {str(e)}",
+            )
+
+    def obtener_por_id(self, proyecto_id: int) -> Proyecto:
+        try:
+            proyecto = (
+                self.db.query(Proyecto)
+                .options(joinedload(Proyecto.cliente))
+                .filter(Proyecto.id == proyecto_id)
+                .first()
+            )
+        except SQLAlchemyError as e:
+            logger.error(f"Error al obtener proyecto {proyecto_id}: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al obtener proyecto: {str(e)}",
+            )
+
+        if not proyecto:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Proyecto no encontrado",
+            )
+
+        return proyecto
+
     def crear_proyecto(self, proyecto_data: ProyectoCreate) -> Proyecto:
         if not proyecto_data.cliente_id:
             raise HTTPException(
