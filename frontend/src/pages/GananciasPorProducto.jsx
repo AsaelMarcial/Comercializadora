@@ -253,11 +253,6 @@ const GananciasPorProducto = () => {
             return;
         }
 
-        if (!selectedProyecto) {
-            alert('Debes seleccionar un proyecto para continuar.');
-            return;
-        }
-
         if (productosConPrecioInvalido) {
             alert(
                 'Uno o más productos no tienen un tipo de precio válido seleccionado. Verifica y selecciona un precio.'
@@ -265,18 +260,21 @@ const GananciasPorProducto = () => {
             return;
         }
 
-        navigate('/app/ventas/confirmacion', {
-            state: {
-                productos: productosConGanancia,
-                granTotal: granTotal,
-                cliente: selectedCliente,
-                proyectoSeleccionado: {
-                    proyectoId: selectedProyecto.id,
-                    proyectoNombre: selectedProyecto.nombre,
-                    proyectoDireccion: selectedProyecto.direccion,
-                },
-            },
-        });
+        const navigationState = {
+            productos: productosConGanancia,
+            granTotal: granTotal,
+            cliente: selectedCliente,
+        };
+
+        if (selectedProyecto) {
+            navigationState.proyectoSeleccionado = {
+                proyectoId: selectedProyecto.id,
+                proyectoNombre: selectedProyecto.nombre,
+                proyectoDireccion: selectedProyecto.direccion,
+            };
+        }
+
+        navigate('/app/ventas/confirmacion', { state: navigationState });
     };
 
     const clienteTieneProyectos = useMemo(
@@ -284,7 +282,7 @@ const GananciasPorProducto = () => {
         [selectedCliente]
     );
 
-    const canContinue = Boolean(selectedCliente && selectedProyecto && !productosConPrecioInvalido);
+    const canContinue = Boolean(selectedCliente && !productosConPrecioInvalido);
 
     return (
         <>
@@ -401,8 +399,8 @@ const GananciasPorProducto = () => {
                                         ) : (
                                             <div className="profit__sidebar-empty">
                                                 <p className="profit__sidebar-hint">
-                                                    Este cliente no tiene proyectos registrados. Registra uno para poder
-                                                    continuar.
+                                                    Este cliente no tiene proyectos registrados. Registra uno para
+                                                    asociarlo a la cotización (recomendado).
                                                 </p>
                                                 <button
                                                     type="button"
@@ -426,7 +424,7 @@ const GananciasPorProducto = () => {
                                                     <span>{selectedProyecto.direccion || 'Sin dirección registrada'}</span>
                                                 </>
                                             ) : (
-                                                <p>Selecciona un proyecto para ver sus detalles.</p>
+                                                <p>Selecciona un proyecto para asociarlo a la cotización (opcional).</p>
                                             )}
                                         </div>
                                         <div className="profit__client-actions">
