@@ -282,15 +282,6 @@
 .btn.accent:hover {
     background: linear-gradient(135deg, #d97706, #1d4ed8);
 }
-.btn.info {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: #ffffff;
-    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.22);
-}
-
-.btn.info:hover {
-    background: linear-gradient(135deg, #0ea371, #047857);
-}
 
 @media (max-width: 768px) {
     .cotizacion-modal {

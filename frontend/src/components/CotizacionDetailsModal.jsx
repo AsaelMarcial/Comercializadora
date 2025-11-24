@@ -8,8 +8,7 @@ const CotizacionDetailsModal = ({
     isShowing,
     onClose,
     onCancelCotizacion,
-    onDownloadCotizacion,
-    onDownloadRemision,
+    onDownloadPDF,
     onEditCotizacion,
 }) => {
     const [productosDetalles, setProductosDetalles] = useState([]);
@@ -184,13 +183,6 @@ const CotizacionDetailsModal = ({
                         </button>
                         <button
                             type="button"
-                            className="btn info"
-                            onClick={() => onDownloadCotizacion(cotizacion.id)}
-                        >
-                            Descargar cotización
-                        </button>
-                        <button
-                            type="button"
                             className="btn danger"
                             onClick={() => onCancelCotizacion(cotizacion.id)}
                         >
@@ -199,7 +191,7 @@ const CotizacionDetailsModal = ({
                         <button
                             type="button"
                             className="btn accent"
-                            onClick={() => onDownloadRemision(cotizacion.id)}
+                            onClick={() => onDownloadPDF(cotizacion.id)}
                         >
                             Descargar PDF
                         </button>
@@ -240,8 +232,7 @@ CotizacionDetailsModal.propTypes = {
     isShowing: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onCancelCotizacion: PropTypes.func.isRequired,
-    onDownloadCotizacion: PropTypes.func.isRequired,
-    onDownloadRemision: PropTypes.func.isRequired,
+    onDownloadPDF: PropTypes.func.isRequired,
     onEditCotizacion: PropTypes.func.isRequired,
 };
 
