@@ -42,6 +42,9 @@ const Login = () => {
 
       const data = await response.json();
       localStorage.setItem('token', data.access_token);
+      if (data.user_info) {
+        localStorage.setItem('user_info', JSON.stringify(data.user_info));
+      }
 
       if (rememberMe) {
         localStorage.setItem('savedEmail', email);

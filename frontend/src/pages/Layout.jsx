@@ -1,21 +1,45 @@
 // src/pages/Layout.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import SidebarButton from '../components/SidebarButton';
+import { getUserFromToken } from '../utils/auth';
 import '../css/layout.css';
 import '../css/botones.css';
 import '../css/datatable.css';
 
 export const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState({ nombre: 'Usuario', email: '' });
   const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem('user_info');
+
+    if (storedUserInfo) {
+      try {
+        setUserInfo(JSON.parse(storedUserInfo));
+        return;
+      } catch (error) {
+        console.error('Error al leer la información del usuario almacenada:', error);
+      }
+    }
+
+    const decodedUser = getUserFromToken();
+    if (decodedUser) {
+      setUserInfo({
+        nombre: decodedUser.nombre || decodedUser.name || 'Usuario',
+        email: decodedUser.email || decodedUser.sub || '',
+      });
+    }
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem('token'); // Eliminar el token
+    localStorage.removeItem('user_info'); // Eliminar la información del usuario almacenada
     navigate('/login'); // Redirigir al login
   };
 
@@ -52,8 +76,8 @@ export const Layout = () => {
           {/* Perfil del usuario */}
           <li className="perfil">
             <div className="perfil-detalles">
-              <div className="perfil_nombre">Usuario</div>
-              <div className="perfil_correo">ejemplo@ejemplo.com</div>
+              <div className="perfil_nombre">{userInfo.nombre || 'Usuario'}</div>
+              <div className="perfil_correo">{userInfo.email || 'Correo no disponible'}</div>
             </div>
             <i className="bx bx-log-out" id="log_out" onClick={handleLogout}></i>
           </li>
