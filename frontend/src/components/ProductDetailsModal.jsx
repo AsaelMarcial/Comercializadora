@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../css/productDetailsModal.css';
 
 const ProductDetailsModal = ({ product, onClose }) => {
     if (!product) return null; // No mostrar si no hay producto seleccionado.
+
+    const [isImageOpen, setIsImageOpen] = useState(false);
 
     const generalDetails = [
         { label: 'Código', value: product.codigo || 'No especificado' },
@@ -30,6 +32,15 @@ const ProductDetailsModal = ({ product, onClose }) => {
         ? `http://147.93.47.106:8000/uploads/producto_${product.id}.jpeg`
         : '';
 
+    const imageFrameProps = imageUrl
+        ? {
+              role: 'button',
+              tabIndex: 0,
+              onClick: openImageModal,
+              onKeyPress: (event) => (event.key === 'Enter' || event.key === ' ') && openImageModal(),
+          }
+        : {};
+
     const formatCurrency = (value) => {
         if (value === null || value === undefined || value === '') return 'No especificado';
         return new Intl.NumberFormat('es-MX', {
@@ -38,6 +49,14 @@ const ProductDetailsModal = ({ product, onClose }) => {
             minimumFractionDigits: 2,
         }).format(Number(value));
     };
+
+    const openImageModal = () => {
+        if (imageUrl) {
+            setIsImageOpen(true);
+        }
+    };
+
+    const closeImageModal = () => setIsImageOpen(false);
 
     return (
         <div className="product-modal-backdrop" role="dialog" aria-modal="true">
@@ -56,12 +75,13 @@ const ProductDetailsModal = ({ product, onClose }) => {
                 <div className="product-modal__body">
                     <div className="product-modal__layout">
                         <div className="product-modal__media">
-                            <div className="product-modal__image-frame">
+                            <div className={`product-modal__image-frame ${imageUrl ? 'product-modal__image-frame--interactive' : ''}`} {...imageFrameProps}>
                                 {imageUrl ? (
                                     <img src={imageUrl} alt={product.nombre} className="product-modal__image" />
                                 ) : (
                                     <div className="product-modal__image-placeholder">Imagen no disponible</div>
                                 )}
+                                {imageUrl && <span className="product-modal__zoom-hint">Haz clic para ampliar</span>}
                                 <span className="product-modal__chip">ID: {product.id || 'N/D'}</span>
                             </div>
                             <div className="product-modal__summary">
@@ -118,6 +138,21 @@ const ProductDetailsModal = ({ product, onClose }) => {
                     </button>
                 </div>
             </div>
+
+            {isImageOpen && (
+                <div className="product-modal__image-overlay" role="dialog" aria-modal="true" onClick={closeImageModal}>
+                    <div className="product-modal__image-lightbox" onClick={(event) => event.stopPropagation()}>
+                        <button type="button" className="product-modal__lightbox-close" onClick={closeImageModal} aria-label="Cerrar imagen ampliada">
+                            ×
+                        </button>
+                        <img
+                            src={imageUrl}
+                            alt={`Vista ampliada de ${product.nombre || 'producto'}`}
+                            className="product-modal__image-full"
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
