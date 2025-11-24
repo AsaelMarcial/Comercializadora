@@ -100,8 +100,7 @@ const GananciasPorProducto = () => {
     }, [carrito]);
 
     useEffect(() => {
-        if (!productosConGanancia.length) return;
-        saveOrder(productosConGanancia);
+        saveOrder(productosConGanancia || []);
     }, [productosConGanancia]);
 
     useEffect(() => {
@@ -309,6 +308,11 @@ const GananciasPorProducto = () => {
         );
     };
 
+    const eliminarProducto = (id) => {
+        setProductosConGanancia((prev) => prev.filter((producto) => producto.producto?.id !== id));
+        setCarrito((prev) => prev.filter((producto) => producto.producto?.id !== id));
+    };
+
     const actualizarCantidad = (id, nuevaCantidad) => {
         setProductosConGanancia((prev) =>
             prev.map((producto) => {
@@ -369,6 +373,20 @@ const GananciasPorProducto = () => {
                 return producto;
             })
         );
+    };
+
+    const ajustarCantidadConDelta = (producto, delta) => {
+        const cantidadActual = obtenerCantidadAjustada(producto.cantidad);
+        const minimoCaja = producto.requiereCajaCompleta ? obtenerCantidadMinimaCaja(producto) : 0;
+        const minimoPermitido = Math.max(0, minimoCaja || 0);
+        const cantidadObjetivo = cantidadActual + delta;
+
+        const cantidadAjustada =
+            producto.requiereCajaCompleta && minimoCaja > 0
+                ? Math.max(minimoCaja, cantidadObjetivo)
+                : Math.max(minimoPermitido, cantidadObjetivo);
+
+        actualizarCantidad(producto.producto?.id, cantidadAjustada);
     };
 
     const aplicarDescuentoCliente = () => {
@@ -644,19 +662,44 @@ const GananciasPorProducto = () => {
                                                     <label htmlFor={`cantidad-${producto.producto?.id}`}>
                                                         Cantidad
                                                     </label>
-                                                    <input
-                                                        id={`cantidad-${producto.producto?.id}`}
-                                                        type="number"
-                                                        min={minimoCaja || 0}
-                                                        step="1"
-                                                        value={producto.cantidad ?? 0}
-                                                        onChange={(event) =>
-                                                            actualizarCantidad(
-                                                                producto.producto?.id,
-                                                                event.target.value
-                                                            )
-                                                        }
-                                                    />
+                                                    <div className="profit-product__quantity-control" role="group" aria-label="Control de cantidad">
+                                                        <button
+                                                            type="button"
+                                                            aria-label="Disminuir cantidad"
+                                                            onClick={() => ajustarCantidadConDelta(producto, -1)}
+                                                            disabled={cantidad <= (minimoCaja || 0)}
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <input
+                                                            id={`cantidad-${producto.producto?.id}`}
+                                                            type="number"
+                                                            min={minimoCaja || 0}
+                                                            step="1"
+                                                            value={producto.cantidad ?? 0}
+                                                            onChange={(event) =>
+                                                                actualizarCantidad(
+                                                                    producto.producto?.id,
+                                                                    event.target.value
+                                                                )
+                                                            }
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            aria-label="Incrementar cantidad"
+                                                            onClick={() => ajustarCantidadConDelta(producto, 1)}
+                                                        >
+                                                            +
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="profit-product__quantity-remove"
+                                                            aria-label="Eliminar producto"
+                                                            onClick={() => eliminarProducto(producto.producto?.id)}
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
                                                     {producto.requiereCajaCompleta && minimoCaja > 0 && (
                                                         <p className="profit-product__helper">
                                                             Mínimo: {minimoCaja} por caja completa
