@@ -11,6 +11,31 @@ import { loadOrder, saveOrder } from '../utils/orderStorage';
 const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
 const GAIN_SLIDER_MAX = 120;
 
+const obtenerCantidadMinimaCaja = (productoBase, tipoPrecio, requiereCajaCompleta) => {
+    if (!requiereCajaCompleta) return 0;
+
+    if (tipoPrecio === 'pieza') {
+        return parseFloat(productoBase?.piezas_caja) || 0;
+    }
+
+    if (tipoPrecio === 'm2') {
+        return parseFloat(productoBase?.m2_caja) || 0;
+    }
+
+    return 0;
+};
+
+const obtenerCantidadAjustada = (cantidad, productoBase, tipoPrecio, requiereCajaCompleta) => {
+    const cantidadNumerica = parseFloat(cantidad) || 0;
+    const minima = obtenerCantidadMinimaCaja(productoBase, tipoPrecio, requiereCajaCompleta);
+
+    if (minima > 0 && cantidadNumerica < minima) {
+        return minima;
+    }
+
+    return cantidadNumerica;
+};
+
 const GananciasPorProducto = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -19,6 +44,8 @@ const GananciasPorProducto = () => {
     const buildProductosConGanancia = (items) =>
         items.map((producto) => {
             const baseProducto = producto.producto || producto;
+            const requiereCajaCompleta =
+                producto.requiereCajaCompleta ?? producto.requiere_caja_completa ?? false;
             const tipoPrecioInicial =
                 producto.tipoPrecio ||
                 (baseProducto.precio_pieza_sin_iva
@@ -37,12 +64,21 @@ const GananciasPorProducto = () => {
                     ? baseProducto.precio_caja_sin_iva
                     : baseProducto.precio_m2_sin_iva || 0);
 
+            const cantidadAjustada = obtenerCantidadAjustada(
+                producto.cantidad,
+                baseProducto,
+                tipoPrecioInicial,
+                requiereCajaCompleta
+            );
+
             return {
                 ...producto,
                 producto: baseProducto,
                 ganancia: producto.ganancia || 0,
                 precioSeleccionado: precioInicial,
                 tipoPrecio: tipoPrecioInicial,
+                requiereCajaCompleta,
+                cantidad: cantidadAjustada,
             };
         });
 
@@ -199,6 +235,21 @@ const GananciasPorProducto = () => {
         [productosConGanancia]
     );
 
+    const productosConCantidadInsuficiente = useMemo(
+        () =>
+            productosConGanancia.filter((producto) => {
+                const minima = obtenerCantidadMinimaCaja(
+                    producto.producto,
+                    producto.tipoPrecio,
+                    producto.requiereCajaCompleta
+                );
+                if (!minima) return false;
+                const cantidad = parseFloat(producto.cantidad) || 0;
+                return cantidad < minima;
+            }).length,
+        [productosConGanancia]
+    );
+
     const promedioGanancia = useMemo(() => {
         if (!productosConGanancia.length) return 0;
         const suma = productosConGanancia.reduce((total, producto) => total + (producto.ganancia || 0), 0);
@@ -254,10 +305,38 @@ const GananciasPorProducto = () => {
                         default:
                             nuevoPrecio = producto.producto?.precio_pieza_sin_iva || 0;
                     }
+                    const cantidadAjustada = obtenerCantidadAjustada(
+                        producto.cantidad,
+                        producto.producto,
+                        nuevoTipoPrecio,
+                        producto.requiereCajaCompleta
+                    );
                     return {
                         ...producto,
                         precioSeleccionado: nuevoPrecio,
                         tipoPrecio: nuevoTipoPrecio,
+                        cantidad: cantidadAjustada,
+                    };
+                }
+                return producto;
+            })
+        );
+    };
+
+    const actualizarRequiereCajaCompleta = (id, requiereCajaCompleta) => {
+        setProductosConGanancia((prev) =>
+            prev.map((producto) => {
+                if (producto.producto?.id === id) {
+                    const cantidadAjustada = obtenerCantidadAjustada(
+                        producto.cantidad,
+                        producto.producto,
+                        producto.tipoPrecio,
+                        requiereCajaCompleta
+                    );
+                    return {
+                        ...producto,
+                        requiereCajaCompleta,
+                        cantidad: cantidadAjustada,
                     };
                 }
                 return producto;
@@ -297,6 +376,11 @@ const GananciasPorProducto = () => {
             return;
         }
 
+        if (productosConCantidadInsuficiente) {
+            alert('Ajusta las cantidades para cumplir con la venta de caja completa.');
+            return;
+        }
+
         const navigationState = {
             productos: productosConGanancia,
             granTotal: granTotal,
@@ -319,7 +403,9 @@ const GananciasPorProducto = () => {
         [selectedCliente]
     );
 
-    const canContinue = Boolean(selectedCliente && !productosConPrecioInvalido);
+    const canContinue = Boolean(
+        selectedCliente && !productosConPrecioInvalido && !productosConCantidadInsuficiente
+    );
 
     return (
         <>
@@ -491,6 +577,15 @@ const GananciasPorProducto = () => {
                             <div className="profit__products" aria-live="polite">
                                 {productosConGanancia.map((producto) => {
                                     const cantidad = parseFloat(producto.cantidad) || 0;
+                                    const cantidadMinimaCaja = obtenerCantidadMinimaCaja(
+                                        producto.producto,
+                                        producto.tipoPrecio,
+                                        producto.requiereCajaCompleta
+                                    );
+                                    const requiereForzarCaja =
+                                        producto.requiereCajaCompleta &&
+                                        producto.tipoPrecio &&
+                                        producto.tipoPrecio !== 'caja';
                                     const precioFinalUnitario =
                                         producto.precioSeleccionado * (1 + (producto.ganancia || 0) / 100);
                                     const totalProducto = precioFinalUnitario * cantidad;
@@ -529,6 +624,39 @@ const GananciasPorProducto = () => {
                                                     <strong>{cantidad}</strong>
                                                 </div>
                                             </header>
+
+                                            <div className="profit-product__field">
+                                                <label
+                                                    className="profit-product__checkbox"
+                                                    htmlFor={`requiere-caja-${producto.producto?.id}`}
+                                                >
+                                                    <input
+                                                        id={`requiere-caja-${producto.producto?.id}`}
+                                                        type="checkbox"
+                                                        checked={producto.requiereCajaCompleta || false}
+                                                        onChange={(event) =>
+                                                            actualizarRequiereCajaCompleta(
+                                                                producto.producto?.id,
+                                                                event.target.checked
+                                                            )
+                                                        }
+                                                    />
+                                                    <span>Requiere caja completa</span>
+                                                </label>
+                                                <p className="profit-product__helper">
+                                                    Mantén activado para exigir cantidades equivalentes al contenido de una caja
+                                                    cuando uses precios por pieza o por m².
+                                                </p>
+                                                {requiereForzarCaja && (
+                                                    <p className="profit-product__helper">
+                                                        {cantidadMinimaCaja
+                                                            ? `Cantidad mínima: ${cantidadMinimaCaja} ${
+                                                                  producto.tipoPrecio === 'pieza' ? 'piezas' : 'm²'
+                                                              } (equivale a 1 caja).`
+                                                            : 'Define las piezas o m² por caja para validar la cantidad mínima.'}
+                                                    </p>
+                                                )}
+                                            </div>
 
                                             <dl className="profit-product__grid">
                                                 <div>
@@ -667,6 +795,15 @@ const GananciasPorProducto = () => {
                                         {productosConPrecioInvalido === 1
                                             ? 'producto requiere definir un tipo de precio válido.'
                                             : 'productos requieren definir un tipo de precio válido.'}
+                                    </p>
+                                )}
+
+                                {Boolean(productosConCantidadInsuficiente) && (
+                                    <p className="profit__summary-warning">
+                                        {productosConCantidadInsuficiente}{' '}
+                                        {productosConCantidadInsuficiente === 1
+                                            ? 'producto debe cumplir con la cantidad mínima de una caja.'
+                                            : 'productos deben cumplir con la cantidad mínima de una caja.'}
                                     </p>
                                 )}
 
