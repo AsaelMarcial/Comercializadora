@@ -307,6 +307,36 @@ class CotizacionCreate(BaseModel):
         }
 
 
+class CotizacionDetalleUpdate(BaseModel):
+    producto_id: Optional[PositiveInt] = None
+    cantidad: Optional[condecimal(max_digits=20, decimal_places=2)] = None
+    precio_unitario: Optional[condecimal(max_digits=20, decimal_places=2)] = None
+    tipo_variante: Optional[str] = None
+
+
+class CotizacionUpdate(BaseModel):
+    cliente_id: Optional[int] = None
+    proyecto_id: Optional[int] = None
+    total: Optional[condecimal(max_digits=10, decimal_places=2)] = None
+    detalles: Optional[list[CotizacionDetalleCreate]] = None
+    costo_envio: Optional[condecimal(max_digits=10, decimal_places=2)] = None
+    variante_envio: Optional[str] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "cliente_id": 2,
+                "proyecto_id": 4,
+                "total": 1500.75,
+                "detalles": [
+                    {"producto_id": 3, "cantidad": 2, "precio_unitario": 250.00, "tipo_variante": "Caja"}
+                ],
+                "costo_envio": 30.00,
+                "variante_envio": "express"
+            }
+        }
+
+
 
 class Cotizacion(CotizacionBase):
     id: int
