@@ -1,7 +1,6 @@
 import { API_HOST, processResponse } from "./dataAccessUtils";
 
 const API_SERVICE = 'sucursales';
-const getClienteSucursalesUrl = (clienteId) => `${API_HOST}/clientes/${clienteId}/sucursales`;
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
@@ -14,16 +13,6 @@ const getAuthHeaders = () => {
 
 export const readAllSucursales = async () => {
     const url = `${API_HOST}/${API_SERVICE}`;
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: { ...getAuthHeaders() },
-    });
-
-    return processResponse(response);
-};
-
-export const readSucursalesByCliente = async (clienteId) => {
-    const url = getClienteSucursalesUrl(clienteId);
     const response = await fetch(url, {
         method: 'GET',
         headers: { ...getAuthHeaders() },

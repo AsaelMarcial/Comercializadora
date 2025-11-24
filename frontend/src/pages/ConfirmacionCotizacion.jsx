@@ -4,7 +4,7 @@ import { useMutation } from 'react-query';
 import { toast } from 'react-toastify';
 import NavigationTitle from '../components/NavigationTitle';
 import { createCotizacion } from '../data-access/cotizacionesDataAccess';
-import { readSucursalesByCliente } from '../data-access/sucursalesDataAccess';
+import { readAllSucursales } from '../data-access/sucursalesDataAccess';
 import '../css/confirmacionCotizacion.css';
 
 const currencyFormatter = new Intl.NumberFormat('es-MX', {
@@ -80,11 +80,11 @@ const ConfirmacionCotizacion = () => {
 
     useEffect(() => {
         const fetchSucursales = async () => {
-            if (!cliente?.id) return;
-
             try {
-                const sucursales = await readSucursalesByCliente(cliente.id);
-                const sucursalesList = normalizeSucursales(Array.isArray(sucursales?.data) ? sucursales.data : sucursales);
+                const sucursales = await readAllSucursales();
+                const sucursalesList = normalizeSucursales(
+                    Array.isArray(sucursales?.data) ? sucursales.data : sucursales
+                );
 
                 setSucursalesDisponibles(sucursalesList);
 
@@ -93,12 +93,12 @@ const ConfirmacionCotizacion = () => {
                     setSucursalRecogidaNombre(sucursalesList[0].nombre ?? '');
                 }
             } catch (error) {
-                console.error('Error al obtener sucursales del cliente:', error);
+                console.error('Error al obtener sucursales:', error);
             }
         };
 
         fetchSucursales();
-    }, [cliente?.id]);
+    }, []);
 
     useEffect(() => {
         if (
