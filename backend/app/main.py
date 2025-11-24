@@ -13,6 +13,7 @@ from app.routers import (
     proveedores,
     clientes,
     proyectos,
+    sucursales,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -81,6 +82,7 @@ app.include_router(cotizaciones.router, tags=["Cotizaciones"])
 app.include_router(proveedores.router, tags=["Proveedores"])
 app.include_router(clientes.router, tags=["Clientes"])
 app.include_router(proyectos.router, tags=["Proyectos"])
+app.include_router(sucursales.router, tags=["Sucursales"])
 
 # Ruta principal de prueba
 @app.get("/", summary="Ruta de prueba")

@@ -25,6 +25,17 @@ class Proveedor(Base):
     email = Column(String(100))
     contacto = Column(String(100))
 
+
+class Sucursal(Base):
+    __tablename__ = "sucursales"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(255), nullable=False)
+    direccion = Column(String(255))
+    telefono = Column(String(20))
+    contacto = Column(String(100))
+    horario = Column(String(255))
+
 # Modelo de Productos
 class Producto(Base):
     __tablename__ = "productos"
