@@ -64,7 +64,11 @@ const Proveedores = () => {
     const sortedSuppliers = useMemo(() => {
         if (!proveedores) return [];
 
-        return [...proveedores].sort((a, b) => a.nombre.localeCompare(b.nombre));
+        const safeName = (supplier) => (supplier?.nombre || '').toString();
+
+        return [...proveedores]
+            .filter(Boolean)
+            .sort((a, b) => safeName(a).localeCompare(safeName(b), 'es', { sensitivity: 'base' }));
     }, [proveedores]);
 
     const totalSuppliers = sortedSuppliers.length;
