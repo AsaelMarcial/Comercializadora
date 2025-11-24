@@ -15,19 +15,54 @@ const GananciasPorProducto = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const navigationOrder = location.state?.order;
-    const [carrito, setCarrito] = useState(() => {
-        if (navigationOrder?.length) {
-            saveOrder(navigationOrder);
-            return navigationOrder;
-        }
 
-        return loadOrder();
+    const buildProductosConGanancia = (items) =>
+        items.map((producto) => {
+            const baseProducto = producto.producto || producto;
+            const tipoPrecioInicial =
+                producto.tipoPrecio ||
+                (baseProducto.precio_pieza_sin_iva
+                    ? 'pieza'
+                    : baseProducto.precio_caja_sin_iva
+                    ? 'caja'
+                    : baseProducto.precio_m2_sin_iva
+                    ? 'm2'
+                    : null);
+
+            const precioInicial =
+                producto.precioSeleccionado ||
+                (tipoPrecioInicial === 'pieza'
+                    ? baseProducto.precio_pieza_sin_iva
+                    : tipoPrecioInicial === 'caja'
+                    ? baseProducto.precio_caja_sin_iva
+                    : baseProducto.precio_m2_sin_iva || 0);
+
+            return {
+                ...producto,
+                producto: baseProducto,
+                ganancia: producto.ganancia || 0,
+                precioSeleccionado: precioInicial,
+                tipoPrecio: tipoPrecioInicial,
+            };
+        });
+
+    const [carrito, setCarrito] = useState(() => {
+        const fallbackOrder = navigationOrder?.length ? navigationOrder : loadOrder();
+        if (fallbackOrder?.length) {
+            saveOrder(fallbackOrder);
+        }
+        return fallbackOrder || [];
     });
 
     useEffect(() => {
         if (navigationOrder?.length) {
             setCarrito(navigationOrder);
             saveOrder(navigationOrder);
+        } else {
+            const storedOrder = loadOrder();
+            if (storedOrder?.length) {
+                setCarrito(storedOrder);
+            }
         }
     }, [navigationOrder]);
 
@@ -39,31 +74,17 @@ const GananciasPorProducto = () => {
     const [projectDraft, setProjectDraft] = useState({ nombre: '', descripcion: '', direccion: '' });
 
     const [productosConGanancia, setProductosConGanancia] = useState(() =>
-        carrito.map((producto) => {
-            const tipoPrecioInicial = producto.precio_pieza_sin_iva
-                ? 'pieza'
-                : producto.precio_caja_sin_iva
-                ? 'caja'
-                : producto.precio_m2_sin_iva
-                ? 'm2'
-                : null;
-
-            const precioInicial =
-                tipoPrecioInicial === 'pieza'
-                    ? producto.precio_pieza_sin_iva
-                    : tipoPrecioInicial === 'caja'
-                    ? producto.precio_caja_sin_iva
-                    : producto.precio_m2_sin_iva || 0;
-
-            return {
-                ...producto,
-                producto: producto.producto || producto,
-                ganancia: 0,
-                precioSeleccionado: precioInicial,
-                tipoPrecio: tipoPrecioInicial,
-            };
-        })
+        buildProductosConGanancia(carrito || [])
     );
+
+    useEffect(() => {
+        setProductosConGanancia(buildProductosConGanancia(carrito || []));
+    }, [carrito]);
+
+    useEffect(() => {
+        if (!productosConGanancia.length) return;
+        saveOrder(productosConGanancia);
+    }, [productosConGanancia]);
 
     useEffect(() => {
         if (selectedCliente) {
