@@ -61,15 +61,20 @@ const Proveedores = () => {
         document.title = 'Orza - Proveedores';
     }, []);
 
-    const sortedSuppliers = useMemo(() => {
-        if (!proveedores) return [];
+    const proveedoresList = useMemo(() => {
+        if (Array.isArray(proveedores)) return proveedores;
+        if (Array.isArray(proveedores?.data)) return proveedores.data;
+        if (Array.isArray(proveedores?.results)) return proveedores.results;
+        return [];
+    }, [proveedores]);
 
+    const sortedSuppliers = useMemo(() => {
         const safeName = (supplier) => (supplier?.nombre || '').toString();
 
-        return [...proveedores]
+        return [...proveedoresList]
             .filter(Boolean)
             .sort((a, b) => safeName(a).localeCompare(safeName(b), 'es', { sensitivity: 'base' }));
-    }, [proveedores]);
+    }, [proveedoresList]);
 
     const totalSuppliers = sortedSuppliers.length;
 
