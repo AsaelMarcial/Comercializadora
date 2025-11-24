@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import NavigationTitle from '../components/NavigationTitle';
 import {
@@ -19,30 +19,55 @@ const Proveedores = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [contactFilter, setContactFilter] = useState('todos');
     const queryClient = useQueryClient();
+    const savingToastId = useRef(null);
+
+    const startSavingToast = (message) => {
+        savingToastId.current = toast.loading(message, { autoClose: false });
+    };
+
+    const finishSavingToast = (message, type) => {
+        if (savingToastId.current) {
+            toast.update(savingToastId.current, {
+                render: message,
+                type,
+                isLoading: false,
+                autoClose: 3000,
+            });
+            savingToastId.current = null;
+        } else {
+            toast(message, { type });
+        }
+    };
 
     const createMutation = useMutation(createProveedor, {
+        onMutate: () => {
+            startSavingToast('Guardando proveedor...');
+        },
         onSuccess: () => {
             queryClient.invalidateQueries('proveedores');
-            toast('Proveedor guardado correctamente', { type: 'success' });
+            finishSavingToast('Proveedor guardado correctamente', 'success');
             setIsShowingFormModal(false);
             setSelectedProveedor(null);
         },
         onError: (error) => {
             console.error('Error creando proveedor:', error);
-            toast('Hubo un error al crear el proveedor.', { type: 'error' });
+            finishSavingToast('Hubo un error al crear el proveedor.', 'error');
         },
     });
 
     const updateMutation = useMutation(updateProveedor, {
+        onMutate: () => {
+            startSavingToast('Actualizando proveedor...');
+        },
         onSuccess: () => {
             queryClient.invalidateQueries('proveedores');
-            toast('Proveedor actualizado correctamente', { type: 'success' });
+            finishSavingToast('Proveedor actualizado correctamente', 'success');
             setIsShowingFormModal(false);
             setSelectedProveedor(null);
         },
         onError: (error) => {
             console.error('Error actualizando proveedor:', error);
-            toast('Hubo un error al actualizar el proveedor.', { type: 'error' });
+            finishSavingToast('Hubo un error al actualizar el proveedor.', 'error');
         },
     });
 
