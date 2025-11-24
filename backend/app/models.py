@@ -148,8 +148,6 @@ class Cotizacion(Base):
     total = Column(DECIMAL(20, 2), nullable=False)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
     proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=True)
-    proyecto_nombre = Column(String(255))
-    proyecto_direccion = Column(String(255))
 
     usuario = relationship("Usuario")
     proyecto = relationship("Proyecto", back_populates="cotizaciones")

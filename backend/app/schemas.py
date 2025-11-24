@@ -388,8 +388,6 @@ class CotizacionResponse(BaseModel):
     total: condecimal(max_digits=10, decimal_places=2)
     usuario_id: int
     proyecto_id: Optional[int] = None
-    proyecto_nombre: Optional[str] = None
-    proyecto_direccion: Optional[str] = None
     proyecto: Optional[ProyectoResponse] = None
     detalles: List[CotizacionDetalleResponse]
 
