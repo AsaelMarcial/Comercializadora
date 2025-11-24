@@ -6,7 +6,14 @@ import os
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 
-from app.models import Cotizacion, CotizacionDetalle, Producto, Cliente, Proyecto
+from app.models import (
+    Cliente,
+    ClienteCotizacion,
+    Cotizacion,
+    CotizacionDetalle,
+    Producto,
+    Proyecto,
+)
 from app.schemas import (
     ClienteCotizacionCreate,
     CotizacionCreate,
@@ -43,8 +50,6 @@ class CRUDCotizacion:
 
             # Validar proyecto asociado si se proporciona
             proyecto = None
-            proyecto_nombre = None
-            proyecto_direccion = ""
 
             if cotizacion_data.proyecto_id is not None:
                 proyecto = (
@@ -57,15 +62,6 @@ class CRUDCotizacion:
                         status_code=status.HTTP_404_NOT_FOUND,
                         detail=f"Proyecto con ID {cotizacion_data.proyecto_id} no encontrado."
                     )
-                proyecto_nombre = proyecto.nombre or ""
-                proyecto_direccion = (
-                    proyecto.direccion
-                    if proyecto.direccion
-                    else (cliente.direccion or "")
-                )
-            else:
-                proyecto_nombre = cliente.proyecto or ""
-                proyecto_direccion = cliente.direccion or ""
 
             # Crear la cotización con el nombre del cliente
             nueva_cotizacion = Cotizacion(
@@ -73,8 +69,6 @@ class CRUDCotizacion:
                 total=cotizacion_data.total,
                 usuario_id=usuario_id,
                 proyecto_id=proyecto.id if proyecto else None,
-                proyecto_nombre=proyecto_nombre,
-                proyecto_direccion=proyecto_direccion,
             )
             self.db.add(nueva_cotizacion)
             self.db.flush()  # No hacemos commit aquí para evitar inconsistencias
@@ -144,6 +138,7 @@ class CRUDCotizacion:
                 .options(
                     joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto),
                     joinedload(Cotizacion.proyecto),
+                    joinedload(Cotizacion.cliente_asociacion).joinedload(ClienteCotizacion.cliente),
                 )
                 .filter(Cotizacion.id == cotizacion_id)
                 .first()
@@ -169,6 +164,7 @@ class CRUDCotizacion:
                 .options(
                     joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto),
                     joinedload(Cotizacion.proyecto),
+                    joinedload(Cotizacion.cliente_asociacion).joinedload(ClienteCotizacion.cliente),
                 )
                 .all()
             )
@@ -233,18 +229,12 @@ class CRUDCotizacion:
                         detail=f"Proyecto con ID {cotizacion_data.proyecto_id} no encontrado."
                     )
                 cotizacion.proyecto_id = proyecto.id
-                cotizacion.proyecto_nombre = proyecto.nombre or ""
-                cotizacion.proyecto_direccion = proyecto.direccion or ""
             else:
                 cotizacion.proyecto_id = None
-                cotizacion.proyecto_nombre = None
-                cotizacion.proyecto_direccion = None
             cabecera_modificada = True
         elif cliente:
             # Si se cambia de cliente y no se especifica un proyecto, se usa la información del cliente
             cotizacion.proyecto_id = None
-            cotizacion.proyecto_nombre = cliente.proyecto or ""
-            cotizacion.proyecto_direccion = cliente.direccion or ""
             cabecera_modificada = True
 
         if cotizacion_data.total is not None:
@@ -295,14 +285,28 @@ class CRUDCotizacion:
         costo_envio: Optional[Decimal],
         variante_envio: Optional[str],
     ) -> None:
+        cliente_asociacion = cotizacion.cliente_asociacion[0] if cotizacion.cliente_asociacion else None
+        cliente_relacionado = cliente_asociacion.cliente if cliente_asociacion else None
+
+        proyecto_nombre = (
+            cotizacion.proyecto.nombre
+            if cotizacion.proyecto
+            else (cliente_relacionado.proyecto if cliente_relacionado and cliente_relacionado.proyecto else "")
+        )
+        proyecto_direccion = (
+            cotizacion.proyecto.direccion
+            if cotizacion.proyecto and cotizacion.proyecto.direccion
+            else (cliente_relacionado.direccion if cliente_relacionado and cliente_relacionado.direccion else "")
+        )
+
         cotizacion_data_pdf = {
             "id": cotizacion.id,
             "fecha": cotizacion.fecha.strftime("%d/%m/%Y"),
             "cliente_nombre": cotizacion.cliente,
-            "cliente_proyecto": cotizacion.proyecto_nombre or "Sin proyecto seleccionado",
-            "cliente_direccion": cotizacion.proyecto_direccion or "Dirección no especificada",
-            "proyecto_nombre": cotizacion.proyecto_nombre or "Sin proyecto seleccionado",
-            "proyecto_direccion": cotizacion.proyecto_direccion or "Dirección no especificada",
+            "cliente_proyecto": proyecto_nombre or "Sin proyecto seleccionado",
+            "cliente_direccion": proyecto_direccion or "Dirección no especificada",
+            "proyecto_nombre": proyecto_nombre or "Sin proyecto seleccionado",
+            "proyecto_direccion": proyecto_direccion or "Dirección no especificada",
             "productos": [
                 {
                     "producto_id": detalle.producto_id,
@@ -343,6 +347,7 @@ class CRUDCotizacion:
                 .options(
                     joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto),
                     joinedload(Cotizacion.proyecto),
+                    joinedload(Cotizacion.cliente_asociacion).joinedload(ClienteCotizacion.cliente),
                 )
                 .filter(Cotizacion.id == cotizacion_id)
                 .first()
