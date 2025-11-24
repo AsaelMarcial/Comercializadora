@@ -187,13 +187,27 @@ class CRUDCotizacion:
                     detail="Cotización no encontrada"
                 )
 
+            pdf_path = os.path.join(PDF_STORAGE_PATH, f"Cotizacion_{cotizacion_id}.pdf")
+
             # Eliminar los detalles de la cotización
             self.db.query(CotizacionDetalle).filter(CotizacionDetalle.cotizacion_id == cotizacion_id).delete()
 
+            # Eliminar asociación con el cliente
+            self.db.query(ClienteCotizacion).filter(ClienteCotizacion.cotizacion_id == cotizacion_id).delete()
+
             # Eliminar la cotización principal
             self.db.delete(cotizacion)
+
+            # Eliminar el PDF asociado, si existe
+            if os.path.exists(pdf_path):
+                os.remove(pdf_path)
+                logger.info(f"PDF eliminado: {pdf_path}")
+
             self.db.commit()
             logger.info(f"Cotización con ID {cotizacion_id} eliminada correctamente.")
+        except HTTPException:
+            self.db.rollback()
+            raise
         except Exception as e:
             self.db.rollback()
             logger.error(f"Error al eliminar la cotización con ID {cotizacion_id}: {e}")
