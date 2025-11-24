@@ -47,7 +47,7 @@ def create_cotizacion(
         # Crear cotización en la base de datos y generar PDF dentro del CRUD
         nueva_cotizacion = crud_cotizacion.crear_cotizacion(
             cotizacion_data=cotizacion,
-            usuario_id=1  # Se puede cambiar por `current_user['id']` si se requiere autenticación
+            usuario_id=current_user.get('id')  # Asignar el ID del usuario autenticado
         )
 
         logger.info(f"Cotización creada exitosamente con ID {nueva_cotizacion.id}")
