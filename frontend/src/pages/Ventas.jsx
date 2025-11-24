@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import NavigationTitle from '../components/NavigationTitle';
@@ -6,6 +6,7 @@ import { readAllProducts } from '../data-access/productsDataAccess';
 import { QUERY_OPTIONS } from '../utils/useQuery';
 import ProductDetailsModal from '../components/ProductDetailsModal';
 import '../css/ventas.css';
+import { loadOrder, saveOrder } from '../utils/orderStorage';
 
 const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
 
@@ -18,7 +19,7 @@ const Ventas = () => {
         refetchOnWindowFocus: false,
     });
 
-    const [order, setOrder] = useState([]);
+    const [order, setOrder] = useState(() => loadOrder());
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [formatFilter, setFormatFilter] = useState('todos');
@@ -74,6 +75,10 @@ const Ventas = () => {
             }, 0),
         [order]
     );
+
+    useEffect(() => {
+        saveOrder(order);
+    }, [order]);
 
     const addToOrder = (product) => {
         setOrder((previousOrder) => {
