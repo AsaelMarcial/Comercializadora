@@ -6,6 +6,7 @@ import Modal from '../components/Modal';
 import { createClienteProject, readAllClientes } from '../data-access/clientesDataAccess';
 import '../css/ganancias.css';
 import { toast } from 'react-toastify';
+import { loadOrder, saveOrder } from '../utils/orderStorage';
 
 const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
 const GAIN_SLIDER_MAX = 120;
@@ -13,7 +14,22 @@ const GAIN_SLIDER_MAX = 120;
 const GananciasPorProducto = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const carrito = location.state?.order || [];
+    const navigationOrder = location.state?.order;
+    const [carrito, setCarrito] = useState(() => {
+        if (navigationOrder?.length) {
+            saveOrder(navigationOrder);
+            return navigationOrder;
+        }
+
+        return loadOrder();
+    });
+
+    useEffect(() => {
+        if (navigationOrder?.length) {
+            setCarrito(navigationOrder);
+            saveOrder(navigationOrder);
+        }
+    }, [navigationOrder]);
 
     const { data: clientes, isLoading: isLoadingClientes } = useQuery('clientes', readAllClientes);
     const queryClient = useQueryClient();
