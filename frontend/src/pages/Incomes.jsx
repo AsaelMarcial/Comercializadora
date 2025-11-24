@@ -22,16 +22,25 @@ const Incomes = () => {
 
 	const deleteMutation = useMutation(deleteIncomeMutation, DELETE_MUTATION_OPTIONS)
 
-	useEffect(() => {
-		document.title = 'Orza - Ingresos'
-		const table = $(tableRef.current).DataTable(datatableOptions)
-		table.draw()
-	}, [incomes])
+        useEffect(() => {
+                document.title = 'Orza - Ingresos'
+                if (!incomes) return
 
-	async function onDeleteButtonClicked(id) {
-		await deleteMutation.mutateAsync(id)
-		queryClient.resetQueries()
-	}
+                const table = $(tableRef.current).DataTable({
+                        ...datatableOptions,
+                        destroy: true
+                })
+                table.draw()
+
+                return () => {
+                        table.destroy()
+                }
+        }, [incomes])
+
+        async function onDeleteButtonClicked(id) {
+                await deleteMutation.mutateAsync(id)
+                queryClient.invalidateQueries('incomes')
+        }
 
 	return (
 		<>
@@ -41,11 +50,14 @@ const Incomes = () => {
 			/>
 			{isLoading ? 'Loading...' :
 				<>
-					<button
-						type='button'
-						className='btn-registrar'
-						onClick={() => setIsShowingModal(true)}
-					>
+                                        <button
+                                                type='button'
+                                                className='btn-registrar'
+                                                onClick={() => {
+                                                        setSelectedIncome(null)
+                                                        setIsShowingModal(true)
+                                                }}
+                                        >
 						<i className='fa-solid fa-plus'></i> Nuevo ingreso
 					</button>
 					<div className='contenedor-tabla'>

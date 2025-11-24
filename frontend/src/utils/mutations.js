@@ -88,15 +88,15 @@ export const DELETE_MUTATION_OPTIONS = {
 
 // Outcome Mutations
 export const createOutcomeMutation = (outcome) => {
-    createOutcome(outcome);
+    return createOutcome(outcome);
 };
 
 export const updateOutcomeMutation = (outcome) => {
-    updateOutcome(outcome);
+    return updateOutcome(outcome);
 };
 
 export const deleteOutcomeMutation = (id) => {
-    deleteOutcome(id);
+    return deleteOutcome(id);
 };
 
 // User Mutations
@@ -114,15 +114,15 @@ export const deleteUserMutation = async (id) => {
 
 // Income Mutations
 export const createIncomeMutation = (income) => {
-    createIncome(income);
+    return createIncome(income);
 };
 
 export const updateIncomeMutation = (income) => {
-    updateIncome(income);
+    return updateIncome(income);
 };
 
 export const deleteIncomeMutation = (id) => {
-    deleteIncome(id);
+    return deleteIncome(id);
 };
 
 // Product Mutations

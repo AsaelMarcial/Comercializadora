@@ -24,16 +24,25 @@ const Outcomes = () => {
 	const deleteMutation = useMutation(deleteOutcomeMutation, DELETE_MUTATION_OPTIONS)
 
 
-	useEffect(() => {
-		document.title = 'Orza - Egresos'
-		const table = $(tableRef.current).DataTable(datatableOptions)
-		table.draw()
-	}, [outcomes])
+        useEffect(() => {
+                document.title = 'Orza - Egresos'
+                if (!outcomes) return
 
-	async function onDeleteButtonClicked(id) {
-		await deleteMutation.mutateAsync(id)
-		queryClient.resetQueries()
-	}
+                const table = $(tableRef.current).DataTable({
+                        ...datatableOptions,
+                        destroy: true
+                })
+                table.draw()
+
+                return () => {
+                        table.destroy()
+                }
+        }, [outcomes])
+
+        async function onDeleteButtonClicked(id) {
+                await deleteMutation.mutateAsync(id)
+                queryClient.invalidateQueries('outcomes')
+        }
 
 	return (
 		<>
@@ -43,11 +52,14 @@ const Outcomes = () => {
 			/>
 			{isLoading ? 'Loading' :
 				<>
-					<button
-						type='button'
-						className='btn-registrar'
-						onClick={() => setIsShowingModal(true)}
-					>
+                                        <button
+                                                type='button'
+                                                className='btn-registrar'
+                                                onClick={() => {
+                                                        setSelectedOutcome(null)
+                                                        setIsShowingModal(true)
+                                                }}
+                                        >
 						<i className='fa-solid fa-plus'></i> Nuevo egreso
 					</button>
 					<div className='contenedor-tabla'>
