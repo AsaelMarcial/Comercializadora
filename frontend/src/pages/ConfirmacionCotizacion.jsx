@@ -66,7 +66,6 @@ const ConfirmacionCotizacion = () => {
     const [sucursalesDisponibles, setSucursalesDisponibles] = useState(initialSucursales);
     const [sucursalRecogidaId, setSucursalRecogidaId] = useState(null);
     const [sucursalRecogidaNombre, setSucursalRecogidaNombre] = useState('');
-    const [usarSucursalManual, setUsarSucursalManual] = useState(initialSucursales.length === 0);
 
     const mutation = useMutation(createCotizacion, {
         onSuccess: () => {
@@ -90,13 +89,8 @@ const ConfirmacionCotizacion = () => {
                 setSucursalesDisponibles(sucursalesList);
 
                 if (sucursalesList.length > 0 && !sucursalRecogidaNombre) {
-                    setUsarSucursalManual(false);
                     setSucursalRecogidaId(sucursalesList[0].id ?? null);
                     setSucursalRecogidaNombre(sucursalesList[0].nombre ?? '');
-                }
-
-                if (sucursalesList.length === 0) {
-                    setUsarSucursalManual(true);
                 }
             } catch (error) {
                 console.error('Error al obtener sucursales del cliente:', error);
@@ -107,19 +101,12 @@ const ConfirmacionCotizacion = () => {
     }, [cliente?.id]);
 
     useEffect(() => {
-        if (sucursalesDisponibles.length === 0) {
-            setUsarSucursalManual(true);
-            setSucursalRecogidaId(null);
-            return;
-        }
-
         if (
             varianteEnvio === 'Recoger personalmente' &&
             sucursalesDisponibles.length > 0 &&
             !sucursalRecogidaNombre
         ) {
             const primeraSucursal = sucursalesDisponibles[0];
-            setUsarSucursalManual(false);
             setSucursalRecogidaId(primeraSucursal.id ?? null);
             setSucursalRecogidaNombre(primeraSucursal.nombre ?? '');
         }
@@ -155,7 +142,7 @@ const ConfirmacionCotizacion = () => {
     const handleSucursalChange = (event) => {
         const { value } = event.target;
 
-        if (usarSucursalManual) {
+        if (sucursalesDisponibles.length === 0) {
             setSucursalRecogidaId(null);
             setSucursalRecogidaNombre(value);
             return;
@@ -361,30 +348,7 @@ const ConfirmacionCotizacion = () => {
                                 <p className="quote-confirmation__hint">
                                     Elige una sucursal registrada o escribe el punto de entrega.
                                 </p>
-                                {sucursalesDisponibles.length > 0 && (
-                                    <div className="quote-confirmation__radio-group">
-                                        <label className="quote-confirmation__radio">
-                                            <input
-                                                type="radio"
-                                                name="pickup-mode"
-                                                checked={!usarSucursalManual}
-                                                onChange={() => setUsarSucursalManual(false)}
-                                            />
-                                            Seleccionar sucursal guardada
-                                        </label>
-                                        <label className="quote-confirmation__radio">
-                                            <input
-                                                type="radio"
-                                                name="pickup-mode"
-                                                checked={usarSucursalManual}
-                                                onChange={() => setUsarSucursalManual(true)}
-                                            />
-                                            Escribir sucursal manualmente
-                                        </label>
-                                    </div>
-                                )}
-
-                                {!usarSucursalManual && sucursalesDisponibles.length > 0 ? (
+                                {sucursalesDisponibles.length > 0 ? (
                                     <select
                                         id="pickup-branch"
                                         value={selectedSucursalValue}
