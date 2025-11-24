@@ -12,6 +12,15 @@ const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
 const GAIN_SLIDER_MAX = 120;
 
 const obtenerCantidadAjustada = (cantidad) => parseFloat(cantidad) || 0;
+const obtenerCantidadMinimaCaja = (producto) => {
+    const baseProducto = producto.producto || {};
+    const piezasCaja = parseFloat(baseProducto.piezas_caja);
+    const m2Caja = parseFloat(baseProducto.m2_caja);
+
+    if (Number.isFinite(piezasCaja) && piezasCaja > 0) return piezasCaja;
+    if (Number.isFinite(m2Caja) && m2Caja > 0) return m2Caja;
+    return 0;
+};
 
 const GananciasPorProducto = () => {
     const location = useLocation();
@@ -208,7 +217,19 @@ const GananciasPorProducto = () => {
         [productosConGanancia]
     );
 
-    const productosConCantidadInsuficiente = 0;
+    const productosConCantidadInsuficiente = useMemo(
+        () =>
+            productosConGanancia.filter((producto) => {
+                if (!producto.requiereCajaCompleta) return false;
+
+                const minimoCaja = obtenerCantidadMinimaCaja(producto);
+                if (!minimoCaja) return false;
+
+                const cantidadActual = parseFloat(producto.cantidad) || 0;
+                return cantidadActual < minimoCaja;
+            }).length,
+        [productosConGanancia]
+    );
 
     const obtenerPrecioPorTipo = (baseProducto, tipoPrecio) => {
         switch (tipoPrecio) {
@@ -288,11 +309,38 @@ const GananciasPorProducto = () => {
         );
     };
 
+    const actualizarCantidad = (id, nuevaCantidad) => {
+        setProductosConGanancia((prev) =>
+            prev.map((producto) => {
+                if (producto.producto?.id !== id) return producto;
+
+                const cantidadNumerica = obtenerCantidadAjustada(nuevaCantidad);
+                const minimoCaja = producto.requiereCajaCompleta
+                    ? obtenerCantidadMinimaCaja(producto)
+                    : 0;
+
+                if (producto.requiereCajaCompleta && minimoCaja > 0 && cantidadNumerica < minimoCaja) {
+                    toast(`La cantidad mínima para cajas completas es ${minimoCaja}.`, { type: 'info' });
+                    return { ...producto, cantidad: minimoCaja };
+                }
+
+                return { ...producto, cantidad: cantidadNumerica };
+            })
+        );
+    };
+
     const actualizarRequiereCajaCompleta = (id, requiereCajaCompleta) => {
         setProductosConGanancia((prev) =>
             prev.map((producto) => {
                 if (producto.producto?.id === id) {
                     const precioCaja = producto.producto?.precio_caja_sin_iva || 0;
+                    const cantidadActual = obtenerCantidadAjustada(producto.cantidad);
+                    const minimoCaja = requiereCajaCompleta ? obtenerCantidadMinimaCaja(producto) : 0;
+                    const cantidadConMinimo =
+                        requiereCajaCompleta && minimoCaja > 0
+                            ? Math.max(cantidadActual, minimoCaja)
+                            : cantidadActual;
+
                     if (requiereCajaCompleta) {
                         return {
                             ...producto,
@@ -300,7 +348,7 @@ const GananciasPorProducto = () => {
                             tipoPrecioPrevio: producto.tipoPrecio,
                             precioSeleccionado: precioCaja,
                             tipoPrecio: 'caja',
-                            cantidad: obtenerCantidadAjustada(producto.cantidad),
+                            cantidad: cantidadConMinimo,
                         };
                     }
 
@@ -315,7 +363,7 @@ const GananciasPorProducto = () => {
                         requiereCajaCompleta,
                         precioSeleccionado: precioRestaurado,
                         tipoPrecio: tipoPrecioRestaurado,
-                        cantidad: obtenerCantidadAjustada(producto.cantidad),
+                        cantidad: cantidadConMinimo,
                     };
                 }
                 return producto;
@@ -556,6 +604,9 @@ const GananciasPorProducto = () => {
                             <div className="profit__products" aria-live="polite">
                                 {productosConGanancia.map((producto) => {
                                     const cantidad = parseFloat(producto.cantidad) || 0;
+                                    const minimoCaja = producto.requiereCajaCompleta
+                                        ? obtenerCantidadMinimaCaja(producto)
+                                        : 0;
                                     const precioFinalUnitario =
                                         producto.precioSeleccionado * (1 + (producto.ganancia || 0) / 100);
                                     const totalProducto = precioFinalUnitario * cantidad;
@@ -590,8 +641,27 @@ const GananciasPorProducto = () => {
                                                     </p>
                                                 </div>
                                                 <div className="profit-product__quantity">
-                                                    <span>Cantidad</span>
-                                                    <strong>{cantidad}</strong>
+                                                    <label htmlFor={`cantidad-${producto.producto?.id}`}>
+                                                        Cantidad
+                                                    </label>
+                                                    <input
+                                                        id={`cantidad-${producto.producto?.id}`}
+                                                        type="number"
+                                                        min={minimoCaja || 0}
+                                                        step="1"
+                                                        value={producto.cantidad ?? 0}
+                                                        onChange={(event) =>
+                                                            actualizarCantidad(
+                                                                producto.producto?.id,
+                                                                event.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                    {producto.requiereCajaCompleta && minimoCaja > 0 && (
+                                                        <p className="profit-product__helper">
+                                                            Mínimo: {minimoCaja} por caja completa
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </header>
 
