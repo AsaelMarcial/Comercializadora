@@ -109,11 +109,24 @@ const Ventas = () => {
 
     const handleBlur = (productId, value) => {
         const parsed = parseFloat(value);
+        const product = order.find((item) => item.id === productId);
+        const boxSize = parseFloat(product?.m2_caja);
+
         if (Number.isNaN(parsed) || parsed <= 0) {
             updateQuantity(productId, '1');
-        } else {
-            updateQuantity(productId, parsed.toFixed(2));
+            return;
         }
+
+        if (!Number.isNaN(boxSize) && boxSize > 0 && parsed < boxSize) {
+            alert(
+                `La cantidad ingresada (${value}) es menor al tamaño de caja del producto (${boxSize}). ` +
+                    'Por favor verifica antes de continuar.'
+            );
+            updateQuantity(productId, value);
+            return;
+        }
+
+        updateQuantity(productId, parsed.toFixed(2));
     };
 
     const handleContinue = () => {
