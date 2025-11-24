@@ -1,70 +1,55 @@
-import { API_HOST, processResponse } from "./dataAccessUtils"
+import { API_HOST, processResponse } from './dataAccessUtils';
 
-const API_SERVICE = 'outcomes'
+const API_SERVICE = 'outcomes';
 
-export const createOutcome = (outcome) => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const url = `${API_HOST}/${API_SERVICE}`
-			const response = await fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(outcome)
-			})
-			await processResponse(response)
-			resolve()
-		} catch (error) {
-			reject(error.message)
-		}
-	})
-}
+const getAuthHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+});
 
-export const readAllOutcomes = () => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const url = `${API_HOST}/${API_SERVICE}`
-			const response = await fetch(url)
-			let outcomes = await processResponse(response)
-			resolve(outcomes)
-		} catch (error) {
-			reject(error.message)
-		}
-	})
-}
+export const createOutcome = async (outcome) => {
+    const url = `${API_HOST}/${API_SERVICE}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+        },
+        body: JSON.stringify(outcome),
+    });
+    await processResponse(response);
+};
 
-export const updateOutcome = (outcome) => {
-	const { id } = outcome
-	return new Promise(async (resolve, reject) => {
-		try {
-			const url = `${API_HOST}/${API_SERVICE}/${id}`
-			const response = await fetch(url, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(outcome)
-			})
-			await processResponse(response)
-			resolve()
-		} catch (error) {
-			reject(error.message)
-		}
-	})
-}
+export const readAllOutcomes = async () => {
+    const url = `${API_HOST}/${API_SERVICE}`;
+    const response = await fetch(url, {
+        headers: {
+            ...getAuthHeaders(),
+        },
+    });
+    return await processResponse(response);
+};
 
-export const deleteOutcome = (id) => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const url = `${API_HOST}/${API_SERVICE}/${id}`
-			const response = await fetch(url, {
-				method: 'DELETE',
-			})
-			await processResponse(response)
-			resolve()
-		} catch (error) {
-			reject(error.message)
-		}
-	})
-}
+export const updateOutcome = async (outcome) => {
+    const { id } = outcome;
+    const url = `${API_HOST}/${API_SERVICE}/${id}`;
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+        },
+        body: JSON.stringify(outcome),
+    });
+    await processResponse(response);
+};
+
+export const deleteOutcome = async (id) => {
+    const url = `${API_HOST}/${API_SERVICE}/${id}`;
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+            ...getAuthHeaders(),
+        },
+    });
+    await processResponse(response);
+};
