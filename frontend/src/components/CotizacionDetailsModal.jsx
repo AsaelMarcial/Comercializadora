@@ -193,7 +193,7 @@ const CotizacionDetailsModal = ({
                             className="btn secondary"
                             onClick={() => onDownloadPDF(cotizacion.id)}
                         >
-                            Descargar PDF
+                            Descargar nota de remisión
                         </button>
                     </div>
                 </div>
