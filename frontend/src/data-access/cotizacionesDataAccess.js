@@ -91,7 +91,7 @@ export const deleteCotizacion = async (id) => {
 };
 
 // Descargar el PDF de una cotización
-export const downloadCotizacionPDF = async (cotizacionId) => {
+const fetchAndDownloadPDF = async (cotizacionId, filename) => {
     if (!cotizacionId) {
         throw new Error('El ID de la cotización no puede estar vacío.');
     }
@@ -108,14 +108,11 @@ export const downloadCotizacionPDF = async (cotizacionId) => {
             throw new Error(`Error al descargar el PDF: ${response.status} - ${response.statusText}`);
         }
 
-        // Convertir la respuesta en blob
         const blob = await response.blob();
-
-        // Crear un enlace de descarga dinámico
         const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = downloadUrl;
-        a.download = `Cotizacion_${cotizacionId}.pdf`;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -125,6 +122,14 @@ export const downloadCotizacionPDF = async (cotizacionId) => {
         console.error('Error al descargar el PDF:', error);
         throw error;
     }
+};
+
+export const downloadCotizacionPDF = async (cotizacionId) => {
+    return fetchAndDownloadPDF(cotizacionId, `Cotizacion_${cotizacionId}.pdf`);
+};
+
+export const downloadNotaRemisionPDF = async (cotizacionId) => {
+    return fetchAndDownloadPDF(cotizacionId, `NotaRemision_${cotizacionId}.pdf`);
 };
 
 
