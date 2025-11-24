@@ -355,23 +355,6 @@ class CotizacionDetalleResponse(BaseModel):
     class Config:
         orm_mode = True
 
-# Esquema para la respuesta de cotización
-class CotizacionResponse(BaseModel):
-    id: int
-    cliente: str
-    fecha: datetime
-    total: condecimal(max_digits=10, decimal_places=2)
-    usuario_id: int
-    proyecto_id: Optional[int] = None
-    proyecto_nombre: Optional[str] = None
-    proyecto_direccion: Optional[str] = None
-    proyecto: Optional[ProyectoResponse] = None
-    detalles: List[CotizacionDetalleResponse]
-
-    class Config:
-        orm_mode = True
-
-
 # Esquema para Proyecto
 class ProyectoBase(BaseModel):
     nombre: constr(max_length=255)
@@ -393,6 +376,22 @@ class ProyectoUpdate(BaseModel):
 class ProyectoResponse(ProyectoBase):
     id: int
     cliente_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+# Esquema para la respuesta de cotización
+class CotizacionResponse(BaseModel):
+    id: int
+    cliente: str
+    fecha: datetime
+    total: condecimal(max_digits=10, decimal_places=2)
+    usuario_id: int
+    proyecto_id: Optional[int] = None
+    proyecto_nombre: Optional[str] = None
+    proyecto_direccion: Optional[str] = None
+    proyecto: Optional[ProyectoResponse] = None
+    detalles: List[CotizacionDetalleResponse]
 
     class Config:
         orm_mode = True

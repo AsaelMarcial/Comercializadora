@@ -25,7 +25,7 @@ def listar_proyectos_por_cliente(
 def crear_proyecto(
     proyecto_data: ProyectoCreate,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    #current_user: dict = Depends(get_current_user),
 ):
     crud_proyecto = CRUDProyecto(db)
     return crud_proyecto.crear_proyecto(proyecto_data)

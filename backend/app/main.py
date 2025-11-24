@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi.openapi.utils import get_openapi
 from sqlalchemy.exc import SQLAlchemyError
 from app.database import engine, Base
+from app import models
 from app.routers import (
     productos,
     usuarios,

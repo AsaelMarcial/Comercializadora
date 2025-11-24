@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import productos, usuarios, inventario, proveedores, clientes
+from .routers import productos, usuarios, inventario, proveedores, clientes, proyectos
 from app.database import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -21,15 +21,13 @@ app.add_middleware(
     allow_headers=["*"],  # Permitir todos los encabezados
 )
 
-# Crear las tablas en la base de datos si no existen
-Base.metadata.create_all(bind=engine)
-
 # Registrar los routers (endpoints)
 app.include_router(productos.router)
 app.include_router(usuarios.router)
 app.include_router(inventario.router)
 app.include_router(proveedores.router)
 app.include_router(clientes.router)
+app.include_router(proyectos.router)
 
 
 # Ruta principal de prueba
