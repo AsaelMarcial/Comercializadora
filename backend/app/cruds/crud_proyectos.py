@@ -66,21 +66,17 @@ class CRUDProyecto:
         return proyecto
 
     def crear_proyecto(self, proyecto_data: ProyectoCreate) -> Proyecto:
-        if not proyecto_data.cliente_id:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="El cliente asociado es obligatorio",
-            )
-
         try:
-            cliente = self.db.query(Cliente).filter(
-                Cliente.id == proyecto_data.cliente_id
-            ).first()
-            if not cliente:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Cliente no encontrado",
-                )
+            cliente = None
+            if proyecto_data.cliente_id is not None:
+                cliente = self.db.query(Cliente).filter(
+                    Cliente.id == proyecto_data.cliente_id
+                ).first()
+                if not cliente:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Cliente no encontrado",
+                    )
 
             nuevo_proyecto = Proyecto(
                 nombre=proyecto_data.nombre,
