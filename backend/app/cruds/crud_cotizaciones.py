@@ -150,6 +150,9 @@ class CRUDCotizacion:
                     detail="Cotización no encontrada"
                 )
             return cotizacion
+        except HTTPException:
+            # Propagar los errores esperados sin transformarlos en 500
+            raise
         except Exception as e:
             logger.error(f"Error al obtener la cotización con ID {cotizacion_id}: {e}")
             raise HTTPException(
