@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import NavigationTitle from '../components/NavigationTitle';
-import { readAllClientes } from '../data-access/clientesDataAccess';
+import Modal from '../components/Modal';
+import { createClienteProject, readAllClientes } from '../data-access/clientesDataAccess';
 import '../css/ganancias.css';
+import { toast } from 'react-toastify';
 
 const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
 const GAIN_SLIDER_MAX = 120;
@@ -14,8 +16,11 @@ const GananciasPorProducto = () => {
     const carrito = location.state?.order || [];
 
     const { data: clientes, isLoading: isLoadingClientes } = useQuery('clientes', readAllClientes);
+    const queryClient = useQueryClient();
     const [selectedCliente, setSelectedCliente] = useState(null);
     const [selectedProyecto, setSelectedProyecto] = useState(null);
+    const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+    const [projectDraft, setProjectDraft] = useState({ nombre: '', descripcion: '', direccion: '' });
 
     const [productosConGanancia, setProductosConGanancia] = useState(() =>
         carrito.map((producto) => {
@@ -58,6 +63,64 @@ const GananciasPorProducto = () => {
     useEffect(() => {
         setSelectedProyecto(null);
     }, [selectedCliente]);
+
+    const createProjectMutation = useMutation(createClienteProject, {
+        onSuccess: (createdProject, variables) => {
+            toast('Proyecto creado correctamente', { type: 'success' });
+            queryClient.invalidateQueries('clientes');
+            setSelectedCliente((prev) => {
+                if (!prev || prev.id !== variables?.clienteId) return prev;
+                const proyectosActualizados = [...(prev.proyectos || []), createdProject];
+                return { ...prev, proyectos: proyectosActualizados };
+            });
+            setSelectedProyecto(createdProject);
+            setIsProjectModalOpen(false);
+            setProjectDraft({ nombre: '', descripcion: '', direccion: '' });
+        },
+        onError: () => {
+            toast('Hubo un error al crear el proyecto.', { type: 'error' });
+        },
+    });
+
+    const openProjectModal = () => {
+        if (!selectedCliente) {
+            toast('Selecciona un cliente para crear un proyecto.', { type: 'info' });
+            return;
+        }
+        setProjectDraft({ nombre: '', descripcion: '', direccion: '' });
+        setIsProjectModalOpen(true);
+    };
+
+    const closeProjectModal = () => {
+        setIsProjectModalOpen(false);
+        setProjectDraft({ nombre: '', descripcion: '', direccion: '' });
+    };
+
+    const handleProjectDraftChange = (field, value) => {
+        setProjectDraft((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const submitProjectModal = (event) => {
+        event.preventDefault();
+        if (!selectedCliente) {
+            toast('Debes seleccionar un cliente para crear un proyecto.', { type: 'warning' });
+            return;
+        }
+
+        if (!projectDraft.nombre.trim()) {
+            toast('El proyecto debe tener un nombre.', { type: 'warning' });
+            return;
+        }
+
+        createProjectMutation.mutate({
+            clienteId: selectedCliente.id,
+            proyecto: {
+                nombre: projectDraft.nombre.trim(),
+                descripcion: projectDraft.descripcion.trim(),
+                direccion: projectDraft.direccion.trim(),
+            },
+        });
+    };
 
     const formatCurrency = (value) =>
         new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(
@@ -336,10 +399,19 @@ const GananciasPorProducto = () => {
                                                 ))}
                                             </select>
                                         ) : (
-                                            <p className="profit__sidebar-hint">
-                                                Este cliente no tiene proyectos registrados. Registra uno para poder
-                                                continuar.
-                                            </p>
+                                            <div className="profit__sidebar-empty">
+                                                <p className="profit__sidebar-hint">
+                                                    Este cliente no tiene proyectos registrados. Registra uno para poder
+                                                    continuar.
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    className="profit__ghost-button"
+                                                    onClick={openProjectModal}
+                                                >
+                                                    Crear proyecto
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
                                 )}
@@ -581,6 +653,51 @@ const GananciasPorProducto = () => {
                     </>
                 )}
             </div>
+
+            <Modal
+                isShowing={isProjectModalOpen}
+                setIsShowing={setIsProjectModalOpen}
+                onClose={closeProjectModal}
+                title="Agregar proyecto"
+            >
+                <form className="clients__project-form" onSubmit={submitProjectModal}>
+                    <h3 style={{ marginBottom: '1rem' }}>Registrar proyecto para {selectedCliente?.nombre}</h3>
+                    <label className="clients__project-form-field">
+                        Nombre del proyecto
+                        <input
+                            type="text"
+                            value={projectDraft.nombre}
+                            onChange={(event) => handleProjectDraftChange('nombre', event.target.value)}
+                            placeholder="Ej. Implementación CRM"
+                        />
+                    </label>
+                    <label className="clients__project-form-field">
+                        Dirección
+                        <input
+                            type="text"
+                            value={projectDraft.direccion}
+                            onChange={(event) => handleProjectDraftChange('direccion', event.target.value)}
+                            placeholder="Ej. Calle 123, Ciudad"
+                        />
+                    </label>
+                    <label className="clients__project-form-field">
+                        Descripción
+                        <textarea
+                            value={projectDraft.descripcion}
+                            onChange={(event) => handleProjectDraftChange('descripcion', event.target.value)}
+                            placeholder="Detalles o alcance del proyecto"
+                        />
+                    </label>
+                    <div className="clients__project-form-actions">
+                        <button type="button" className="btn btn-light" onClick={closeProjectModal}>
+                            Cancelar
+                        </button>
+                        <button type="submit" className="btn btn-primary">
+                            Crear proyecto
+                        </button>
+                    </div>
+                </form>
+            </Modal>
         </>
     );
 };
