@@ -204,6 +204,10 @@
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+.product-form__section-grid--prices {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
 .form-group--inline {
         display: flex;
         align-items: center;
@@ -223,6 +227,60 @@
 .toggle-label {
         font-weight: 600;
         color: #1d2433;
+}
+
+.product-form__field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+}
+
+.product-form__field--full {
+        grid-column: 1 / -1;
+}
+
+.product-form__field-label {
+        margin: 0;
+        font-weight: 700;
+        color: #1d2433;
+        font-size: 0.95rem;
+}
+
+.product-form__field-helper {
+        margin: 0.25rem 0 0;
+        color: #4b5563;
+        font-size: 0.9rem;
+}
+
+.product-form__iva-toggle {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.chip {
+        border: 1px solid rgba(30, 64, 175, 0.2);
+        background: #fff;
+        color: #1d2433;
+        padding: 0.65rem 0.9rem;
+        border-radius: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: center;
+        transition: all 0.2s ease;
+}
+
+.chip--active {
+        background: rgba(30, 64, 175, 0.08);
+        border-color: rgba(30, 64, 175, 0.6);
+        color: #1d4ed8;
+        box-shadow: 0 14px 36px -18px rgba(30, 64, 175, 0.55);
+}
+
+.chip:hover {
+        transform: translateY(-1px);
 }
 
 /* Estilos para el modal */
