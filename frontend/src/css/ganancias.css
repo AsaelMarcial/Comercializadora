@@ -315,10 +315,89 @@
 }
 
 .profit-product__quantity {
-    display: grid;
-    justify-items: end;
-    text-align: right;
-    gap: 0.3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+    text-align: left;
+}
+
+.profit-product__quantity label {
+    font-weight: 600;
+    color: var(--profit-text);
+}
+
+.profit-product__quantity-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.35rem;
+    background: #f8fafc;
+    border: 1px solid var(--profit-border);
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.04);
+}
+
+.profit-product__quantity-control button,
+.profit-product__quantity-control input {
+    height: 42px;
+    min-width: 42px;
+    border-radius: 12px;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.profit-product__quantity-control button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+    background: rgba(148, 163, 184, 0.15);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    color: var(--profit-text);
+    font-weight: 700;
+    transition: var(--profit-transition);
+    cursor: pointer;
+}
+
+.profit-product__quantity-control button:hover {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.35);
+    color: var(--profit-accent);
+}
+
+.profit-product__quantity-control button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(226, 232, 240, 0.6);
+}
+
+.profit-product__quantity-control input[type='number'] {
+    width: 84px;
+    text-align: center;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: #ffffff;
+    color: var(--profit-text);
+    padding: 0.35rem 0.5rem;
+    font-weight: 600;
+    transition: var(--profit-transition);
+}
+
+.profit-product__quantity-control input[type='number']:focus {
+    outline: none;
+    border-color: rgba(37, 99, 235, 0.6);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+.profit-product__quantity-remove {
+    background: rgba(248, 113, 113, 0.12) !important;
+    border-color: rgba(248, 113, 113, 0.35) !important;
+    color: #b91c1c !important;
+}
+
+.profit-product__quantity-remove:hover {
+    background: rgba(248, 113, 113, 0.2) !important;
+    border-color: rgba(248, 113, 113, 0.5) !important;
 }
 
 .profit-product__quantity span {
