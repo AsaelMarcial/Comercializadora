@@ -292,11 +292,6 @@ class CotizacionDetalleBase(BaseModel):
             "unitario enviado."
         ),
     )
-    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = Field(
-        default=None,
-        description="Costo unitario base utilizado para calcular la utilidad.",
-    )
-    ganancia_estimada: Optional[bool] = None
 
     class Config:
         schema_extra = {
@@ -307,7 +302,6 @@ class CotizacionDetalleBase(BaseModel):
                 "tipo_variante": "Caja",  # Ejemplo del nuevo campo
                 "ganancia_porcentaje": 15.5,
                 "ganancia_monto": 81.38,
-                "costo_base": 43.25,
             }
         }
 
@@ -317,7 +311,6 @@ class CotizacionDetalleBase(BaseModel):
         cantidad = values.get("cantidad")
         ganancia_porcentaje = values.get("ganancia_porcentaje")
         ganancia_monto = values.get("ganancia_monto")
-        costo_base = values.get("costo_base")
 
         if ganancia_porcentaje is not None and Decimal(ganancia_porcentaje) < 0:
             raise ValueError("ganancia_porcentaje no puede ser negativo")
@@ -344,25 +337,6 @@ class CotizacionDetalleBase(BaseModel):
                         raise ValueError(
                             "ganancia_monto no es consistente con ganancia_porcentaje y precio_unitario"
                         )
-            elif costo_base is not None:
-                precio_esperado = Decimal(costo_base) + (monto_decimal / cantidad_decimal)
-                if abs(precio_esperado - precio_unitario_decimal) > tolerancia:
-                    raise ValueError(
-                        "precio_unitario no es consistente con costo_base y ganancia_monto"
-                    )
-
-        if (
-            precio_unitario is not None
-            and costo_base is not None
-            and ganancia_porcentaje is not None
-        ):
-            precio_esperado = Decimal(costo_base) * (
-                Decimal("1") + Decimal(ganancia_porcentaje) / Decimal("100")
-            )
-            if abs(precio_esperado - Decimal(precio_unitario)) > Decimal("0.01"):
-                raise ValueError(
-                    "precio_unitario no es consistente con costo_base y ganancia_porcentaje"
-                )
 
         return values
 
@@ -437,7 +411,6 @@ class CotizacionDetalleUpdate(BaseModel):
     tipo_variante: Optional[str] = None
     ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
     ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None
-    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
 
 
 class CotizacionUpdate(BaseModel):
@@ -479,8 +452,6 @@ class CotizacionDetalleResponse(BaseModel):
     tipo_variante: Optional[str] = None  # Nuevo campo incluido
     ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
     ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None  # Total de utilidad por línea
-    ganancia_estimada: Optional[bool] = None
-    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
 
     class Config:
         orm_mode = True
