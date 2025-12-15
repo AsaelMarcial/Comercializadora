@@ -140,7 +140,7 @@ class CRUDCotizacion:
 
     def _calcular_ganancia_detalle(
         self, detalle: CotizacionDetalleCreate, producto: Optional[Producto] = None
-    ) -> tuple[Optional[Decimal], Optional[Decimal], Optional[Decimal], bool]:
+    ) -> tuple[Optional[Decimal], Optional[Decimal]]:
         """Calcula la ganancia en porcentaje y monto para un detalle.
 
         Si el frontend envía los valores ya calculados se respetan. Si solo se
@@ -152,47 +152,27 @@ class CRUDCotizacion:
         cantidad = Decimal(detalle.cantidad)
         ganancia_porcentaje = detalle.ganancia_porcentaje
         ganancia_monto = detalle.ganancia_monto
-        ganancia_estimada = False
-        costo_base = getattr(detalle, "costo_base", None)
         tipo_variante = getattr(detalle, "tipo_variante", None)
 
         if ganancia_porcentaje is not None:
             ganancia_porcentaje = Decimal(ganancia_porcentaje)
         if ganancia_monto is not None:
             ganancia_monto = Decimal(ganancia_monto)
-        if costo_base is not None:
-            costo_base = Decimal(costo_base)
-        else:
-            costo_base = self._obtener_costo_base_desde_producto(
-                detalle.producto_id, tipo_variante, producto
-            )
-            ganancia_estimada = True
+
+        costo_base = self._obtener_costo_base_desde_producto(
+            detalle.producto_id, tipo_variante, producto
+        )
 
         if ganancia_monto is None:
-            if costo_base is not None:
-                ganancia_unitaria = precio_unitario - costo_base
-                ganancia_monto = ganancia_unitaria * cantidad
-                ganancia_estimada = True
+            ganancia_unitaria = precio_unitario - costo_base
+            ganancia_monto = ganancia_unitaria * cantidad
 
-                if ganancia_porcentaje is None and costo_base != 0:
-                    ganancia_porcentaje = (
-                        ganancia_unitaria / costo_base * Decimal("100")
-                    )
-                    ganancia_estimada = True
+            if ganancia_porcentaje is None and costo_base != 0:
+                ganancia_porcentaje = (
+                    ganancia_unitaria / costo_base * Decimal("100")
+                )
 
-            elif ganancia_porcentaje is not None:
-                factor = Decimal("1") + ganancia_porcentaje / Decimal("100")
-                if factor != 0:
-                    costo_unitario = precio_unitario / factor
-                    ganancia_unitaria = precio_unitario - costo_unitario
-                    ganancia_monto = ganancia_unitaria * cantidad
-                    ganancia_estimada = True
-
-        if (
-            ganancia_porcentaje is None
-            and ganancia_monto is not None
-            and costo_base is not None
-        ):
+        if ganancia_porcentaje is None and ganancia_monto is not None:
             if cantidad == 0:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -201,7 +181,6 @@ class CRUDCotizacion:
             ganancia_unitaria = ganancia_monto / cantidad
             if costo_base != 0:
                 ganancia_porcentaje = ganancia_unitaria / costo_base * Decimal("100")
-                ganancia_estimada = True
 
         self._validar_consistencia_ganancia(
             precio_unitario,
@@ -211,7 +190,7 @@ class CRUDCotizacion:
             costo_base,
         )
 
-        return ganancia_porcentaje, ganancia_monto, costo_base, ganancia_estimada
+        return ganancia_porcentaje, ganancia_monto
 
     def crear_cotizacion(self, cotizacion_data: CotizacionCreate, usuario_id: int) -> Cotizacion:
         try:
@@ -264,12 +243,9 @@ class CRUDCotizacion:
                         detail=f"Producto con ID {detalle.producto_id} no encontrado."
                     )
 
-                (
-                    ganancia_porcentaje,
-                    ganancia_monto,
-                    costo_base,
-                    ganancia_estimada,
-                ) = self._calcular_ganancia_detalle(detalle, producto)
+                ganancia_porcentaje, ganancia_monto = self._calcular_ganancia_detalle(
+                    detalle, producto
+                )
 
                 nuevo_detalle = CotizacionDetalle(
                     cotizacion_id=nueva_cotizacion.id,
@@ -279,9 +255,7 @@ class CRUDCotizacion:
                     total=detalle.cantidad * detalle.precio_unitario,
                     ganancia_porcentaje=ganancia_porcentaje,
                     ganancia_monto=ganancia_monto,
-                    costo_base=costo_base,
-                    ganancia_estimada=ganancia_estimada,
-                    tipo_variante=detalle.tipo_variante
+                    tipo_variante=detalle.tipo_variante,
                 )
                 self.db.add(nuevo_detalle)
 
@@ -466,12 +440,9 @@ class CRUDCotizacion:
                 )
 
             detalle_total = Decimal(detalle.cantidad) * Decimal(detalle.precio_unitario)
-            (
-                ganancia_porcentaje,
-                ganancia_monto,
-                costo_base,
-                ganancia_estimada,
-            ) = self._calcular_ganancia_detalle(detalle, producto)
+            ganancia_porcentaje, ganancia_monto = self._calcular_ganancia_detalle(
+                detalle, producto
+            )
             nuevo_detalle = CotizacionDetalle(
                 cotizacion_id=cotizacion.id,
                 producto_id=detalle.producto_id,
@@ -480,8 +451,6 @@ class CRUDCotizacion:
                 total=detalle_total,
                 ganancia_porcentaje=ganancia_porcentaje,
                 ganancia_monto=ganancia_monto,
-                costo_base=costo_base,
-                ganancia_estimada=ganancia_estimada,
                 tipo_variante=detalle.tipo_variante,
             )
             self.db.add(nuevo_detalle)
