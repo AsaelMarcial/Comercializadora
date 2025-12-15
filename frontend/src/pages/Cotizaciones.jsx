@@ -188,7 +188,49 @@ const Cotizaciones = () => {
             const validOrder = order.filter(Boolean);
 
             if (validOrder.length) {
-                navigate('/app/ventas/ganancias', { state: { order: validOrder } });
+                const clienteState = {
+                    id:
+                        cotizacion.cliente_id ||
+                        cotizacion.clienteId ||
+                        cotizacion.cliente?.id ||
+                        null,
+                    nombre:
+                        cotizacion.cliente ||
+                        cotizacion.cliente_nombre ||
+                        cotizacion.clienteNombre ||
+                        cotizacion.cliente?.nombre ||
+                        '',
+                };
+
+                const proyectoState = {
+                    id:
+                        cotizacion.proyecto_id ||
+                        cotizacion.proyectoId ||
+                        cotizacion.proyecto?.id ||
+                        null,
+                    nombre:
+                        cotizacion.proyecto_nombre ||
+                        cotizacion.proyecto?.nombre ||
+                        cotizacion.proyectoNombre ||
+                        '',
+                    direccion:
+                        cotizacion.proyecto_direccion ||
+                        cotizacion.proyecto?.direccion ||
+                        cotizacion.proyectoDireccion ||
+                        '',
+                };
+
+                const navigationState = { order: validOrder };
+
+                if (clienteState.id || clienteState.nombre) {
+                    navigationState.cliente = clienteState;
+                }
+
+                if (proyectoState.id || proyectoState.nombre || proyectoState.direccion) {
+                    navigationState.proyecto = proyectoState;
+                }
+
+                navigate('/app/ventas/ganancias', { state: navigationState });
             }
         } catch (error) {
             console.error('Error al preparar la cotización para edición:', error);
