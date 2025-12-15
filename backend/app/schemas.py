@@ -1,5 +1,7 @@
-from pydantic import BaseModel, EmailStr, PositiveInt, constr, condecimal
+from decimal import Decimal
 from typing import Optional, List
+
+from pydantic import BaseModel, EmailStr, Field, PositiveInt, constr, condecimal, root_validator
 from datetime import datetime
 
 class ProveedorBase(BaseModel):
@@ -270,9 +272,30 @@ class CotizacionDetalleBase(BaseModel):
     cantidad: condecimal(max_digits=20, decimal_places=2)
     precio_unitario: condecimal(max_digits=20, decimal_places=2)
     tipo_variante: Optional[str] = None  # Nuevo campo agregado
-    ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
-    ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None
-    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
+    ganancia_porcentaje: Optional[
+        condecimal(max_digits=7, decimal_places=2, ge=0)
+    ] = Field(
+        default=None,
+        description=(
+            "Porcentaje de utilidad aplicado al costo base del producto (se admite 0). "
+            "Se utiliza para calcular la ganancia total del detalle cuando el monto no "
+            "se envía explícitamente."
+        ),
+    )
+    ganancia_monto: Optional[
+        condecimal(max_digits=20, decimal_places=2, ge=0)
+    ] = Field(
+        default=None,
+        description=(
+            "Monto total de utilidad del detalle considerando la cantidad solicitada "
+            "(se admite 0). Debe ser consistente con el porcentaje y el precio "
+            "unitario enviado."
+        ),
+    )
+    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = Field(
+        default=None,
+        description="Costo unitario base utilizado para calcular la utilidad.",
+    )
     ganancia_estimada: Optional[bool] = None
 
     class Config:
@@ -287,6 +310,61 @@ class CotizacionDetalleBase(BaseModel):
                 "costo_base": 43.25,
             }
         }
+
+    @root_validator
+    def validar_ganancias(cls, values):
+        precio_unitario = values.get("precio_unitario")
+        cantidad = values.get("cantidad")
+        ganancia_porcentaje = values.get("ganancia_porcentaje")
+        ganancia_monto = values.get("ganancia_monto")
+        costo_base = values.get("costo_base")
+
+        if ganancia_porcentaje is not None and Decimal(ganancia_porcentaje) < 0:
+            raise ValueError("ganancia_porcentaje no puede ser negativo")
+        if ganancia_monto is not None and Decimal(ganancia_monto) < 0:
+            raise ValueError("ganancia_monto no puede ser negativo")
+
+        if (
+            precio_unitario is not None
+            and cantidad is not None
+            and cantidad != 0
+            and ganancia_monto is not None
+        ):
+            cantidad_decimal = Decimal(cantidad)
+            precio_unitario_decimal = Decimal(precio_unitario)
+            monto_decimal = Decimal(ganancia_monto)
+            tolerancia = Decimal("0.01")
+
+            if ganancia_porcentaje is not None:
+                factor = Decimal("1") + Decimal(ganancia_porcentaje) / Decimal("100")
+                if factor != 0:
+                    costo_unitario_est = precio_unitario_decimal / factor
+                    monto_esperado = (precio_unitario_decimal - costo_unitario_est) * cantidad_decimal
+                    if abs(monto_esperado - monto_decimal) > tolerancia:
+                        raise ValueError(
+                            "ganancia_monto no es consistente con ganancia_porcentaje y precio_unitario"
+                        )
+            elif costo_base is not None:
+                precio_esperado = Decimal(costo_base) + (monto_decimal / cantidad_decimal)
+                if abs(precio_esperado - precio_unitario_decimal) > tolerancia:
+                    raise ValueError(
+                        "precio_unitario no es consistente con costo_base y ganancia_monto"
+                    )
+
+        if (
+            precio_unitario is not None
+            and costo_base is not None
+            and ganancia_porcentaje is not None
+        ):
+            precio_esperado = Decimal(costo_base) * (
+                Decimal("1") + Decimal(ganancia_porcentaje) / Decimal("100")
+            )
+            if abs(precio_esperado - Decimal(precio_unitario)) > Decimal("0.01"):
+                raise ValueError(
+                    "precio_unitario no es consistente con costo_base y ganancia_porcentaje"
+                )
+
+        return values
 
 class CotizacionDetalleCreate(CotizacionDetalleBase):
     pass
