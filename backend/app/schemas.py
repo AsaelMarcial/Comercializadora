@@ -270,6 +270,9 @@ class CotizacionDetalleBase(BaseModel):
     cantidad: condecimal(max_digits=20, decimal_places=2)
     precio_unitario: condecimal(max_digits=20, decimal_places=2)
     tipo_variante: Optional[str] = None  # Nuevo campo agregado
+    ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
+    ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None
+    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
 
     class Config:
         schema_extra = {
@@ -277,7 +280,10 @@ class CotizacionDetalleBase(BaseModel):
                 "producto_id": 1,
                 "cantidad": 10.5,
                 "precio_unitario": 50.00,
-                "tipo_variante": "Caja"  # Ejemplo del nuevo campo
+                "tipo_variante": "Caja",  # Ejemplo del nuevo campo
+                "ganancia_porcentaje": 15.5,
+                "ganancia_monto": 81.38,
+                "costo_base": 43.25,
             }
         }
 
@@ -350,6 +356,9 @@ class CotizacionDetalleUpdate(BaseModel):
     cantidad: Optional[condecimal(max_digits=20, decimal_places=2)] = None
     precio_unitario: Optional[condecimal(max_digits=20, decimal_places=2)] = None
     tipo_variante: Optional[str] = None
+    ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
+    ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None
+    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
 
 
 class CotizacionUpdate(BaseModel):
@@ -389,6 +398,8 @@ class CotizacionDetalleResponse(BaseModel):
     precio_unitario: condecimal(max_digits=10, decimal_places=2)
     total: condecimal(max_digits=10, decimal_places=2)
     tipo_variante: Optional[str] = None  # Nuevo campo incluido
+    ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
+    ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None  # Total de utilidad por línea
 
     class Config:
         orm_mode = True

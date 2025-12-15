@@ -218,6 +218,8 @@
                     <th>UNIDAD</th>
                     <th>CANTIDAD</th>
                     <th>PRECIO UNITARIO</th>
+                    <th>GANANCIA %</th>
+                    <th>GANANCIA</th>
                     <th>IMPORTE</th>
                 </tr>
             </thead>
@@ -235,6 +237,8 @@
                     <td>{{ producto.tipo_variante }}</td>
                     <td>{{ producto.cantidad }}</td>
                     <td>${{ producto.precio_unitario | format_number }}</td>
+                    <td>{% if producto.ganancia_porcentaje is not none %}{{ producto.ganancia_porcentaje | format_number }}{% endif %}</td>
+                    <td>{% if producto.ganancia_monto is not none %}${{ producto.ganancia_monto | format_number }}{% endif %}</td>
                     <td>${{ (producto.precio_unitario | float * producto.cantidad | float) | format_number }}</td>
                 </tr>
                 {% endfor %}
@@ -248,6 +252,8 @@
                     </td>
                     <td>{{ variante_envio }}</td>
                     <td>1</td>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td>${{ costo_envio | format_number }}</td>
