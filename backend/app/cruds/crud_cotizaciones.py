@@ -373,12 +373,6 @@ class CRUDCotizacion:
                     "cantidad": float(detalle.cantidad),
                     "precio_unitario": float(detalle.precio_unitario),
                     "total": float(detalle.total),
-                    "ganancia_porcentaje": float(detalle.ganancia_porcentaje)
-                    if detalle.ganancia_porcentaje is not None
-                    else None,
-                    "ganancia_monto": float(detalle.ganancia_monto)
-                    if detalle.ganancia_monto is not None
-                    else None,
                     "tipo_variante": detalle.tipo_variante,
                 }
                 for detalle in cotizacion.detalles
