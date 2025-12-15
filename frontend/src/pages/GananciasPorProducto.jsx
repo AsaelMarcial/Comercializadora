@@ -498,7 +498,25 @@ const GananciasPorProducto = () => {
         }
 
         const navigationState = {
-            productos: productosConGanancia,
+            productos: productosConGanancia.map((producto) => {
+                const cantidad = Number.parseFloat(producto.cantidad) || 0;
+                const costoBase = Number.parseFloat(
+                    producto.precioSeleccionado ?? producto.costo_base ?? 0
+                );
+                const gananciaPorcentaje = Number.parseFloat(producto.ganancia || 0);
+
+                const precioUnitario = costoBase * (1 + gananciaPorcentaje / 100);
+                const gananciaMonto = (precioUnitario - costoBase) * cantidad;
+
+                return {
+                    ...producto,
+                    costo_base: Number.isFinite(costoBase) ? costoBase : 0,
+                    ganancia_porcentaje: Number.isFinite(gananciaPorcentaje)
+                        ? gananciaPorcentaje
+                        : 0,
+                    ganancia_monto: Number.isFinite(gananciaMonto) ? gananciaMonto : 0,
+                };
+            }),
             granTotal: granTotal,
             cliente: selectedCliente,
         };
