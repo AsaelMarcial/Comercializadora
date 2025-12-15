@@ -6,6 +6,7 @@ import NavigationTitle from '../components/NavigationTitle';
 import { createCotizacion } from '../data-access/cotizacionesDataAccess';
 import { readAllSucursales } from '../data-access/sucursalesDataAccess';
 import '../css/confirmacionCotizacion.css';
+import { clearOrderStorage } from '../utils/orderStorage';
 
 const currencyFormatter = new Intl.NumberFormat('es-MX', {
     style: 'currency',
@@ -86,6 +87,7 @@ const ConfirmacionCotizacion = () => {
         onSuccess: () => {
             localStorage.removeItem(DRAFT_STORAGE_KEY);
             toast.success('Cotización guardada con éxito');
+            clearOrderStorage();
             navigate('/app/ventas/cotizaciones');
         },
         onError: (error) => {
