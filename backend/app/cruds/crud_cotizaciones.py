@@ -44,7 +44,6 @@ class CRUDCotizacion:
         cantidad: Decimal,
         ganancia_porcentaje: Optional[Decimal],
         ganancia_monto: Optional[Decimal],
-        costo_base: Optional[Decimal],
     ) -> None:
         """Verifica que el monto y el porcentaje de ganancia concuerden con el precio.
 
@@ -60,117 +59,38 @@ class CRUDCotizacion:
             )
 
         if ganancia_porcentaje is not None and ganancia_monto is not None:
-            factor = Decimal("1") + ganancia_porcentaje / Decimal("100")
-            if factor != 0:
-                costo_unitario_est = precio_unitario / factor
-                monto_esperado = (precio_unitario - costo_unitario_est) * cantidad
-                if abs(monto_esperado - ganancia_monto) > tolerancia:
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=(
-                            "ganancia_monto debe ser consistente con el porcentaje y el "
-                            "precio_unitario enviados."
-                        ),
-                    )
-
-        if ganancia_monto is not None and costo_base is not None:
-            precio_esperado = costo_base + (ganancia_monto / cantidad)
-            if abs(precio_esperado - precio_unitario) > tolerancia:
+            monto_esperado = precio_unitario * cantidad * (ganancia_porcentaje / Decimal("100"))
+            if abs(monto_esperado - ganancia_monto) > tolerancia:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=(
-                        "precio_unitario debe coincidir con costo_base y ganancia_monto."
+                        "ganancia_monto debe ser consistente con el porcentaje y el "
+                        "precio_unitario enviados."
                     ),
                 )
-
-        if ganancia_porcentaje is not None and costo_base is not None:
-            precio_esperado = costo_base * (Decimal("1") + ganancia_porcentaje / Decimal("100"))
-            if abs(precio_esperado - precio_unitario) > tolerancia:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=(
-                        "precio_unitario debe coincidir con costo_base y ganancia_porcentaje."
-                    ),
-                )
-
-    def _obtener_costo_base_desde_producto(
-        self, producto_id: int, tipo_variante: Optional[str], producto: Optional[Producto] = None
-    ) -> Optional[Decimal]:
-        """Obtiene el costo base del producto según la variante solicitada."""
-
-        if not tipo_variante:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="tipo_variante es requerido para calcular el costo base.",
-            )
-
-        producto_actual = producto or (
-            self.db.query(Producto).filter(Producto.id == producto_id).first()
-        )
-        if not producto_actual:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Producto con ID {producto_id} no encontrado.",
-            )
-
-        variante_normalizada = tipo_variante.lower()
-        if variante_normalizada == "caja":
-            costo_base = producto_actual.precio_caja_sin_iva
-        elif variante_normalizada == "pieza":
-            costo_base = producto_actual.precio_pieza_sin_iva
-        elif variante_normalizada in {"m2", "m²", "mt2"}:
-            costo_base = producto_actual.precio_m2_sin_iva
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=(
-                    "tipo_variante no es válido para calcular el costo base del producto."
-                ),
-            )
-
-        if costo_base is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=(
-                    "El producto no tiene registrado un precio sin IVA para la variante especificada."
-                ),
-            )
-
-        return Decimal(costo_base)
 
     def _calcular_ganancia_detalle(
-        self, detalle: CotizacionDetalleCreate, producto: Optional[Producto] = None
+        self, detalle: CotizacionDetalleCreate
     ) -> tuple[Optional[Decimal], Optional[Decimal]]:
         """Calcula la ganancia en porcentaje y monto para un detalle.
 
         Si el frontend envía los valores ya calculados se respetan. Si solo se
-        proporciona el costo base o el porcentaje, se calcula el monto de
-        utilidad total considerando el precio final y la cantidad.
+        proporciona el porcentaje se calcula el monto de utilidad total
+        considerando el precio final y la cantidad.
         """
 
         precio_unitario = Decimal(detalle.precio_unitario)
         cantidad = Decimal(detalle.cantidad)
         ganancia_porcentaje = detalle.ganancia_porcentaje
         ganancia_monto = detalle.ganancia_monto
-        tipo_variante = getattr(detalle, "tipo_variante", None)
 
         if ganancia_porcentaje is not None:
             ganancia_porcentaje = Decimal(ganancia_porcentaje)
         if ganancia_monto is not None:
             ganancia_monto = Decimal(ganancia_monto)
 
-        costo_base = self._obtener_costo_base_desde_producto(
-            detalle.producto_id, tipo_variante, producto
-        )
-
-        if ganancia_monto is None:
-            ganancia_unitaria = precio_unitario - costo_base
-            ganancia_monto = ganancia_unitaria * cantidad
-
-            if ganancia_porcentaje is None and costo_base != 0:
-                ganancia_porcentaje = (
-                    ganancia_unitaria / costo_base * Decimal("100")
-                )
+        if ganancia_monto is None and ganancia_porcentaje is not None:
+            ganancia_monto = precio_unitario * cantidad * (ganancia_porcentaje / Decimal("100"))
 
         if ganancia_porcentaje is None and ganancia_monto is not None:
             if cantidad == 0:
@@ -178,16 +98,13 @@ class CRUDCotizacion:
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="La cantidad del detalle debe ser mayor a cero para calcular la ganancia.",
                 )
-            ganancia_unitaria = ganancia_monto / cantidad
-            if costo_base != 0:
-                ganancia_porcentaje = ganancia_unitaria / costo_base * Decimal("100")
+            ganancia_porcentaje = (ganancia_monto / (precio_unitario * cantidad)) * Decimal("100")
 
         self._validar_consistencia_ganancia(
             precio_unitario,
             cantidad,
             ganancia_porcentaje,
             ganancia_monto,
-            costo_base,
         )
 
         return ganancia_porcentaje, ganancia_monto
@@ -243,9 +160,7 @@ class CRUDCotizacion:
                         detail=f"Producto con ID {detalle.producto_id} no encontrado."
                     )
 
-                ganancia_porcentaje, ganancia_monto = self._calcular_ganancia_detalle(
-                    detalle, producto
-                )
+                ganancia_porcentaje, ganancia_monto = self._calcular_ganancia_detalle(detalle)
 
                 nuevo_detalle = CotizacionDetalle(
                     cotizacion_id=nueva_cotizacion.id,
@@ -440,9 +355,7 @@ class CRUDCotizacion:
                 )
 
             detalle_total = Decimal(detalle.cantidad) * Decimal(detalle.precio_unitario)
-            ganancia_porcentaje, ganancia_monto = self._calcular_ganancia_detalle(
-                detalle, producto
-            )
+            ganancia_porcentaje, ganancia_monto = self._calcular_ganancia_detalle(detalle)
             nuevo_detalle = CotizacionDetalle(
                 cotizacion_id=cotizacion.id,
                 producto_id=detalle.producto_id,
