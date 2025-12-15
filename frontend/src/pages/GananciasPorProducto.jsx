@@ -97,6 +97,7 @@ const GananciasPorProducto = () => {
     const queryClient = useQueryClient();
     const [selectedCliente, setSelectedCliente] = useState(null);
     const [selectedProyecto, setSelectedProyecto] = useState(null);
+    const [initializedFromNavigation, setInitializedFromNavigation] = useState(false);
     const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
     const [projectDraft, setProjectDraft] = useState({ nombre: '', descripcion: '', direccion: '' });
 
@@ -111,6 +112,45 @@ const GananciasPorProducto = () => {
     useEffect(() => {
         saveOrder(productosConGanancia || []);
     }, [productosConGanancia]);
+
+    useEffect(() => {
+        if (initializedFromNavigation) return;
+
+        const clienteDesdeState = location.state?.cliente;
+        if (!clienteDesdeState || !clientes?.length) return;
+
+        const clienteMatch =
+            clientes.find((cliente) => cliente.id === Number(clienteDesdeState.id)) ||
+            clientes.find(
+                (cliente) =>
+                    cliente.nombre?.toLowerCase() === clienteDesdeState.nombre?.toLowerCase()
+            );
+
+        if (!clienteMatch) return;
+
+        setSelectedCliente(clienteMatch);
+
+        const proyectoDesdeState =
+            location.state?.proyecto || location.state?.proyectoSeleccionado || null;
+
+        if (proyectoDesdeState && Array.isArray(clienteMatch.proyectos)) {
+            const proyectoMatch =
+                clienteMatch.proyectos.find(
+                    (proyecto) => proyecto.id === Number(proyectoDesdeState.id || proyectoDesdeState.proyectoId)
+                ) ||
+                clienteMatch.proyectos.find(
+                    (proyecto) =>
+                        proyecto.nombre?.toLowerCase() ===
+                        (proyectoDesdeState.nombre || proyectoDesdeState.proyectoNombre)?.toLowerCase()
+                );
+
+            if (proyectoMatch) {
+                setSelectedProyecto(proyectoMatch);
+            }
+        }
+
+        setInitializedFromNavigation(true);
+    }, [clientes, initializedFromNavigation, location.state]);
 
     useEffect(() => {
         if (selectedCliente) {
