@@ -238,9 +238,38 @@ const ConfirmacionCotizacion = () => {
             costo_envio: envio,
             cliente_id: cliente?.id,
             detalles: productos.map((producto) => {
-                const precioBase = producto.precioSeleccionado || 0;
-                const ganancia = producto.ganancia || 0;
-                const precioUnitario = parseFloat((precioBase * (1 + ganancia / 100)).toFixed(2));
+                const cantidad = parseFloat(producto.cantidad) || 0;
+                const costoBase = parseFloat(
+                    producto.costo_base ?? producto.precioSeleccionado ?? 0
+                );
+                const gananciaPorcentaje =
+                    producto.ganancia_porcentaje ?? producto.ganancia ?? null;
+                const gananciaMontoPrevio =
+                    producto.ganancia_monto !== undefined ? producto.ganancia_monto : null;
+                const precioUnitarioExistente =
+                    producto.precio_unitario !== undefined ? producto.precio_unitario : null;
+
+                const precioUnitarioCalculado = (() => {
+                    if (precioUnitarioExistente !== null) {
+                        return parseFloat(precioUnitarioExistente) || 0;
+                    }
+
+                    if (gananciaMontoPrevio !== null && cantidad > 0) {
+                        return costoBase + parseFloat(gananciaMontoPrevio || 0) / cantidad;
+                    }
+
+                    if (gananciaPorcentaje !== null) {
+                        return costoBase * (1 + (parseFloat(gananciaPorcentaje) || 0) / 100);
+                    }
+
+                    return costoBase;
+                })();
+
+                const precioUnitario = parseFloat(precioUnitarioCalculado.toFixed(2));
+                const gananciaMonto =
+                    gananciaMontoPrevio !== null
+                        ? parseFloat(gananciaMontoPrevio)
+                        : parseFloat(((precioUnitario - costoBase) * cantidad).toFixed(2));
 
                 return {
                     producto_id: producto.producto.id,
@@ -248,6 +277,10 @@ const ConfirmacionCotizacion = () => {
                     cantidad: producto.cantidad,
                     precio_unitario: precioUnitario,
                     tipo_variante: producto.tipoPrecio,
+                    costo_base: parseFloat(costoBase.toFixed(2)),
+                    ganancia_porcentaje:
+                        gananciaPorcentaje !== null ? parseFloat(gananciaPorcentaje) : null,
+                    ganancia_monto: gananciaMonto,
                 };
             }),
             total: parseFloat(granTotalConIva.toFixed(2)),
