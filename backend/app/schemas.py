@@ -311,7 +311,7 @@ class CotizacionDetalleBase(BaseModel):
             }
         }
 
-    @root_validator
+    @root_validator(skip_on_failure=True)
     def validar_ganancias(cls, values):
         precio_unitario = values.get("precio_unitario")
         cantidad = values.get("cantidad")
