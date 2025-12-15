@@ -38,6 +38,61 @@ class CRUDCotizacion:
     def __init__(self, db: Session):
         self.db = db
 
+    @staticmethod
+    def _validar_consistencia_ganancia(
+        precio_unitario: Decimal,
+        cantidad: Decimal,
+        ganancia_porcentaje: Optional[Decimal],
+        ganancia_monto: Optional[Decimal],
+        costo_base: Optional[Decimal],
+    ) -> None:
+        """Verifica que el monto y el porcentaje de ganancia concuerden con el precio.
+
+        Se utiliza una tolerancia pequeña para evitar errores por redondeo.
+        """
+
+        tolerancia = Decimal("0.01")
+
+        if cantidad == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La cantidad del detalle debe ser mayor a cero para calcular la ganancia.",
+            )
+
+        if ganancia_porcentaje is not None and ganancia_monto is not None:
+            factor = Decimal("1") + ganancia_porcentaje / Decimal("100")
+            if factor != 0:
+                costo_unitario_est = precio_unitario / factor
+                monto_esperado = (precio_unitario - costo_unitario_est) * cantidad
+                if abs(monto_esperado - ganancia_monto) > tolerancia:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail=(
+                            "ganancia_monto debe ser consistente con el porcentaje y el "
+                            "precio_unitario enviados."
+                        ),
+                    )
+
+        if ganancia_monto is not None and costo_base is not None:
+            precio_esperado = costo_base + (ganancia_monto / cantidad)
+            if abs(precio_esperado - precio_unitario) > tolerancia:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=(
+                        "precio_unitario debe coincidir con costo_base y ganancia_monto."
+                    ),
+                )
+
+        if ganancia_porcentaje is not None and costo_base is not None:
+            precio_esperado = costo_base * (Decimal("1") + ganancia_porcentaje / Decimal("100"))
+            if abs(precio_esperado - precio_unitario) > tolerancia:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=(
+                        "precio_unitario debe coincidir con costo_base y ganancia_porcentaje."
+                    ),
+                )
+
     def _calcular_ganancia_detalle(
         self, detalle: CotizacionDetalleCreate
     ) -> tuple[Optional[Decimal], Optional[Decimal], bool]:
@@ -55,23 +110,37 @@ class CRUDCotizacion:
         ganancia_estimada = False
         costo_base = getattr(detalle, "costo_base", None)
 
+        if ganancia_porcentaje is not None:
+            ganancia_porcentaje = Decimal(ganancia_porcentaje)
+        if ganancia_monto is not None:
+            ganancia_monto = Decimal(ganancia_monto)
+        if costo_base is not None:
+            costo_base = Decimal(costo_base)
+
         if ganancia_monto is None:
             if costo_base is not None:
-                costo_unitario = Decimal(costo_base)
-                ganancia_unitaria = precio_unitario - costo_unitario
+                ganancia_unitaria = precio_unitario - costo_base
                 ganancia_monto = ganancia_unitaria * cantidad
 
-                if ganancia_porcentaje is None and costo_unitario != 0:
+                if ganancia_porcentaje is None and costo_base != 0:
                     ganancia_porcentaje = (
-                        ganancia_unitaria / costo_unitario * Decimal("100")
+                        ganancia_unitaria / costo_base * Decimal("100")
                     )
 
             elif ganancia_porcentaje is not None:
-                factor = Decimal("1") + Decimal(ganancia_porcentaje) / Decimal("100")
+                factor = Decimal("1") + ganancia_porcentaje / Decimal("100")
                 if factor != 0:
                     costo_unitario = precio_unitario / factor
                     ganancia_unitaria = precio_unitario - costo_unitario
                     ganancia_monto = ganancia_unitaria * cantidad
+
+        self._validar_consistencia_ganancia(
+            precio_unitario,
+            cantidad,
+            ganancia_porcentaje,
+            ganancia_monto,
+            costo_base,
+        )
 
         return ganancia_porcentaje, ganancia_monto, ganancia_estimada
 
