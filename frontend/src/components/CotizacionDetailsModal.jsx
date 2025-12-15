@@ -76,6 +76,12 @@ const CotizacionDetailsModal = ({
         cotizacion.proyectoDireccion;
     const folio = cotizacion.folio || cotizacion.id;
     const fechaEmision = new Date(cotizacion.fecha).toLocaleDateString();
+    const hayMargenes = productosDetalles.some(({ ganancia_porcentaje, ganancia_monto }) => {
+        const tienePorcentaje = ganancia_porcentaje !== null && ganancia_porcentaje !== undefined && ganancia_porcentaje !== '';
+        const tieneMonto = ganancia_monto !== null && ganancia_monto !== undefined && ganancia_monto !== '';
+        return tienePorcentaje || tieneMonto;
+    });
+    const hayEstimados = productosDetalles.some(({ ganancia_estimada }) => ganancia_estimada);
 
     return (
         <div className="modal-backdrop" onClick={handleBackdropClick}>
@@ -135,6 +141,12 @@ const CotizacionDetailsModal = ({
                             </div>
                             <p className="muted">{productosDetalles.length} ítems</p>
                         </div>
+                        {hayEstimados && (
+                            <div className="table-card__alert" role="status">
+                                <i className="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                Algunos márgenes se estimaron mediante backfill y pueden ser inexactos.
+                            </div>
+                        )}
                         <div className="table-wrapper">
                             <table>
                                 <thead>
@@ -144,6 +156,8 @@ const CotizacionDetailsModal = ({
                                         <th>Cantidad</th>
                                         <th>Precio Unitario</th>
                                         <th>Total</th>
+                                        {hayMargenes && <th>Margen %</th>}
+                                        {hayMargenes && <th>Margen $</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -154,6 +168,26 @@ const CotizacionDetailsModal = ({
                                             <td>{detalle.cantidad}</td>
                                             <td>${parseFloat(detalle.precio_unitario).toFixed(2)}</td>
                                             <td>${parseFloat(detalle.total).toFixed(2)}</td>
+                                            {hayMargenes && (
+                                                <>
+                                                    <td>
+                                                        {detalle.ganancia_porcentaje !== null &&
+                                                        detalle.ganancia_porcentaje !== undefined ? (
+                                                            `${parseFloat(detalle.ganancia_porcentaje).toFixed(2)}%`
+                                                        ) : (
+                                                            '—'
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        {detalle.ganancia_monto !== null &&
+                                                        detalle.ganancia_monto !== undefined ? (
+                                                            `$${parseFloat(detalle.ganancia_monto).toFixed(2)}`
+                                                        ) : (
+                                                            '—'
+                                                        )}
+                                                    </td>
+                                                </>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>
@@ -223,6 +257,9 @@ CotizacionDetailsModal.propTypes = {
                     PropTypes.number,
                 ]).isRequired,
                 total: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+                ganancia_porcentaje: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+                ganancia_monto: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+                ganancia_estimada: PropTypes.bool,
             })
         ).isRequired,
         folio: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

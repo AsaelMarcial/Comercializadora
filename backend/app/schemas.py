@@ -273,6 +273,7 @@ class CotizacionDetalleBase(BaseModel):
     ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
     ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None
     costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
+    ganancia_estimada: Optional[bool] = None
 
     class Config:
         schema_extra = {
@@ -400,6 +401,8 @@ class CotizacionDetalleResponse(BaseModel):
     tipo_variante: Optional[str] = None  # Nuevo campo incluido
     ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
     ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None  # Total de utilidad por línea
+    ganancia_estimada: Optional[bool] = None
+    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
 
     class Config:
         orm_mode = True
