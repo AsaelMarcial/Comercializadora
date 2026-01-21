@@ -271,6 +271,7 @@ class CotizacionDetalleBase(BaseModel):
     producto_id: PositiveInt
     cantidad: condecimal(max_digits=20, decimal_places=2)
     precio_unitario: condecimal(max_digits=20, decimal_places=2)
+    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
     tipo_variante: Optional[str] = None  # Nuevo campo agregado
     ganancia_porcentaje: Optional[
         condecimal(max_digits=7, decimal_places=2, ge=0)
@@ -299,6 +300,7 @@ class CotizacionDetalleBase(BaseModel):
                 "producto_id": 1,
                 "cantidad": 10.5,
                 "precio_unitario": 50.00,
+                "costo_base": 45.00,
                 "tipo_variante": "Caja",  # Ejemplo del nuevo campo
                 "ganancia_porcentaje": 15.5,
                 "ganancia_monto": 81.38,
@@ -408,6 +410,7 @@ class CotizacionDetalleUpdate(BaseModel):
     producto_id: Optional[PositiveInt] = None
     cantidad: Optional[condecimal(max_digits=20, decimal_places=2)] = None
     precio_unitario: Optional[condecimal(max_digits=20, decimal_places=2)] = None
+    costo_base: Optional[condecimal(max_digits=20, decimal_places=2)] = None
     tipo_variante: Optional[str] = None
     ganancia_porcentaje: Optional[condecimal(max_digits=7, decimal_places=2)] = None
     ganancia_monto: Optional[condecimal(max_digits=20, decimal_places=2)] = None

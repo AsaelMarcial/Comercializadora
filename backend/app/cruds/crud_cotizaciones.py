@@ -44,6 +44,7 @@ class CRUDCotizacion:
         cantidad: Decimal,
         ganancia_porcentaje: Optional[Decimal],
         ganancia_monto: Optional[Decimal],
+        costo_base: Optional[Decimal] = None,
     ) -> None:
         """Verifica que el monto y el porcentaje de ganancia concuerden con el precio.
 
@@ -59,7 +60,10 @@ class CRUDCotizacion:
             )
 
         if ganancia_porcentaje is not None and ganancia_monto is not None:
-            monto_esperado = precio_unitario * cantidad * (ganancia_porcentaje / Decimal("100"))
+            if costo_base is not None:
+                monto_esperado = costo_base * cantidad * (ganancia_porcentaje / Decimal("100"))
+            else:
+                monto_esperado = precio_unitario * cantidad * (ganancia_porcentaje / Decimal("100"))
             if abs(monto_esperado - ganancia_monto) > tolerancia:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -83,14 +87,20 @@ class CRUDCotizacion:
         cantidad = Decimal(detalle.cantidad)
         ganancia_porcentaje = detalle.ganancia_porcentaje
         ganancia_monto = detalle.ganancia_monto
+        costo_base = detalle.costo_base
 
         if ganancia_porcentaje is not None:
             ganancia_porcentaje = Decimal(ganancia_porcentaje)
         if ganancia_monto is not None:
             ganancia_monto = Decimal(ganancia_monto)
+        if costo_base is not None:
+            costo_base = Decimal(costo_base)
 
         if ganancia_monto is None and ganancia_porcentaje is not None:
-            ganancia_monto = precio_unitario * cantidad * (ganancia_porcentaje / Decimal("100"))
+            if costo_base is not None:
+                ganancia_monto = costo_base * cantidad * (ganancia_porcentaje / Decimal("100"))
+            else:
+                ganancia_monto = precio_unitario * cantidad * (ganancia_porcentaje / Decimal("100"))
 
         if ganancia_porcentaje is None and ganancia_monto is not None:
             if cantidad == 0:
@@ -98,13 +108,15 @@ class CRUDCotizacion:
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="La cantidad del detalle debe ser mayor a cero para calcular la ganancia.",
                 )
-            ganancia_porcentaje = (ganancia_monto / (precio_unitario * cantidad)) * Decimal("100")
+            base_para_porcentaje = costo_base if costo_base is not None else precio_unitario
+            ganancia_porcentaje = (ganancia_monto / (base_para_porcentaje * cantidad)) * Decimal("100")
 
         self._validar_consistencia_ganancia(
             precio_unitario,
             cantidad,
             ganancia_porcentaje,
             ganancia_monto,
+            costo_base,
         )
 
         return ganancia_porcentaje, ganancia_monto
