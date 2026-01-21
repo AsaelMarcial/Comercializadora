@@ -27,7 +27,7 @@ const ProductDetailsModal = ({ product, onClose }) => {
     ];
 
     const imageUrl = product.id
-        ? `http://147.93.47.106:8000/uploads/producto_${product.id}.jpeg`
+        ? `http://74.208.222.71:8000/uploads/producto_${product.id}.jpeg`
         : '';
 
     const formatCurrency = (value) => {

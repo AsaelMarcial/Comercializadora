@@ -260,7 +260,7 @@ const Products = () => {
                                     <figure className="product-card__media">
                                         {product.id ? (
                                             <img
-                                                src={`http://147.93.47.106:8000/uploads/producto_${product.id}.jpeg`}
+                                                src={`http://74.208.222.71:8000/uploads/producto_${product.id}.jpeg`}
                                                 alt={product.nombre}
                                                 onError={(event) => {
                                                     event.currentTarget.onerror = null;

@@ -8,7 +8,7 @@ import ProductDetailsModal from '../components/ProductDetailsModal';
 import '../css/ventas.css';
 import { loadOrder, saveOrder } from '../utils/orderStorage';
 
-const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
+const IMAGE_BASE_URL = 'http://74.208.222.71:8000/uploads';
 
 const Ventas = () => {
     const navigate = useNavigate();

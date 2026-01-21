@@ -27,7 +27,7 @@ const Login = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://147.93.47.106:8000/login', {
+      const response = await fetch('http://74.208.222.71:8000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

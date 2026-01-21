@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 # Ruta de la plantilla HTML
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../templates")
-IMAGE_BASE_URL = "http://147.93.47.106:8000/uploads"  # Base URL para las imágenes
+IMAGE_BASE_URL = "http://74.208.222.71:8000/uploads"  # Base URL para las imágenes
 
 
 def format_number(value):

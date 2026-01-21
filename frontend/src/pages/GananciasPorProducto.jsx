@@ -8,7 +8,7 @@ import '../css/ganancias.css';
 import { toast } from 'react-toastify';
 import { loadOrder, saveOrder } from '../utils/orderStorage';
 
-const IMAGE_BASE_URL = 'http://147.93.47.106:8000/uploads';
+const IMAGE_BASE_URL = 'http://74.208.222.71:8000/uploads';
 const GAIN_SLIDER_MAX = 120;
 
 const obtenerCantidadAjustada = (cantidad) => parseFloat(cantidad) || 0;
