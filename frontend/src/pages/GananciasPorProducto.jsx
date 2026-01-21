@@ -455,6 +455,16 @@ const GananciasPorProducto = () => {
         actualizarCantidad(producto.producto?.id, cantidadAjustada);
     };
 
+    const moveProduct = (fromIndex, toIndex) => {
+        setProductosConGanancia((prev) => {
+            if (toIndex < 0 || toIndex >= prev.length) return prev;
+            const updated = [...prev];
+            const [moved] = updated.splice(fromIndex, 1);
+            updated.splice(toIndex, 0, moved);
+            return updated;
+        });
+    };
+
     const aplicarDescuentoCliente = () => {
         if (!selectedCliente) return;
         setProductosConGanancia((prev) =>
@@ -712,7 +722,7 @@ const GananciasPorProducto = () => {
                             </aside>
 
                             <div className="profit__products" aria-live="polite">
-                                {productosConGanancia.map((producto) => {
+                                {productosConGanancia.map((producto, index) => {
                                     const cantidad = parseFloat(producto.cantidad) || 0;
                                     const contenidoCaja = obtenerCantidadMinimaCaja(producto);
                                     const minimoCaja = producto.requiereCajaCompleta ? 1 : 0;
@@ -730,6 +740,26 @@ const GananciasPorProducto = () => {
                                     return (
                                         <article className="profit-product" key={producto.producto?.id}>
                                             <header className="profit-product__header">
+                                                <div className="profit-product__order" aria-label="Orden del producto">
+                                                    <button
+                                                        type="button"
+                                                        className="profit-product__order-button"
+                                                        onClick={() => moveProduct(index, index - 1)}
+                                                        disabled={index === 0}
+                                                        aria-label="Mover producto hacia arriba"
+                                                    >
+                                                        ▲
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="profit-product__order-button"
+                                                        onClick={() => moveProduct(index, index + 1)}
+                                                        disabled={index === productosConGanancia.length - 1}
+                                                        aria-label="Mover producto hacia abajo"
+                                                    >
+                                                        ▼
+                                                    </button>
+                                                </div>
                                                 <div className="profit-product__thumbnail" aria-hidden="true">
                                                     <img
                                                         src={imageSrc}

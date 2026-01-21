@@ -475,6 +475,36 @@
 }
 
 
+
+.profit-product__order {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.profit-product__order-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid rgba(15, 92, 155, 0.2);
+    background: #f1f6fb;
+    color: #0f5c9b;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.profit-product__order-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(15, 92, 155, 0.2);
+}
+
+.profit-product__order-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
 .profit-product__gain-control {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 120px auto;
