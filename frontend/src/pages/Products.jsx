@@ -7,6 +7,7 @@ import { QUERY_OPTIONS } from '../utils/useQuery';
 import Modal from '../components/Modal';
 import ProductForm from '../forms/ProductForm';
 import ProductDetailsModal from '../components/ProductDetailsModal';
+import { UPLOADS_BASE_URL } from '../data-access/dataAccessUtils';
 import UploadImageModal from '../components/UploadImageModal';
 import '../css/products.css';
 
@@ -260,7 +261,7 @@ const Products = () => {
                                     <figure className="product-card__media">
                                         {product.id ? (
                                             <img
-                                                src={`http://74.208.222.71:8000/uploads/producto_${product.id}.jpeg`}
+                                                src={`${UPLOADS_BASE_URL}/producto_${product.id}.jpeg`}
                                                 alt={product.nombre}
                                                 onError={(event) => {
                                                     event.currentTarget.onerror = null;

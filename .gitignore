@@ -170,3 +170,4 @@ coverage/
 *.tmp
 *.temp
 .cache/
+.github/copilot-instructions.md

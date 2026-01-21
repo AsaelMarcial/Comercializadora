@@ -50,6 +50,21 @@ export const readAllProducts = async () => {
     }
 };
 
+export const readPublicProducts = async () => {
+    try {
+        const url = `${API_HOST}/${API_SERVICE}-publicos`;
+        const response = await fetch(url, {
+            method: 'GET',
+        });
+
+        const products = await processResponse(response);
+        return products;
+    } catch (error) {
+        console.error('Error al obtener productos públicos:', error);
+        throw new Error(error.message);
+    }
+};
+
 // Nueva función para obtener un producto por su ID
 export const getProductById = async (id) => {
     try {

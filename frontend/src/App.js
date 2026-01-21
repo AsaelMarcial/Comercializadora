@@ -12,6 +12,7 @@ import GananciasPorProducto from './pages/GananciasPorProducto';
 import Users from './pages/Users';
 import Help from './pages/Help';
 import Login from './pages/Login';
+import PublicCatalog from './pages/PublicCatalog';
 import PrivateRoute from './components/PrivateRoute';
 import ConfirmacionCotizacion from "./pages/ConfirmacionCotizacion";
 import Proveedores from './pages/Proveedores';
@@ -25,7 +26,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Ruta pública: Login */}
+        {/* Rutas públicas */}
+        <Route path="/" element={<PublicCatalog />} />
+        <Route path="/catalogo" element={<PublicCatalog />} />
         <Route path="/login" element={<Login />} />
 
         {/* Rutas privadas */}
@@ -51,7 +54,7 @@ function App() {
         </Route>
 
         {/* Redirección a login para rutas no válidas */}
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );

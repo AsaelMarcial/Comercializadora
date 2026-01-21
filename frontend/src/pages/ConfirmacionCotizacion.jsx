@@ -16,6 +16,11 @@ const currencyFormatter = new Intl.NumberFormat('es-MX', {
 
 const formatCurrency = (value) => currencyFormatter.format(Number.isFinite(value) ? value : 0);
 
+const toTwoDecimals = (value, fallback = 0) => {
+    const numberValue = Number.parseFloat(value);
+    return Number.isFinite(numberValue) ? parseFloat(numberValue.toFixed(2)) : fallback;
+};
+
 const shippingOptions = [
     { value: 'Servicio completo', label: 'Servicio completo' },
     { value: 'Paquetería', label: 'Paquetería' },
@@ -265,11 +270,11 @@ const ConfirmacionCotizacion = () => {
                     return costoBase;
                 })();
 
-                const precioUnitario = parseFloat(precioUnitarioCalculado.toFixed(2));
+                const precioUnitario = toTwoDecimals(precioUnitarioCalculado, 0);
                 const gananciaMonto =
                     gananciaMontoPrevio !== null
-                        ? parseFloat(gananciaMontoPrevio)
-                        : parseFloat(((precioUnitario - costoBase) * cantidad).toFixed(2));
+                        ? toTwoDecimals(gananciaMontoPrevio, 0)
+                        : toTwoDecimals((precioUnitario - costoBase) * cantidad, 0);
 
                 return {
                     producto_id: producto.producto.id,
@@ -277,9 +282,11 @@ const ConfirmacionCotizacion = () => {
                     cantidad: producto.cantidad,
                     precio_unitario: precioUnitario,
                     tipo_variante: producto.tipoPrecio,
-                    costo_base: parseFloat(costoBase.toFixed(2)),
+                    costo_base: toTwoDecimals(costoBase, 0),
                     ganancia_porcentaje:
-                        gananciaPorcentaje !== null ? parseFloat(gananciaPorcentaje) : null,
+                        gananciaPorcentaje !== null
+                            ? toTwoDecimals(gananciaPorcentaje, 0)
+                            : null,
                     ganancia_monto: gananciaMonto,
                 };
             }),

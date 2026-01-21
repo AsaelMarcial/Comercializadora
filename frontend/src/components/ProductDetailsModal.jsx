@@ -1,7 +1,8 @@
 import React from 'react';
+import { UPLOADS_BASE_URL } from '../data-access/dataAccessUtils';
 import '../css/productDetailsModal.css';
 
-const ProductDetailsModal = ({ product, onClose }) => {
+const ProductDetailsModal = ({ product, onClose, showPricing = true }) => {
     if (!product) return null; // No mostrar si no hay producto seleccionado.
 
     const generalDetails = [
@@ -27,7 +28,7 @@ const ProductDetailsModal = ({ product, onClose }) => {
     ];
 
     const imageUrl = product.id
-        ? `http://74.208.222.71:8000/uploads/producto_${product.id}.jpeg`
+        ? `${UPLOADS_BASE_URL}/producto_${product.id}.jpeg`
         : '';
 
     const formatCurrency = (value) => {
@@ -88,23 +89,25 @@ const ProductDetailsModal = ({ product, onClose }) => {
                                 </div>
                             </div>
 
-                            <div className="product-modal__section">
-                                <div className="product-modal__section-header">
-                                    <div>
-                                        <p className="product-modal__eyebrow">Comercial</p>
-                                        <h5 className="product-modal__section-title">Precios</h5>
-                                    </div>
-                                    <span className="product-modal__badge">MXN</span>
-                                </div>
-                                <div className="product-modal__info-grid product-modal__info-grid--prices">
-                                    {pricingDetails.map((item) => (
-                                        <div key={item.label} className="product-modal__card product-modal__card--highlight">
-                                            <p className="product-modal__card-label">{item.label}</p>
-                                            <p className="product-modal__card-value">{formatCurrency(item.value)}</p>
+                            {showPricing && (
+                                <div className="product-modal__section">
+                                    <div className="product-modal__section-header">
+                                        <div>
+                                            <p className="product-modal__eyebrow">Comercial</p>
+                                            <h5 className="product-modal__section-title">Precios</h5>
                                         </div>
-                                    ))}
+                                        <span className="product-modal__badge">MXN</span>
+                                    </div>
+                                    <div className="product-modal__info-grid product-modal__info-grid--prices">
+                                        {pricingDetails.map((item) => (
+                                            <div key={item.label} className="product-modal__card product-modal__card--highlight">
+                                                <p className="product-modal__card-label">{item.label}</p>
+                                                <p className="product-modal__card-value">{formatCurrency(item.value)}</p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
