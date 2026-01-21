@@ -1,4 +1,6 @@
-export const API_HOST = 'http://74.208.222.71:8000'
+export const API_HOST = '/api'
+
+export const UPLOADS_BASE_URL = `${API_HOST}/uploads`;
 
 // dataAccessUtils.js
 export const processResponse = async (response) => {

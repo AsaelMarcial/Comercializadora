@@ -6,9 +6,10 @@ import { readAllProducts } from '../data-access/productsDataAccess';
 import { QUERY_OPTIONS } from '../utils/useQuery';
 import ProductDetailsModal from '../components/ProductDetailsModal';
 import '../css/ventas.css';
+import { UPLOADS_BASE_URL } from '../data-access/dataAccessUtils';
 import { loadOrder, saveOrder } from '../utils/orderStorage';
 
-const IMAGE_BASE_URL = 'http://74.208.222.71:8000/uploads';
+const IMAGE_BASE_URL = UPLOADS_BASE_URL;
 
 const Ventas = () => {
     const navigate = useNavigate();

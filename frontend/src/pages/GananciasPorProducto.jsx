@@ -5,10 +5,11 @@ import NavigationTitle from '../components/NavigationTitle';
 import Modal from '../components/Modal';
 import { createClienteProject, readAllClientes } from '../data-access/clientesDataAccess';
 import '../css/ganancias.css';
+import { UPLOADS_BASE_URL } from '../data-access/dataAccessUtils';
 import { toast } from 'react-toastify';
 import { loadOrder, saveOrder } from '../utils/orderStorage';
 
-const IMAGE_BASE_URL = 'http://74.208.222.71:8000/uploads';
+const IMAGE_BASE_URL = UPLOADS_BASE_URL;
 const GAIN_SLIDER_MAX = 120;
 
 const obtenerCantidadAjustada = (cantidad) => parseFloat(cantidad) || 0;

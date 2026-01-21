@@ -1,4 +1,5 @@
 import React from 'react';
+import { UPLOADS_BASE_URL } from '../data-access/dataAccessUtils';
 import '../css/productDetailsModal.css';
 
 const ProductDetailsModal = ({ product, onClose }) => {
@@ -27,7 +28,7 @@ const ProductDetailsModal = ({ product, onClose }) => {
     ];
 
     const imageUrl = product.id
-        ? `http://74.208.222.71:8000/uploads/producto_${product.id}.jpeg`
+        ? `${UPLOADS_BASE_URL}/producto_${product.id}.jpeg`
         : '';
 
     const formatCurrency = (value) => {
