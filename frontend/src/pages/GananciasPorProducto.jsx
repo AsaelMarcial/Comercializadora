@@ -23,6 +23,21 @@ const obtenerCantidadMinimaCaja = (producto) => {
     return 0;
 };
 
+const obtenerContenidoCajaInfo = (producto) => {
+    const baseProducto = producto.producto || {};
+    const m2Caja = parseFloat(baseProducto.m2_caja);
+    if (Number.isFinite(m2Caja) && m2Caja > 0) {
+        return { cantidad: m2Caja, unidad: 'm2' };
+    }
+
+    const piezasCaja = parseFloat(baseProducto.piezas_caja);
+    if (Number.isFinite(piezasCaja) && piezasCaja > 0) {
+        return { cantidad: piezasCaja, unidad: 'piezas' };
+    }
+
+    return { cantidad: 0, unidad: 'unidades' };
+};
+
 const calcularCajasNecesarias = (cantidadUnidades, contenidoCaja) => {
     if (!Number.isFinite(contenidoCaja) || contenidoCaja <= 0) {
         return Math.max(1, Math.ceil(cantidadUnidades || 1));
@@ -30,6 +45,33 @@ const calcularCajasNecesarias = (cantidadUnidades, contenidoCaja) => {
 
     const unidades = Number.isFinite(cantidadUnidades) ? cantidadUnidades : 0;
     return Math.max(1, Math.ceil(unidades / contenidoCaja));
+};
+
+const obtenerCantidadSolicitada = (producto) =>
+    obtenerCantidadAjustada(producto.cantidadSolicitada ?? producto.cantidad);
+
+const obtenerCajasNecesarias = (producto) => {
+    const { cantidad } = obtenerContenidoCajaInfo(producto);
+    return calcularCajasNecesarias(obtenerCantidadSolicitada(producto), cantidad);
+};
+
+const obtenerCantidadParaPrecio = (producto) => {
+    if (!producto.requiereCajaCompleta) {
+        return obtenerCantidadSolicitada(producto);
+    }
+
+    const cajas = obtenerCajasNecesarias(producto);
+    const baseProducto = producto.producto || {};
+
+    switch (producto.tipoPrecio) {
+        case 'm2':
+            return cajas * (parseFloat(baseProducto.m2_caja) || 0);
+        case 'pieza':
+            return cajas * (parseFloat(baseProducto.piezas_caja) || 0);
+        case 'caja':
+        default:
+            return cajas;
+    }
 };
 
 const GananciasPorProducto = () => {
@@ -71,6 +113,7 @@ const GananciasPorProducto = () => {
                 tipoPrecioPrevio: producto.tipoPrecioPrevio || tipoPrecioInicial,
                 requiereCajaCompleta,
                 cantidad: cantidadAjustada,
+                cantidadSolicitada: producto.cantidadSolicitada ?? cantidadAjustada,
             };
         });
 
@@ -248,7 +291,7 @@ const GananciasPorProducto = () => {
                 if (!producto.precioSeleccionado || Number.isNaN(producto.precioSeleccionado)) {
                     return total;
                 }
-                const cantidad = parseFloat(producto.cantidad) || 0;
+                const cantidad = obtenerCantidadParaPrecio(producto);
                 return total + producto.precioSeleccionado * cantidad;
             }, 0),
         [productosConGanancia]
@@ -257,7 +300,7 @@ const GananciasPorProducto = () => {
     const totalGanancia = useMemo(
         () =>
             productosConGanancia.reduce((total, producto) => {
-                const cantidad = parseFloat(producto.cantidad) || 0;
+                const cantidad = obtenerCantidadParaPrecio(producto);
                 const gananciaUnitaria = (producto.precioSeleccionado * producto.ganancia) / 100;
                 return total + gananciaUnitaria * cantidad;
             }, 0),
@@ -282,8 +325,8 @@ const GananciasPorProducto = () => {
             productosConGanancia.filter((producto) => {
                 if (!producto.requiereCajaCompleta) return false;
 
-                const cantidadActual = parseFloat(producto.cantidad) || 0;
-                return cantidadActual < 1;
+                const cantidadSolicitada = obtenerCantidadSolicitada(producto);
+                return cantidadSolicitada <= 0;
             }).length,
         [productosConGanancia]
     );
@@ -379,14 +422,23 @@ const GananciasPorProducto = () => {
                 const cantidadNumerica = obtenerCantidadAjustada(nuevaCantidad);
 
                 if (producto.requiereCajaCompleta) {
-                    const cajas = Math.max(1, Math.ceil(cantidadNumerica || 0));
+                    const contenidoCaja = obtenerContenidoCajaInfo(producto).cantidad;
+                    const cajas = calcularCajasNecesarias(cantidadNumerica, contenidoCaja);
                     if (cajas < 1) {
                         toast('La cantidad mínima es 1 caja.', { type: 'info' });
                     }
-                    return { ...producto, cantidad: cajas };
+                    return {
+                        ...producto,
+                        cantidadSolicitada: cantidadNumerica,
+                        cantidad: cantidadNumerica,
+                    };
                 }
 
-                return { ...producto, cantidad: cantidadNumerica };
+                return {
+                    ...producto,
+                    cantidad: cantidadNumerica,
+                    cantidadSolicitada: cantidadNumerica,
+                };
             })
         );
     };
@@ -396,8 +448,8 @@ const GananciasPorProducto = () => {
             prev.map((producto) => {
                 if (producto.producto?.id === id) {
                     const precioCaja = producto.producto?.precio_caja_sin_iva || 0;
-                    const cantidadActual = obtenerCantidadAjustada(producto.cantidad);
-                    const contenidoCaja = obtenerCantidadMinimaCaja(producto);
+                    const cantidadActual = obtenerCantidadSolicitada(producto);
+                    const contenidoCaja = obtenerContenidoCajaInfo(producto).cantidad;
 
                     if (requiereCajaCompleta) {
                         const cajasNecesarias = calcularCajasNecesarias(cantidadActual, contenidoCaja);
@@ -409,7 +461,9 @@ const GananciasPorProducto = () => {
                             precioSeleccionado: precioCaja,
                             tipoPrecio: 'caja',
                             cantidadPrevioCajaCompleta: cantidadActual,
-                            cantidad: cajasNecesarias,
+                            cantidadSolicitada: cantidadActual,
+                            cantidad: cantidadActual,
+                            cajasCalculadas: cajasNecesarias,
                         };
                     }
 
@@ -429,6 +483,7 @@ const GananciasPorProducto = () => {
                         precioSeleccionado: precioRestaurado,
                         tipoPrecio: tipoPrecioRestaurado,
                         cantidad: cantidadRestaurada,
+                        cantidadSolicitada: cantidadRestaurada,
                         cantidadPrevioCajaCompleta: undefined,
                     };
                 }
@@ -438,12 +493,12 @@ const GananciasPorProducto = () => {
     };
 
     const ajustarCantidadConDelta = (producto, delta) => {
-        const cantidadActual = obtenerCantidadAjustada(producto.cantidad);
+        const cantidadActual = obtenerCantidadSolicitada(producto);
         const minimoCaja = obtenerCantidadMinimaCaja(producto);
         const cantidadObjetivo = cantidadActual + delta;
 
         if (producto.requiereCajaCompleta) {
-            const cantidadAjustada = Math.max(1, Math.ceil(cantidadObjetivo));
+            const cantidadAjustada = Math.max(0, cantidadObjetivo);
             actualizarCantidad(producto.producto?.id, cantidadAjustada);
             return;
         }
@@ -510,17 +565,20 @@ const GananciasPorProducto = () => {
 
         const navigationState = {
             productos: productosConGanancia.map((producto) => {
-                const cantidad = Number.parseFloat(producto.cantidad) || 0;
+                const cantidadSolicitada = obtenerCantidadSolicitada(producto);
+                const cantidadParaPrecio = obtenerCantidadParaPrecio(producto);
                 const costoBase = Number.parseFloat(
                     producto.precioSeleccionado ?? producto.costo_base ?? 0
                 );
                 const gananciaPorcentaje = Number.parseFloat(producto.ganancia || 0);
 
                 const precioUnitario = costoBase * (1 + gananciaPorcentaje / 100);
-                const gananciaMonto = (precioUnitario - costoBase) * cantidad;
+                const gananciaMonto = (precioUnitario - costoBase) * cantidadParaPrecio;
 
                 return {
                     ...producto,
+                    cantidad: cantidadParaPrecio,
+                    cantidadSolicitada,
                     costo_base: Number.isFinite(costoBase) ? costoBase : 0,
                     ganancia_porcentaje: Number.isFinite(gananciaPorcentaje)
                         ? parseFloat(gananciaPorcentaje.toFixed(2))
@@ -723,12 +781,17 @@ const GananciasPorProducto = () => {
 
                             <div className="profit__products" aria-live="polite">
                                 {productosConGanancia.map((producto, index) => {
-                                    const cantidad = parseFloat(producto.cantidad) || 0;
-                                    const contenidoCaja = obtenerCantidadMinimaCaja(producto);
-                                    const minimoCaja = producto.requiereCajaCompleta ? 1 : 0;
+                                    const cantidadSolicitada = obtenerCantidadSolicitada(producto);
+                                    const contenidoInfo = obtenerContenidoCajaInfo(producto);
+                                    const cajasNecesarias = producto.requiereCajaCompleta
+                                        ? calcularCajasNecesarias(cantidadSolicitada, contenidoInfo.cantidad)
+                                        : 0;
+                                    const totalEquivalente = cajasNecesarias * (contenidoInfo.cantidad || 0);
+                                    const cantidadParaPrecio = obtenerCantidadParaPrecio(producto);
+                                    const minimoCaja = producto.requiereCajaCompleta ? 0 : 0;
                                     const precioFinalUnitario =
                                         producto.precioSeleccionado * (1 + (producto.ganancia || 0) / 100);
-                                    const totalProducto = precioFinalUnitario * cantidad;
+                                    const totalProducto = precioFinalUnitario * cantidadParaPrecio;
 
                                     const imageSrc = `${IMAGE_BASE_URL}/producto_${producto.producto?.id}.jpeg`;
 
@@ -781,14 +844,14 @@ const GananciasPorProducto = () => {
                                                 </div>
                                                 <div className="profit-product__quantity">
                                                     <label htmlFor={`cantidad-${producto.producto?.id}`}>
-                                                        Cantidad
+                                                        Cantidad solicitada ({contenidoInfo.unidad})
                                                     </label>
                                                     <div className="profit-product__quantity-control" role="group" aria-label="Control de cantidad">
                                                         <button
                                                             type="button"
                                                             aria-label="Disminuir cantidad"
                                                             onClick={() => ajustarCantidadConDelta(producto, -1)}
-                                                            disabled={cantidad <= (minimoCaja || 0)}
+                                                            disabled={cantidadSolicitada <= (minimoCaja || 0)}
                                                         >
                                                             -
                                                         </button>
@@ -796,8 +859,8 @@ const GananciasPorProducto = () => {
                                                             id={`cantidad-${producto.producto?.id}`}
                                                             type="number"
                                                             min={minimoCaja || 0}
-                                                            step="1"
-                                                            value={producto.cantidad ?? 0}
+                                                            step={producto.requiereCajaCompleta ? '0.01' : '1'}
+                                                            value={cantidadSolicitada}
                                                             onChange={(event) =>
                                                                 actualizarCantidad(
                                                                     producto.producto?.id,
@@ -821,9 +884,11 @@ const GananciasPorProducto = () => {
                                                             ×
                                                         </button>
                                                     </div>
-                                                      {producto.requiereCajaCompleta && contenidoCaja > 0 && (
-                                                          <p className="profit-product__helper">
-                                                              Contenido por caja: {contenidoCaja}
+                                                      {producto.requiereCajaCompleta && contenidoInfo.cantidad > 0 && (
+                                                          <p className="profit-product__note">
+                                                              {cantidadSolicitada.toFixed(2)} {contenidoInfo.unidad} solicitados, se requieren{' '}
+                                                              {cajasNecesarias} cajas equivalente a{' '}
+                                                              {totalEquivalente.toFixed(2)} {contenidoInfo.unidad}.
                                                           </p>
                                                       )}
                                                   </div>
@@ -860,11 +925,11 @@ const GananciasPorProducto = () => {
                                                 </div>
                                                 <div>
                                                     <dt>Subtotal base</dt>
-                                                    <dd>{formatCurrency(producto.precioSeleccionado * cantidad)}</dd>
+                                                    <dd>{formatCurrency(producto.precioSeleccionado * cantidadParaPrecio)}</dd>
                                                 </div>
                                                 <div>
                                                     <dt>Ganancia</dt>
-                                                    <dd>{formatCurrency(totalProducto - producto.precioSeleccionado * cantidad)}</dd>
+                                                    <dd>{formatCurrency(totalProducto - producto.precioSeleccionado * cantidadParaPrecio)}</dd>
                                                 </div>
                                                 <div>
                                                     <dt>Total del producto</dt>

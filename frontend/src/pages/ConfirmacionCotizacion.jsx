@@ -21,6 +21,30 @@ const toTwoDecimals = (value, fallback = 0) => {
     return Number.isFinite(numberValue) ? parseFloat(numberValue.toFixed(2)) : fallback;
 };
 
+const getContenidoCajaInfo = (producto) => {
+    const baseProducto = producto?.producto || {};
+    const m2Caja = parseFloat(baseProducto.m2_caja);
+    if (Number.isFinite(m2Caja) && m2Caja > 0) {
+        return { cantidad: m2Caja, unidad: 'm2' };
+    }
+
+    const piezasCaja = parseFloat(baseProducto.piezas_caja);
+    if (Number.isFinite(piezasCaja) && piezasCaja > 0) {
+        return { cantidad: piezasCaja, unidad: 'piezas' };
+    }
+
+    return { cantidad: 0, unidad: 'unidades' };
+};
+
+const calcularCajasNecesarias = (cantidadUnidades, contenidoCaja) => {
+    if (!Number.isFinite(contenidoCaja) || contenidoCaja <= 0) {
+        return Math.max(1, Math.ceil(cantidadUnidades || 1));
+    }
+
+    const unidades = Number.isFinite(cantidadUnidades) ? cantidadUnidades : 0;
+    return Math.max(1, Math.ceil(unidades / contenidoCaja));
+};
+
 const shippingOptions = [
     { value: 'Servicio completo', label: 'Servicio completo' },
     { value: 'Paquetería', label: 'Paquetería' },
@@ -243,7 +267,9 @@ const ConfirmacionCotizacion = () => {
             costo_envio: envio,
             cliente_id: cliente?.id,
             detalles: productos.map((producto) => {
-                const cantidad = parseFloat(producto.cantidad) || 0;
+                const cantidadSolicitada = parseFloat(
+                    producto.cantidadSolicitada ?? producto.cantidad
+                ) || 0;
                 const costoBase = parseFloat(
                     producto.costo_base ?? producto.precioSeleccionado ?? 0
                 );
@@ -271,15 +297,35 @@ const ConfirmacionCotizacion = () => {
                 })();
 
                 const precioUnitario = toTwoDecimals(precioUnitarioCalculado, 0);
+
+                const contenidoInfo = getContenidoCajaInfo(producto);
+                const cajasNecesarias = producto.requiereCajaCompleta
+                    ? calcularCajasNecesarias(cantidadSolicitada, contenidoInfo.cantidad)
+                    : 0;
+
+                const cantidadParaPrecio = producto.requiereCajaCompleta
+                    ? (() => {
+                          switch (producto.tipoPrecio) {
+                              case 'm2':
+                                  return cajasNecesarias * (producto.producto?.m2_caja || 0);
+                              case 'pieza':
+                                  return cajasNecesarias * (producto.producto?.piezas_caja || 0);
+                              case 'caja':
+                              default:
+                                  return cajasNecesarias;
+                          }
+                      })()
+                    : cantidadSolicitada;
+
                 const gananciaMonto =
                     gananciaMontoPrevio !== null
                         ? toTwoDecimals(gananciaMontoPrevio, 0)
-                        : toTwoDecimals((precioUnitario - costoBase) * cantidad, 0);
+                        : toTwoDecimals((precioUnitario - costoBase) * cantidadParaPrecio, 0);
 
                 return {
                     producto_id: producto.producto.id,
                     nombre: producto.producto.nombre,
-                    cantidad: producto.cantidad,
+                    cantidad: cantidadParaPrecio,
                     precio_unitario: precioUnitario,
                     tipo_variante: producto.tipoPrecio,
                     costo_base: toTwoDecimals(costoBase, 0),
