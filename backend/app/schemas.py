@@ -313,6 +313,7 @@ class CotizacionDetalleBase(BaseModel):
         cantidad = values.get("cantidad")
         ganancia_porcentaje = values.get("ganancia_porcentaje")
         ganancia_monto = values.get("ganancia_monto")
+        costo_base = values.get("costo_base")
 
         if ganancia_porcentaje is not None and Decimal(ganancia_porcentaje) < 0:
             raise ValueError("ganancia_porcentaje no puede ser negativo")
@@ -331,14 +332,21 @@ class CotizacionDetalleBase(BaseModel):
             tolerancia = Decimal("0.01")
 
             if ganancia_porcentaje is not None:
-                factor = Decimal("1") + Decimal(ganancia_porcentaje) / Decimal("100")
-                if factor != 0:
-                    costo_unitario_est = precio_unitario_decimal / factor
-                    monto_esperado = (precio_unitario_decimal - costo_unitario_est) * cantidad_decimal
-                    if abs(monto_esperado - monto_decimal) > tolerancia:
-                        raise ValueError(
-                            "ganancia_monto no es consistente con ganancia_porcentaje y precio_unitario"
-                        )
+                if costo_base is not None:
+                    costo_base_decimal = Decimal(costo_base)
+                    monto_esperado = costo_base_decimal * cantidad_decimal * (Decimal(ganancia_porcentaje) / Decimal("100"))
+                else:
+                    factor = Decimal("1") + Decimal(ganancia_porcentaje) / Decimal("100")
+                    if factor != 0:
+                        costo_unitario_est = precio_unitario_decimal / factor
+                        monto_esperado = (precio_unitario_decimal - costo_unitario_est) * cantidad_decimal
+                    else:
+                        monto_esperado = monto_decimal
+
+                if abs(monto_esperado - monto_decimal) > tolerancia:
+                    raise ValueError(
+                        "ganancia_monto no es consistente con ganancia_porcentaje y precio_unitario"
+                    )
 
         return values
 

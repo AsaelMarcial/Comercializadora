@@ -913,8 +913,7 @@ const GananciasPorProducto = () => {
                                                     <span>Requiere caja completa</span>
                                                 </label>
                                                 <p className="profit-product__helper">
-                                                    Al activarlo se usará siempre el precio de caja y ajustaremos la cantidad al
-                                                    número de cajas necesario para cubrir lo que solicitaste.
+                                                    Al activarlo se hara el calculo de las cajas necesarias para completar la cantidad solicitada y se ajustara la cantidad de productos.
                                                 </p>
                                             </div>
 
