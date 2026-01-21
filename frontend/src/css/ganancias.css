@@ -260,7 +260,7 @@
 
 .profit-product__header {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto auto 1fr auto;
     gap: 1.1rem;
     align-items: center;
 }
@@ -727,6 +727,10 @@
     .profit-product__header {
         grid-template-columns: 1fr;
         justify-items: start;
+    }
+
+    .profit-product__order {
+        flex-direction: row;
     }
 
     .profit-product__quantity {
