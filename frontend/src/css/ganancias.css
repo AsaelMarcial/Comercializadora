@@ -474,6 +474,11 @@
     color: rgba(185, 28, 28, 0.8);
 }
 
+.profit-product__note {
+    font-size: 0.85rem;
+    color: rgba(71, 85, 105, 0.85);
+}
+
 
 
 .profit-product__order {
