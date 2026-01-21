@@ -48,6 +48,13 @@ def read_productos(
     crud_producto = CRUDProducto(db)
     return crud_producto.obtener_productos()
 
+@router.get("/productos-publicos", response_model=list[Producto])
+def read_productos_publicos(
+    db: Session = Depends(get_db),
+):
+    crud_producto = CRUDProducto(db)
+    return crud_producto.obtener_productos()
+
 @router.put("/productos/{producto_id}", response_model=Producto)
 def update_producto(
     producto_id: int,
