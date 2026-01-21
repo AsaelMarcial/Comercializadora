@@ -268,7 +268,7 @@ const ConfirmacionCotizacion = () => {
                 const precioUnitario = parseFloat(precioUnitarioCalculado.toFixed(2));
                 const gananciaMonto =
                     gananciaMontoPrevio !== null
-                        ? parseFloat(gananciaMontoPrevio)
+                        ? parseFloat(parseFloat(gananciaMontoPrevio).toFixed(2))
                         : parseFloat(((precioUnitario - costoBase) * cantidad).toFixed(2));
 
                 return {
@@ -279,7 +279,9 @@ const ConfirmacionCotizacion = () => {
                     tipo_variante: producto.tipoPrecio,
                     costo_base: parseFloat(costoBase.toFixed(2)),
                     ganancia_porcentaje:
-                        gananciaPorcentaje !== null ? parseFloat(gananciaPorcentaje) : null,
+                        gananciaPorcentaje !== null
+                            ? parseFloat(parseFloat(gananciaPorcentaje).toFixed(2))
+                            : null,
                     ganancia_monto: gananciaMonto,
                 };
             }),

@@ -513,9 +513,11 @@ const GananciasPorProducto = () => {
                     ...producto,
                     costo_base: Number.isFinite(costoBase) ? costoBase : 0,
                     ganancia_porcentaje: Number.isFinite(gananciaPorcentaje)
-                        ? gananciaPorcentaje
+                        ? parseFloat(gananciaPorcentaje.toFixed(2))
                         : 0,
-                    ganancia_monto: Number.isFinite(gananciaMonto) ? gananciaMonto : 0,
+                    ganancia_monto: Number.isFinite(gananciaMonto)
+                        ? parseFloat(gananciaMonto.toFixed(2))
+                        : 0,
                 };
             }),
             granTotal: granTotal,
