@@ -13,7 +13,20 @@ logger = logging.getLogger(__name__)
 
 # Ruta de la plantilla HTML
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../templates")
-IMAGE_BASE_URL = "http://74.208.222.71:8000/uploads"  # Base URL para las imágenes
+
+def build_uploads_base_url():
+    env_value = os.getenv("PDF_UPLOADS_BASE_URL")
+    if env_value:
+        return env_value.rstrip("/")
+
+    api_host = os.getenv("API_HOST", "https://orza.mx").rstrip("/")
+    if api_host.endswith("/api"):
+        return f"{api_host}/uploads"
+    return f"{api_host}/api/uploads"
+
+
+UPLOADS_BASE_URL = build_uploads_base_url()
+ASSETS_BASE_URL = os.getenv("PDF_ASSETS_BASE_URL", "https://orza.mx").rstrip("/")
 
 
 def format_number(value):
@@ -49,10 +62,10 @@ def generate_pdf(cotizacion_data):
     for producto in cotizacion_data["productos"]:
         producto_id = producto.get("producto_id")
         if producto_id:
-            producto["imagen_url"] = f"{IMAGE_BASE_URL}/producto_{producto_id}.jpeg"
+            producto["imagen_url"] = f"{UPLOADS_BASE_URL}/producto_{producto_id}.jpeg"
         else:
             # Asigna una imagen predeterminada si no hay producto_id
-            producto["imagen_url"] = f"{IMAGE_BASE_URL}/default-image.jpeg"
+            producto["imagen_url"] = f"{UPLOADS_BASE_URL}/default-image.jpeg"
 
     try:
         # Cargar la plantilla
@@ -96,6 +109,8 @@ def generate_pdf(cotizacion_data):
             total=cotizacion_data["total"],
             costo_envio=float(cotizacion_data.get("costo_envio", 0)),  # Asegura que costo_envio sea un número
             variante_envio=cotizacion_data.get("variante_envio", "N/A"),
+            uploads_base_url=UPLOADS_BASE_URL,
+            assets_base_url=ASSETS_BASE_URL,
         )
         logger.info(f"Plantilla renderizada correctamente para la cotización ID {cotizacion_data['id']}.")
     except Exception as e:

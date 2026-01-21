@@ -193,7 +193,7 @@
 </head>
 <body>
     <div class="header">
-        <img src="http://74.208.222.71:3000/Logo%20COMERCIALIZADORA%20Orza%20LETRAS%20BLANCAS%20SIN%20FONDO.png" alt="Logo" class="logo">
+        <img src="{{ assets_base_url }}/Logo%20COMERCIALIZADORA%20Orza%20LETRAS%20BLANCAS%20SIN%20FONDO.png" alt="Logo" class="logo">
         <div class="divider"></div>
         <div class="title">COTIZACIÓN</div>
         <div class="info">
@@ -228,7 +228,7 @@
                         <img
                             src="{{ producto.imagen_url }}"
                             alt="Producto"
-                            onerror="this.src='http://74.208.222.71:8000/uploads/default-image.jpeg';"
+                            onerror="this.src='{{ uploads_base_url }}/default-image.jpeg';"
                         />
                     </td>
                     <td>{{ producto.nombre }}{% if producto.color %} {{ producto.color }}{% endif %}{% if producto.formato %} {{ producto.formato }}{% endif %}</td>
@@ -241,7 +241,7 @@
                 <tr class="costo-envio-row">
                     <td>
                         <img
-                            src="http://74.208.222.71:3000/camion-de-envio.png"
+                            src="{{ assets_base_url }}/camion-de-envio.png"
                             alt="Envío"
                             style="width: 50px; height: 50px; object-fit: cover;"
                         />
