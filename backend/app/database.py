@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from fastapi import HTTPException, status
 
 # URL de la base de datos, ajusta según tu configuración
-DATABASE_URL = "mysql+mysqlconnector://orza:RootOrza2025.@147.93.47.106:3306/comercializadora"
+DATABASE_URL = "mysql+pymysql://root:Xak9pEWN@74.208.222.71:3306/comercializadora"
 
 # Crear el motor de la base de datos con configuración avanzada
 engine = create_engine(
