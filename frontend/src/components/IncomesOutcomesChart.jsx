@@ -19,8 +19,8 @@ const IncomesOutcomesChart = () => {
 	})
 
 	const options = useMemo(() => {
-		let totalIncomes = incomes.lenght != 0 ? incomes.reduce((total, actual) => total + actual.monto, 0) : 0
-		let totalOutcomes = outcomes.lenght != 0 ? outcomes.reduce((total, actual) => total + actual.total, 0) : 0
+		let totalIncomes = incomes.length != 0 ? incomes.reduce((total, actual) => total + actual.monto, 0) : 0
+		let totalOutcomes = outcomes.length != 0 ? outcomes.reduce((total, actual) => total + actual.total, 0) : 0
 
 		return {
 			animationEnabled: true,
