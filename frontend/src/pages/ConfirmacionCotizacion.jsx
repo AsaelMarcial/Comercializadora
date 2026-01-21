@@ -280,24 +280,6 @@ const ConfirmacionCotizacion = () => {
                 const precioUnitarioExistente =
                     producto.precio_unitario !== undefined ? producto.precio_unitario : null;
 
-                const precioUnitarioCalculado = (() => {
-                    if (precioUnitarioExistente !== null) {
-                        return parseFloat(precioUnitarioExistente) || 0;
-                    }
-
-                    if (gananciaMontoPrevio !== null && cantidad > 0) {
-                        return costoBase + parseFloat(gananciaMontoPrevio || 0) / cantidad;
-                    }
-
-                    if (gananciaPorcentaje !== null) {
-                        return costoBase * (1 + (parseFloat(gananciaPorcentaje) || 0) / 100);
-                    }
-
-                    return costoBase;
-                })();
-
-                const precioUnitario = toTwoDecimals(precioUnitarioCalculado, 0);
-
                 const contenidoInfo = getContenidoCajaInfo(producto);
                 const cajasNecesarias = producto.requiereCajaCompleta
                     ? calcularCajasNecesarias(cantidadSolicitada, contenidoInfo.cantidad)
@@ -316,6 +298,24 @@ const ConfirmacionCotizacion = () => {
                           }
                       })()
                     : cantidadSolicitada;
+
+                const precioUnitarioCalculado = (() => {
+                    if (precioUnitarioExistente !== null) {
+                        return parseFloat(precioUnitarioExistente) || 0;
+                    }
+
+                    if (gananciaMontoPrevio !== null && cantidadParaPrecio > 0) {
+                        return costoBase + parseFloat(gananciaMontoPrevio || 0) / cantidadParaPrecio;
+                    }
+
+                    if (gananciaPorcentaje !== null) {
+                        return costoBase * (1 + (parseFloat(gananciaPorcentaje) || 0) / 100);
+                    }
+
+                    return costoBase;
+                })();
+
+                const precioUnitario = toTwoDecimals(precioUnitarioCalculado, 0);
 
                 const gananciaMonto =
                     gananciaMontoPrevio !== null
