@@ -4,7 +4,7 @@ import os
 from decimal import Decimal
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, noload
 
 from app.models import (
     Cliente,
@@ -234,6 +234,7 @@ class CRUDCotizacion:
 
         orden_existente = (
             self.db.query(OrdenVenta)
+            .options(noload(OrdenVenta.detalles))
             .filter(OrdenVenta.cotizacion_id == cotizacion_id)
             .first()
         )
