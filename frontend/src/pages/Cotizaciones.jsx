@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import NavigationTitle from '../components/NavigationTitle';
-import { getAllCotizaciones, cancelCotizacion, downloadCotizacionPDF } from '../data-access/cotizacionesDataAccess';
+import { getAllCotizaciones, cancelCotizacion, downloadCotizacionPDF, convertirCotizacionAVenta } from '../data-access/cotizacionesDataAccess';
 import CotizacionDetailsModal from '../components/CotizacionDetailsModal';
 import { toast } from 'react-toastify';
 import '../css/cotizaciones.css';
@@ -29,6 +29,22 @@ const Cotizaciones = () => {
             toast('No se pudo cancelar la cotización. Inténtalo nuevamente.', { type: 'error' });
         },
     });
+
+    const convertirMutation = useMutation(
+        ({ cotizacionId, payload }) => convertirCotizacionAVenta(cotizacionId, payload),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries('cotizaciones');
+                queryClient.invalidateQueries('ordenes-venta');
+                toast('Cotización convertida en venta.', { type: 'success' });
+                setIsShowingModal(false);
+            },
+            onError: (error) => {
+                console.error('Error al convertir la cotización:', error);
+                toast('No se pudo convertir la cotización.', { type: 'error' });
+            },
+        }
+    );
 
     useEffect(() => {
         document.title = 'Orza - Cotizaciones';
@@ -236,6 +252,13 @@ const Cotizaciones = () => {
             console.error('Error al preparar la cotización para edición:', error);
             toast('No se pudo preparar la cotización para editar.', { type: 'error' });
         }
+    };
+
+    const handleConvertCotizacion = async (cotizacionId, payload) => {
+        const shouldConvert = window.confirm('¿Deseas convertir esta cotización en venta?');
+        if (!shouldConvert) return;
+
+        await convertirMutation.mutateAsync({ cotizacionId, payload });
     };
 
     return (
@@ -459,6 +482,7 @@ const Cotizaciones = () => {
                     onCancelCotizacion={handleCancelCotizacion}
                     onDownloadPDF={handleDownloadQuote}
                     onEditCotizacion={handleEditCotizacion}
+                    onConvertToVenta={handleConvertCotizacion}
                 />
             )}
         </>

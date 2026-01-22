@@ -184,8 +184,8 @@ class Inventario(InventarioBase):
 # Esquema para Órdenes de Venta y Detalle
 class OrdenVentaDetalleBase(BaseModel):
     producto_id: int
-    cantidad: PositiveInt
-    precio_unitario: float
+    cantidad: condecimal(max_digits=10, decimal_places=2)
+    precio_unitario: condecimal(max_digits=10, decimal_places=2)
 
 class OrdenVentaDetalleCreate(OrdenVentaDetalleBase):
     pass
@@ -198,13 +198,20 @@ class OrdenVentaDetalle(OrdenVentaDetalleBase):
 
 class OrdenVentaBase(BaseModel):
     cliente: str
-    total: float
+    total: condecimal(max_digits=10, decimal_places=2)
+    estado: Optional[constr(max_length=50)] = "surtiendo"
+    comentarios: Optional[str] = None
+    cotizacion_id: Optional[int] = None
+    cliente_id: Optional[int] = None
+    proyecto_id: Optional[int] = None
+    usuario_id: Optional[int] = None
 
 class OrdenVentaCreate(OrdenVentaBase):
     detalles: List[OrdenVentaDetalleCreate]
 
 class OrdenVenta(OrdenVentaBase):
     id: int
+    fecha: datetime
     detalles: List[OrdenVentaDetalle]
 
     class Config:
@@ -213,8 +220,8 @@ class OrdenVenta(OrdenVentaBase):
 # Esquema para Órdenes de Compra y Detalle
 class OrdenCompraDetalleBase(BaseModel):
     producto_id: int
-    cantidad: PositiveInt
-    precio_unitario: float
+    cantidad: condecimal(max_digits=10, decimal_places=2)
+    precio_unitario: condecimal(max_digits=10, decimal_places=2)
 
 class OrdenCompraDetalleCreate(OrdenCompraDetalleBase):
     pass
@@ -227,7 +234,7 @@ class OrdenCompraDetalle(OrdenCompraDetalleBase):
 
 class OrdenCompraBase(BaseModel):
     proveedor_id: int
-    total: float
+    total: condecimal(max_digits=10, decimal_places=2)
 
 class OrdenCompraCreate(OrdenCompraBase):
     detalles: List[OrdenCompraDetalleCreate]
@@ -466,6 +473,11 @@ class CotizacionDetalleResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CotizacionConvertirVentaRequest(BaseModel):
+    estado: Optional[constr(max_length=50)] = "surtiendo"
+    comentarios: Optional[str] = None
 
 # Esquema para Proyecto
 class ProyectoBase(BaseModel):

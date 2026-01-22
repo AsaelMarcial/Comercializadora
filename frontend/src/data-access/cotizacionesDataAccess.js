@@ -147,3 +147,13 @@ export const cancelCotizacion = async (cotizacionId) => {
         throw new Error(`Error al cancelar la cotización: ${error.message}`);
     }
 };
+
+export const convertirCotizacionAVenta = async (cotizacionId, payload) => {
+    if (!cotizacionId) throw new Error('El ID de la cotización no puede estar vacío.');
+
+    return await httpRequest(
+        `${API_HOST}/${API_SERVICE}/${cotizacionId}/convertir-venta`,
+        'POST',
+        payload || {}
+    );
+};

@@ -10,10 +10,15 @@ const CotizacionDetailsModal = ({
     onCancelCotizacion,
     onDownloadPDF,
     onEditCotizacion,
+    onConvertToVenta,
 }) => {
     const [productosDetalles, setProductosDetalles] = useState([]);
     const closeButtonRef = useRef(null);
     const primaryActionRef = useRef(null);
+    const [conversionState, setConversionState] = useState({
+        estado: 'surtiendo',
+        comentarios: '',
+    });
 
     useEffect(() => {
         const fetchProductosDetalles = async () => {
@@ -82,6 +87,11 @@ const CotizacionDetailsModal = ({
         return tienePorcentaje || tieneMonto;
     });
     const hayEstimados = productosDetalles.some(({ ganancia_estimada }) => ganancia_estimada);
+
+    const handleConvert = () => {
+        if (!onConvertToVenta) return;
+        onConvertToVenta(cotizacion.id, conversionState);
+    };
 
     return (
         <div className="modal-backdrop" onClick={handleBackdropClick}>
@@ -194,6 +204,48 @@ const CotizacionDetailsModal = ({
                             </table>
                         </div>
                     </section>
+
+                    <section className="conversion-card">
+                        <div className="conversion-card__header">
+                            <div>
+                                <p className="label">Convertir a venta</p>
+                                <h4>Generar pedido</h4>
+                            </div>
+                            <span className="muted">Estado inicial: surtiendo</span>
+                        </div>
+                        <div className="conversion-card__form">
+                            <label htmlFor="conversion-estado">Estado</label>
+                            <select
+                                id="conversion-estado"
+                                value={conversionState.estado}
+                                onChange={(event) =>
+                                    setConversionState((prev) => ({
+                                        ...prev,
+                                        estado: event.target.value,
+                                    }))
+                                }
+                            >
+                                <option value="surtiendo">Surtiendo</option>
+                                <option value="en_almacen">En almacén</option>
+                                <option value="en_entrega">En entrega</option>
+                                <option value="completada">Completada</option>
+                            </select>
+
+                            <label htmlFor="conversion-comentarios">Comentarios</label>
+                            <textarea
+                                id="conversion-comentarios"
+                                rows="3"
+                                placeholder="Notas internas para el pedido"
+                                value={conversionState.comentarios}
+                                onChange={(event) =>
+                                    setConversionState((prev) => ({
+                                        ...prev,
+                                        comentarios: event.target.value,
+                                    }))
+                                }
+                            />
+                        </div>
+                    </section>
                 </div>
 
                 <div className="modal-actions">
@@ -207,6 +259,13 @@ const CotizacionDetailsModal = ({
                         </button>
                     </div>
                     <div className="actions-group">
+                        <button
+                            type="button"
+                            className="btn secondary"
+                            onClick={handleConvert}
+                        >
+                            Convertir a venta
+                        </button>
                         <button
                             type="button"
                             ref={primaryActionRef}
@@ -271,6 +330,7 @@ CotizacionDetailsModal.propTypes = {
     onCancelCotizacion: PropTypes.func.isRequired,
     onDownloadPDF: PropTypes.func.isRequired,
     onEditCotizacion: PropTypes.func.isRequired,
+    onConvertToVenta: PropTypes.func,
 };
 
 export default CotizacionDetailsModal;

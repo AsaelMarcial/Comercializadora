@@ -14,6 +14,7 @@ from app.routers import (
     clientes,
     proyectos,
     sucursales,
+    ordenes_venta,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -79,6 +80,7 @@ app.include_router(productos.router, tags=["Productos"])
 app.include_router(usuarios.router, tags=["Usuarios"])
 app.include_router(inventario.router, tags=["Inventario"])
 app.include_router(cotizaciones.router, tags=["Cotizaciones"])
+app.include_router(ordenes_venta.router, tags=["Órdenes de venta"])
 app.include_router(proveedores.router, tags=["Proveedores"])
 app.include_router(clientes.router, tags=["Clientes"])
 app.include_router(proyectos.router, tags=["Proyectos"])
