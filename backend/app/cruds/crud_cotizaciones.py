@@ -276,8 +276,12 @@ class CRUDCotizacion:
             cliente_cotizacion.estado = payload.estado or "surtiendo"
 
         self.db.commit()
-        self.db.refresh(orden)
-        return orden
+        return (
+            self.db.query(OrdenVenta)
+            .options(joinedload(OrdenVenta.detalles))
+            .filter(OrdenVenta.id == orden.id)
+            .first()
+        )
 
     def obtener_cotizacion(self, cotizacion_id: int) -> Cotizacion:
         try:
