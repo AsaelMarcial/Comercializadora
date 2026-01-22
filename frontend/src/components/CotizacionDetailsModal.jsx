@@ -10,6 +10,7 @@ const CotizacionDetailsModal = ({
     onCancelCotizacion,
     onDownloadPDF,
     onEditCotizacion,
+    onOpenConvertModal,
 }) => {
     const [productosDetalles, setProductosDetalles] = useState([]);
     const closeButtonRef = useRef(null);
@@ -82,6 +83,7 @@ const CotizacionDetailsModal = ({
         return tienePorcentaje || tieneMonto;
     });
     const hayEstimados = productosDetalles.some(({ ganancia_estimada }) => ganancia_estimada);
+
 
     return (
         <div className="modal-backdrop" onClick={handleBackdropClick}>
@@ -194,6 +196,7 @@ const CotizacionDetailsModal = ({
                             </table>
                         </div>
                     </section>
+
                 </div>
 
                 <div className="modal-actions">
@@ -207,6 +210,13 @@ const CotizacionDetailsModal = ({
                         </button>
                     </div>
                     <div className="actions-group">
+                        <button
+                            type="button"
+                            className="btn secondary"
+                            onClick={() => onOpenConvertModal?.(cotizacion)}
+                        >
+                            Generar pedido
+                        </button>
                         <button
                             type="button"
                             ref={primaryActionRef}
@@ -271,6 +281,7 @@ CotizacionDetailsModal.propTypes = {
     onCancelCotizacion: PropTypes.func.isRequired,
     onDownloadPDF: PropTypes.func.isRequired,
     onEditCotizacion: PropTypes.func.isRequired,
+    onOpenConvertModal: PropTypes.func,
 };
 
 export default CotizacionDetailsModal;

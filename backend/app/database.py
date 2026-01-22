@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import sessionmaker, declarative_base
 from fastapi import HTTPException, status
 
@@ -8,8 +9,7 @@ DATABASE_URL = "mysql+pymysql://root:Xak9pEWN@74.208.222.71:3306/comercializador
 # Crear el motor de la base de datos con configuración avanzada
 engine = create_engine(
     DATABASE_URL,
-    pool_size=10,  # Tamaño del pool de conexiones
-    max_overflow=20,  # Conexiones adicionales permitidas
+    poolclass=NullPool,
     pool_pre_ping=True,  # Verifica conexiones antes de usarlas
     pool_recycle=1800,  # Recicla conexiones inactivas después de 30 minutos
     echo=False,  # Cambiar a True para depuración

@@ -101,8 +101,12 @@ class OrdenVenta(Base):
     cliente = Column(String(255), nullable=False)
     fecha = Column(TIMESTAMP, server_default=func.now())
     total = Column(DECIMAL(10, 2))
-    estado = Column(String(50), default="pendiente")  # Estado de la orden
+    estado = Column(String(50), default="surtiendo")  # Estado de la orden
+    comentarios = Column(Text, nullable=True)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
+    cotizacion_id = Column(Integer, ForeignKey("cotizaciones.id"), nullable=True)
+    cliente_id = Column(Integer, ForeignKey("clientes.id"), nullable=True)
+    proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=True)
 
     usuario = relationship("Usuario")
     detalles = relationship("OrdenVentaDetalle", back_populates="orden", lazy="joined")
@@ -114,7 +118,7 @@ class OrdenVentaDetalle(Base):
     id = Column(Integer, primary_key=True, index=True)
     orden_id = Column(Integer, ForeignKey("ordenes_venta.id", ondelete="CASCADE"))
     producto_id = Column(Integer, ForeignKey("productos.id"))
-    cantidad = Column(Integer, nullable=False)
+    cantidad = Column(DECIMAL(10, 2), nullable=False)
     precio_unitario = Column(DECIMAL(10, 2))
 
     orden = relationship("OrdenVenta", back_populates="detalles")

@@ -4,20 +4,24 @@ import os
 from decimal import Decimal
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, noload
 
 from app.models import (
     Cliente,
     ClienteCotizacion,
     Cotizacion,
     CotizacionDetalle,
+    OrdenVenta,
+    OrdenVentaDetalle,
     Producto,
     Proyecto,
 )
+from app.database import SessionLocal
 from app.schemas import (
     ClienteCotizacionCreate,
     CotizacionCreate,
     CotizacionDetalleCreate,
+    CotizacionConvertirVentaRequest,
     CotizacionUpdate,
 )
 from app.cruds.crud_clientes import CRUDClienteCotizacion
@@ -210,13 +214,75 @@ class CRUDCotizacion:
         except HTTPException:
             self.db.rollback()
             raise
-        except Exception as e:
-            self.db.rollback()
-            logger.error(f"Error en crear_cotizacion para el usuario {usuario_id}: {e}")
+
+    def convertir_a_venta(
+        self,
+        cotizacion_id: int,
+        payload: CotizacionConvertirVentaRequest,
+        usuario_id: int,
+    ) -> OrdenVenta:
+        cotizacion = (
+            self.db.query(Cotizacion)
+            .options(joinedload(Cotizacion.detalles))
+            .filter(Cotizacion.id == cotizacion_id)
+            .first()
+        )
+        if not cotizacion:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error al crear la cotización: {str(e)}"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Cotización con ID {cotizacion_id} no encontrada.",
             )
+
+        with SessionLocal() as temp_db:
+            orden_existente = (
+                temp_db.query(OrdenVenta.id)
+                .filter(OrdenVenta.cotizacion_id == cotizacion_id)
+                .first()
+            )
+        if orden_existente:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La cotización ya fue convertida en una venta.",
+            )
+
+        orden = OrdenVenta(
+            cliente=cotizacion.cliente,
+            total=cotizacion.total,
+            estado=payload.estado or "surtiendo",
+            comentarios=payload.comentarios,
+            usuario_id=usuario_id,
+            cotizacion_id=cotizacion.id,
+            cliente_id=getattr(cotizacion, "cliente_id", None),
+            proyecto_id=cotizacion.proyecto_id,
+        )
+        self.db.add(orden)
+        self.db.flush()
+
+        for detalle in cotizacion.detalles:
+            nuevo_detalle = OrdenVentaDetalle(
+                orden_id=orden.id,
+                producto_id=detalle.producto_id,
+                cantidad=detalle.cantidad,
+                precio_unitario=detalle.precio_unitario,
+            )
+            self.db.add(nuevo_detalle)
+
+        # Actualizar estado de cotización si existe asociación
+        cliente_cotizacion = (
+            self.db.query(ClienteCotizacion)
+            .filter(ClienteCotizacion.cotizacion_id == cotizacion_id)
+            .first()
+        )
+        if cliente_cotizacion:
+            cliente_cotizacion.estado = payload.estado or "surtiendo"
+
+        self.db.commit()
+        return (
+            self.db.query(OrdenVenta)
+            .options(joinedload(OrdenVenta.detalles))
+            .filter(OrdenVenta.id == orden.id)
+            .first()
+        )
 
     def obtener_cotizacion(self, cotizacion_id: int) -> Cotizacion:
         try:
@@ -248,11 +314,13 @@ class CRUDCotizacion:
         try:
             cotizaciones = (
                 self.db.query(Cotizacion)
+                .outerjoin(OrdenVenta, OrdenVenta.cotizacion_id == Cotizacion.id)
                 .options(
                     joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto),
                     joinedload(Cotizacion.proyecto),
                     joinedload(Cotizacion.cliente_asociacion).joinedload(ClienteCotizacion.cliente),
                 )
+                .filter(OrdenVenta.id.is_(None))
                 .all()
             )
             logger.info(f"Se obtuvieron {len(cotizaciones)} cotizaciones")

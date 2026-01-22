@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 import io
 import os
 from app.cruds.crud_cotizaciones import CRUDCotizacion
-from app.schemas import CotizacionCreate, CotizacionResponse, CotizacionUpdate
+from app.schemas import CotizacionCreate, CotizacionResponse, CotizacionUpdate, CotizacionConvertirVentaRequest
+from app.schemas import OrdenVenta
 from app.database import get_db
 from app.auth import get_current_user
 from app.utils.pdf_utils import generate_pdf
@@ -57,6 +58,36 @@ def create_cotizacion(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al crear la cotización: {str(e)}"
+        )
+
+
+@router.post(
+    "/cotizaciones/{cotizacion_id}/convertir-venta",
+    response_model=OrdenVenta,
+    tags=["Cotizaciones"],
+    summary="Convertir cotización a venta"
+)
+def convertir_cotizacion_a_venta(
+    cotizacion_id: int,
+    payload: CotizacionConvertirVentaRequest,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    crud_cotizacion.db = db
+    try:
+        orden = crud_cotizacion.convertir_a_venta(
+            cotizacion_id=cotizacion_id,
+            payload=payload,
+            usuario_id=current_user.get("id"),
+        )
+        return orden
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Error al convertir la cotización {cotizacion_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al convertir la cotización: {str(e)}",
         )
 
 
