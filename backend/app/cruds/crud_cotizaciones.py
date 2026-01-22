@@ -277,13 +277,6 @@ class CRUDCotizacion:
         self.db.commit()
         self.db.refresh(orden)
         return orden
-        except Exception as e:
-            self.db.rollback()
-            logger.error(f"Error en crear_cotizacion para el usuario {usuario_id}: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error al crear la cotización: {str(e)}"
-            )
 
     def obtener_cotizacion(self, cotizacion_id: int) -> Cotizacion:
         try:
