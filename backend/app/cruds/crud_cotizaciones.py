@@ -16,6 +16,7 @@ from app.models import (
     Producto,
     Proyecto,
 )
+from app.database import SessionLocal
 from app.schemas import (
     ClienteCotizacionCreate,
     CotizacionCreate,
@@ -232,12 +233,12 @@ class CRUDCotizacion:
                 detail=f"Cotización con ID {cotizacion_id} no encontrada.",
             )
 
-        orden_existente = (
-            self.db.query(OrdenVenta)
-            .options(noload(OrdenVenta.detalles))
-            .filter(OrdenVenta.cotizacion_id == cotizacion_id)
-            .first()
-        )
+        with SessionLocal() as temp_db:
+            orden_existente = (
+                temp_db.query(OrdenVenta.id)
+                .filter(OrdenVenta.cotizacion_id == cotizacion_id)
+                .first()
+            )
         if orden_existente:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
