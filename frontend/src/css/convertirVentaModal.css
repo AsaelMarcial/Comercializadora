@@ -1,0 +1,70 @@
+.convertir-venta-modal {
+    width: min(520px, 100%);
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+    border: 1px solid #e7e7ec;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.convertir-venta-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f0f1f5;
+}
+
+.convertir-venta-modal__header h3 {
+    margin: 6px 0;
+    font-size: 22px;
+}
+
+.convertir-venta-modal__eyebrow {
+    margin: 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7280;
+    letter-spacing: 0.08em;
+}
+
+.convertir-venta-modal__subtitle {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.convertir-venta-modal__body {
+    display: grid;
+    gap: 12px;
+    padding: 20px 24px 24px;
+}
+
+.convertir-venta-modal__body label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.convertir-venta-modal__body select,
+.convertir-venta-modal__body textarea {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    background: #fff;
+}
+
+.convertir-venta-modal__body textarea {
+    resize: vertical;
+}
+
+.convertir-venta-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}

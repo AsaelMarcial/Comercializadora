@@ -45,3 +45,23 @@ export const getOrdenVentaById = async (ordenId) => {
         throw new Error(error.message);
     }
 };
+
+export const updateOrdenVenta = async (ordenId, payload) => {
+    if (!ordenId) throw new Error('El ID de la orden no puede estar vacío.');
+
+    try {
+        const url = `${API_HOST}/${API_SERVICE}/${ordenId}`;
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                ...getHeaders(true),
+            },
+            body: JSON.stringify(payload || {}),
+        });
+
+        return await processResponse(response);
+    } catch (error) {
+        console.error('Error al actualizar la orden de venta:', error);
+        throw new Error(error.message);
+    }
+};

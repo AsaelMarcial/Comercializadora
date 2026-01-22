@@ -1,13 +1,33 @@
 import React, { useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import NavigationTitle from '../components/NavigationTitle';
-import { readAllOrdenesVenta } from '../data-access/ordenesVentaDataAccess';
+import { readAllOrdenesVenta, updateOrdenVenta } from '../data-access/ordenesVentaDataAccess';
+import { downloadCotizacionPDF } from '../data-access/cotizacionesDataAccess';
+import PedidoDetailsModal from '../components/PedidoDetailsModal';
+import { toast } from 'react-toastify';
 import '../css/pedidos.css';
 
 const Pedidos = () => {
+    const queryClient = useQueryClient();
     const { data: ordenes = [], isLoading } = useQuery('ordenes-venta', readAllOrdenesVenta);
     const [searchTerm, setSearchTerm] = useState('');
     const [estadoFilter, setEstadoFilter] = useState('todos');
+    const [selectedPedido, setSelectedPedido] = useState(null);
+    const [isShowingModal, setIsShowingModal] = useState(false);
+
+    const updateMutation = useMutation(
+        ({ ordenId, payload }) => updateOrdenVenta(ordenId, payload),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries('ordenes-venta');
+                toast('Pedido actualizado.', { type: 'success' });
+                setIsShowingModal(false);
+            },
+            onError: () => {
+                toast('No se pudo actualizar el pedido.', { type: 'error' });
+            },
+        }
+    );
 
     const sortedOrders = useMemo(() => {
         if (!ordenes) return [];
@@ -30,6 +50,31 @@ const Pedidos = () => {
             return matchesSearch && matchesEstado;
         });
     }, [sortedOrders, searchTerm, estadoFilter]);
+
+    const handleOpenDetails = (pedido) => {
+        setSelectedPedido(pedido);
+        setIsShowingModal(true);
+    };
+
+    const handleCloseDetails = () => {
+        setSelectedPedido(null);
+        setIsShowingModal(false);
+    };
+
+    const handleSavePedido = (payload) => {
+        if (!selectedPedido) return;
+        updateMutation.mutate({ ordenId: selectedPedido.id, payload });
+    };
+
+    const handleDownload = async () => {
+        if (!selectedPedido?.cotizacion_id) return;
+        try {
+            await downloadCotizacionPDF(selectedPedido.cotizacion_id);
+            toast('Descarga iniciada', { type: 'success' });
+        } catch (error) {
+            toast('No se pudo descargar el PDF.', { type: 'error' });
+        }
+    };
 
     return (
         <>
@@ -91,7 +136,7 @@ const Pedidos = () => {
                                     {filteredOrders.map((order) => {
                                         const items = Array.isArray(order.detalles) ? order.detalles.length : 0;
                                         return (
-                                            <tr key={order.id}>
+                                            <tr key={order.id} onClick={() => handleOpenDetails(order)}>
                                                 <td>{order.id}</td>
                                                 <td>{order.cliente}</td>
                                                 <td>
@@ -122,6 +167,16 @@ const Pedidos = () => {
                     )}
                 </section>
             </div>
+
+            {isShowingModal && selectedPedido && (
+                <PedidoDetailsModal
+                    pedido={selectedPedido}
+                    isShowing={isShowingModal}
+                    onClose={handleCloseDetails}
+                    onSave={handleSavePedido}
+                    onDownloadPDF={selectedPedido.cotizacion_id ? handleDownload : undefined}
+                />
+            )}
         </>
     );
 };

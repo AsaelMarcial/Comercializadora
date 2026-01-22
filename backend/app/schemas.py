@@ -209,6 +209,11 @@ class OrdenVentaBase(BaseModel):
 class OrdenVentaCreate(OrdenVentaBase):
     detalles: List[OrdenVentaDetalleCreate]
 
+
+class OrdenVentaUpdate(BaseModel):
+    estado: Optional[constr(max_length=50)] = None
+    comentarios: Optional[str] = None
+
 class OrdenVenta(OrdenVentaBase):
     id: int
     fecha: datetime

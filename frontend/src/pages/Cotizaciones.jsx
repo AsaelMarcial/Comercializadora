@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import NavigationTitle from '../components/NavigationTitle';
 import { getAllCotizaciones, cancelCotizacion, downloadCotizacionPDF, convertirCotizacionAVenta } from '../data-access/cotizacionesDataAccess';
 import CotizacionDetailsModal from '../components/CotizacionDetailsModal';
+import ConvertirVentaModal from '../components/ConvertirVentaModal';
 import { toast } from 'react-toastify';
 import '../css/cotizaciones.css';
 import { getProductById } from '../data-access/productsDataAccess';
@@ -14,6 +15,7 @@ const Cotizaciones = () => {
     const queryClient = useQueryClient();
     const [isShowingModal, setIsShowingModal] = useState(false);
     const [selectedCotizacion, setSelectedCotizacion] = useState(null);
+    const [isShowingConvertModal, setIsShowingConvertModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [dateFilter, setDateFilter] = useState('todas');
     const [amountFilter, setAmountFilter] = useState('todas');
@@ -38,6 +40,7 @@ const Cotizaciones = () => {
                 queryClient.invalidateQueries('ordenes-venta');
                 toast('Cotización convertida en venta.', { type: 'success' });
                 setIsShowingModal(false);
+                setIsShowingConvertModal(false);
             },
             onError: (error) => {
                 console.error('Error al convertir la cotización:', error);
@@ -142,6 +145,15 @@ const Cotizaciones = () => {
     const handleCloseDetails = () => {
         setSelectedCotizacion(null);
         setIsShowingModal(false);
+    };
+
+    const handleOpenConvertModal = (cotizacion) => {
+        setSelectedCotizacion(cotizacion);
+        setIsShowingConvertModal(true);
+    };
+
+    const handleCloseConvertModal = () => {
+        setIsShowingConvertModal(false);
     };
 
     const handleDownloadQuote = async (id) => {
@@ -482,7 +494,16 @@ const Cotizaciones = () => {
                     onCancelCotizacion={handleCancelCotizacion}
                     onDownloadPDF={handleDownloadQuote}
                     onEditCotizacion={handleEditCotizacion}
-                    onConvertToVenta={handleConvertCotizacion}
+                    onOpenConvertModal={handleOpenConvertModal}
+                />
+            )}
+
+            {isShowingConvertModal && selectedCotizacion && (
+                <ConvertirVentaModal
+                    isShowing={isShowingConvertModal}
+                    cotizacion={selectedCotizacion}
+                    onClose={handleCloseConvertModal}
+                    onConfirm={(payload) => handleConvertCotizacion(selectedCotizacion.id, payload)}
                 />
             )}
         </>

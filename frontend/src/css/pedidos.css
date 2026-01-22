@@ -145,6 +145,10 @@
   padding: 2.5rem 1rem;
 }
 
+.orders__table tbody tr {
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .orders__hero {
     padding: 1.25rem;

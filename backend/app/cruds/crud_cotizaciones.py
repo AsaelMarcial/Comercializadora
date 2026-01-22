@@ -308,11 +308,13 @@ class CRUDCotizacion:
         try:
             cotizaciones = (
                 self.db.query(Cotizacion)
+                .outerjoin(OrdenVenta, OrdenVenta.cotizacion_id == Cotizacion.id)
                 .options(
                     joinedload(Cotizacion.detalles).joinedload(CotizacionDetalle.producto),
                     joinedload(Cotizacion.proyecto),
                     joinedload(Cotizacion.cliente_asociacion).joinedload(ClienteCotizacion.cliente),
                 )
+                .filter(OrdenVenta.id.is_(None))
                 .all()
             )
             logger.info(f"Se obtuvieron {len(cotizaciones)} cotizaciones")
